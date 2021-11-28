@@ -1059,7 +1059,7 @@ Navigate to Virtual Network Gateways ->  On-Prem1-VNG -> Monitoring -> BGP Peers
 
 ## Task 4: Verify Connectivity
 
-🙂 To verify connectivity,ping **HUB-VM** (10.1.10.4), ping ***On-Prem-VM*** (10.0.10.4), and ***On-prem1-VM*** (10.2.10.4) from ***Spoke-VM*** (10.4.10.4), all pings will work fine: 
+🙂 To verify connectivity,ping ***HUB-VM*** (10.1.10.4), ping ***On-Prem-VM*** (10.0.10.4), and ***On-prem1-VM*** (10.2.10.4) from ***Spoke-VM*** (10.4.10.4), all pings will work fine: 
 
 ```
 azureuser@Spoke-VM:~$ ping 10.1.10.4
