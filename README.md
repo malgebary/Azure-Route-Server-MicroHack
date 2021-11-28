@@ -370,8 +370,6 @@ PING 10.0.10.4 (10.0.10.4) 56(84) bytes of data.
 	
 	subnet_id=$(az network vnet subnet show --name RouteServerSubnet --resource-group Route-Server --vnet-name HUB-SCUS --query id -o tsv) 
 	
-	echo $subnet_id
-	
 	az network routeserver create --name RouteServer --resource-group Route-Server --hosted-subnet $subnet_id --public-ip-address RouteServerIP --location southcentralus
 	
 
@@ -946,7 +944,7 @@ After deploying above the Network will look as below:
 - Create the Spoke-VM
 ```
 az network public-ip create --name Spoke-VMPIP --resource-group Route-Server --location westus --allocation-method Dynamic
-az network nic create --resource-group Route-Server -n Spoke-VMNIC --location westus --subnet Subnet-1 --private-ip-address 10.4.10.4 --vnet-name Spoke-Vnet --public-ip-  address Spoke-VMPIP
+az network nic create --resource-group Route-Server -n Spoke-VMNIC --location westus --subnet Subnet-1 --private-ip-address 10.4.10.4 --vnet-name Spoke-Vnet --public-ip-address Spoke-VMPIP
 az vm create -n Spoke-VM -g Route-Server --image UbuntuLTS --admin-username azureuser --admin-password Routeserver123 --size Standard_B1ls --location westus --nics Spoke-VMNIC
 ```
 
