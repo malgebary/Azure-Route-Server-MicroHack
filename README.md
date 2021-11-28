@@ -1070,7 +1070,7 @@ PING 10.1.10.4 (10.1.10.4) 56(84) bytes of data.
 64 bytes from 10.1.10.4: icmp_seq=3 ttl=64 time=33.1 ms
 ^C
 --- 10.1.10.4 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 3004ms
+4 packets transmitted, 4 received, 0% packet loss, time 3004ms
 rtt min/avg/max/mdev = 33.013/33.897/36.269/1.377 ms
 ```
 
