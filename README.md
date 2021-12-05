@@ -16,6 +16,8 @@
 
 [Scenario 3: Vnet peering and ARS](#Scenario-3-Vnet-peering-and-ARS)
 
+[Scenario 4: Route server multi-region design with Ipsec](Scenario-4-Route-server-multi-region-design-with-Ipsec)
+
 # Introduction
 
 Azure Route Server ([ARS](https://docs.microsoft.com/en-us/azure/route-server/overview)) enables dynamic routing between Network Virtual Appliance (NVA) and Virtual Network (Vnet) by supporting Border Gateway Protocol (BGP). Before ARS, users had to create a User Defined Route (UDR) to NVA, and need to manually update the routing table on the NVA whenever Vnet addresses get updated. With the introduction of Azure Route Server, users can now inject a similar route without having to create the UDRs, or manually update the NVA with new Vnet prefixes.
@@ -38,7 +40,7 @@ Azure Cli will be used to build this Lab. the complete lab consist of:
   1. Six Vnets: ***On-Prem-Vnet***, ***On-prem1-Vnet***, ***HUB-SCUS***, ***HUB-EastUS***, ***Spoke-Vnet***, and ***Spoke1-Vnet***.
   2. Three Virtual Network Gateways:***On-Prem-VNG***, ***On-Prem1-VNG***, and ***HUB-VNG***.
   3. Eight VMs: ***On-Prem-VM***, ***On-Prem1-VM***, ***HUB-VM***, ***HUb1-VM***, ***CSR***, ***CSR1***, ***Spoke-VM***, and ***Spoke1-VM***.
-  4. Two Azure Route Severs: ***RouteServer***, ***RouteServer1***.
+  4. Two Azure Route Severs: ***RouteServer***, and ***RouteServer1***.
 	
   
 At the end of the Lab the deployment will look like this:
