@@ -22,7 +22,7 @@ Azure Route Server ([ARS](https://docs.microsoft.com/en-us/azure/route-server/ov
 
 ARS enables the NVA to advertise routes to other endpoints in the local/peered Vnet; as well as endpoints defined in on-premises networks connected via ExpressRoute or VPN.  Additionally, ARS allow transit between Virtual Network Gateways (ExpressRoute and VPN) which was not possible before. 
 
-In this MicroHack we will explore some routing scenarios that shows how ARS can be utilized to simplify configuration, management, and deployment of the NVAs in the Virtual Network.
+In this MicroHack we will explore some routing scenarios that shows how ARS can be utilized to simplify configuration, management, and deployment of the NVAs in the Virtual Network and how will that simplify routing between Azure and on-premises.
 
 # Objectives:
 
@@ -35,16 +35,16 @@ After completing this MicroHack you will:
 
 Azure Cli will be used to build this Lab. the complete lab consist of:  
 
-  1. Four Vnets: ***On-Prem-Vnet***, ***On-prem1-Vnet***, ***HUB-SCUS***, and ***Spoke-Vnet***.
+  1. Six Vnets: ***On-Prem-Vnet***, ***On-prem1-Vnet***, ***HUB-SCUS***, ***HUB-EastUS***, ***Spoke-Vnet***, and ***Spoke1-Vnet***.
   2. Three Virtual Network Gateways:***On-Prem-VNG***, ***On-Prem1-VNG***, and ***HUB-VNG***.
-  3. Five VMs: ***On-Prem-VM***, ***On-Prem1-VM***, ***HUB-VM***, ***CSR***, and ***Spoke-VM***.
-  4. Azure Route Sever: ***RouteServer***.
+  3. Eight VMs: ***On-Prem-VM***, ***On-Prem1-VM***, ***HUB-VM***, ***HUb1-VM***, ***CSR***, ***CSR1***, ***Spoke-VM***, and ***Spoke1-VM***.
+  4. Two Azure Route Severs: ***RouteServer***, ***RouteServer1***.
 	
   
 At the end of the Lab the deployment will look like this:
 
+![image](https://user-images.githubusercontent.com/78562461/144753419-5e5799e9-6cc1-4cf6-9c5c-4a3d00703725.png)
 
-![image](https://user-images.githubusercontent.com/78562461/140991540-2ea50ef8-1310-4abf-bf7d-5d8bfb4791dd.png)
 
 # Notes:
 
