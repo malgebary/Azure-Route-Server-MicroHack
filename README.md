@@ -16,7 +16,7 @@
 
 [Scenario 3: Vnet peering and ARS](#Scenario-3-Vnet-peering-and-ARS)
 
-[Scenario 4: Route server multi-region design with Ipsec](Scenario-4-Route-server-multi-region-design-with-Ipsec)
+[Scenario 4: Route server multi-region design with Ipsec](#Scenario-4-Route-server-multi-region-design-with-Ipsec)
 
 # Introduction
 
