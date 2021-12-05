@@ -1113,6 +1113,6 @@ For this scenario we will add the following components:
 	
 After deploying above component the complete diagram will be as below:
 	
-![image](https://user-images.githubusercontent.com/78562461/144761769-215348cd-ce38-4332-a61f-48b6aea7d8ee.png)
+![image](https://user-images.githubusercontent.com/78562461/144764716-ba02e71c-a1a6-4fff-8bf6-c4fcead85362.png)
 
 
