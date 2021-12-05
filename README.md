@@ -1103,16 +1103,16 @@ rtt min/avg/max/mdev = 58.128/58.656/59.337/0.542 ms
 
 ## Scenario 4: Route server multi-region design with Ipsec 
 
-In this scenario we will have another route server in EastUS region, and will configure BGP over Ipsec tunnel between the NVAs. We will explore how routes will be exchanged between the NVAs and route servers and its effect on overall routing between Vnets
-and on-premises networks.
+In this scenario we will have another route server in EastUS region, and will configure BGP over Ipsec tunnel between the NVAs. We will explore how routes will be exchanged between the NVAs and route servers and its effect on overall routing between Vnets and on-premises networks.
 	
 For this scenario we will add the following components:
 
-1. HUB-EastUS Vnet which will have ARS Routeserver1, NVA CSR1, and test VM HUB-VM1 
-2. Spoke1-Vnet Vnet and will have test VM Spoke1-VM. This Vnet will peer with HUB-EastUS Vnet
-3. Ipsec tunnel with BGP as dynamic routing  between CSR NVA in HUB-SCUS and CSR1 NVA in HUB-EastUS Vnet, tunnel interface (VTI interface) will be used as BGP peers.
+1. ***HUB-EastUS*** Vnet which will have ARS ***Routeserver1***, NVA ***CSR1***, and test VM ***HUB-VM1*** 
+2. ***Spoke1-Vnet*** Vnet and will have test VM ***Spoke1-VM***. This Vnet will peer with ***HUB-EastUS*** Vnet
+3. Ipsec tunnel with BGP as dynamic routing  between ***CSR*** NVA in ***HUB-SCUS*** Vnet and ***CSR1*** NVA in ***HUB-EastUS*** Vnet, tunnel interface (VTI interface) will be used as BGP peers.
 	
 After deploying above component the complete diagram will be as below:
 	
-![image](https://user-images.githubusercontent.com/78562461/144754040-77cd3093-4810-4214-9f16-eb87cfb18476.png)
+![image](https://user-images.githubusercontent.com/78562461/144761769-215348cd-ce38-4332-a61f-48b6aea7d8ee.png)
+
 
