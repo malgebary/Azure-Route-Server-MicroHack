@@ -1437,14 +1437,14 @@ Tunnel12 is up, line protocol is up
 
 1- Check on NVA ***CSR*** routes
 	
-- From CSR IOS XE:
+👉 From CSR IOS XE:
 
 	```
 	sh ip bgp
 	```
 	
- we see that CSR is learning all the topology routes as follows:
-
+ - we see that CSR is learning all the topology routes as follows:
+ 
   - 10.0.0.0/16 is the On-Prem-Vnet prefix learned directly from On-Prem-VNG (ASN 65001)
 - 10.1.0.0/16 is the HUB-SCUS Vnet prefix that is advertised by ARS Routeserver in this Vnet (ASN 65515)
 - 10.2.0.0/16 is the On-Prem1-Vnet that is advertised by On-Prem1-VNG (ASN 65003) to HUB-VNG (ASN 65004) then advertised to ARS Routeserver (65515) then to the CSR
