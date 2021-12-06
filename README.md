@@ -1237,16 +1237,17 @@ router bgp 65005
 	10.3.1.5        4        65515      19      29       10    0    0 00:13:05        2
 	
 
-   ## Task5: Build Ipsec tunnel between CSR NVA in HUB-Vnet and CSR1 NVA in HUB-EastUS Vnet
+   ## Task5: Build Ipsec tunnel between CSR NVA in HUB-SCUS Vnet and CSR1 NVA in HUB-EastUS Vnet
        
    - Document the ***CSR1*** NVA public ip ***CSR1NVA-PublicIp*** and the public ip of the ***CSR*** NVA ***CSRPublicIP*** as we will need them to build the Ipsec tunnel in next step:
-    
-    ```
-	az network public-ip show -g  Route-Server -n  CSR1NVA-PublicIP --query "{address: ipAddress}"
-	az network public-ip show -g  Route-Server -n  CSRPublicIP  --query "{address: ipAddress}"
-     ```
+   
+```
+az network public-ip show -g  Route-Server -n  CSR1NVA-PublicIP --query "{address: ipAddress}"
+az network public-ip show -g  Route-Server -n  CSRPublicIP  --query "{address: ipAddress}"
+```
+
      
-  - SSH to the ***CSR*** NVA and type `conf t` to get into configuration mode:
+   ssh to the ***CSR*** NVA and type `conf t` to get into configuration mode:
 
          `CSR#conf t`
 
@@ -1304,6 +1305,7 @@ router bgp 65002
 !add Static route for BGP peer IP over the tunnel
 ip route 192.168.1.4 255.255.255.255 Tunnel12
 ```
+
 
 ❗ Note: the above BGP setting assumes that you have already built the previous scenarios, make sure that complete BGP configuration will be as below:
 
