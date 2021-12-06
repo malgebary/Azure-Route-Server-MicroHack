@@ -1116,3 +1116,30 @@ After deploying above component the complete diagram will be as below:
 ![image](https://user-images.githubusercontent.com/78562461/144764716-ba02e71c-a1a6-4fff-8bf6-c4fcead85362.png)
 
 
+## Task1: Create the ***HUB-EastUS*** Vnet, test VM ***HUB1-VM***, ***CSR1*** NVA and ARS ***Routeserver1***
+	
+-Create ***HUB-EastU***S Vnet
+
+```
+az network vnet create --resource-group Route-Server --name HUB-Eastus --location eastus --address-prefixes 10.3.0.0/16 --subnet-name Subnet-1 --subnet-prefix 10.3.10.0/24 
+az network vnet subnet create --address-prefix 10.3.0.0/24 --name CSR1-Subnet --resource-group Route-Server --vnet-name HUB-Eastus
+az network vnet subnet create --address-prefix 10.3.1.0/27 --name RouteServerSubnet --resource-group Route-Server --vnet-name HUB-EastUS
+```
+
+-Create ***HUB1-VM***:
+
+```	
+az network public-ip create --name HUB1-VMPIP --resource-group Route-Server --location eastus --allocation-method Dynamic
+az network nic create --resource-group Route-Server -n HUB1-VMNIC --location eastus --subnet Subnet-1 --private-ip-address 10.3.10.4 --vnet-name HUB-EastUS --public-ip-address HUB1-VMPIP
+az vm create -n HUB1-VM -g Route-Server --image UbuntuLTS --admin-username azureuser --admin-password Routeserver123 --size Standard_B1ls --location eastus --nics HUB1-VMNIC
+```
+
+-Create ***CSR1*** NVA in ***HUB-EastUs*** Vnet:
+
+```
+az network public-ip create --name CSR1NVA-PublicIP --resource-group Route-Server --idle-timeout 30 --allocation-method Static --location eastus
+az network nic create --name CSR1Interface -g Route-Server --subnet CSR1-Subnet --vnet HUB-EastUS --public-ip-address CSR1NVA-PublicIP --ip-forwarding true --private-ip-address 10.3.0.4 --location eastus
+az vm create --resource-group Route-Server --location eastus --name CSR1 --size Standard_DS3_v2 --nics CSR1Interface --image cisco:cisco-csr-1000v:17_2_1-byol:17.2.120200508 --admin-username azureuser --admin-password Routeserver123
+```
+-Create ARS ***RouteServer1***
+
