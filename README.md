@@ -1423,6 +1423,7 @@ Tunnel12 is up, line protocol is up
 	
 - Verify BGP has established over ipsec tunnel
 
-![image](https://user-images.githubusercontent.com/78562461/144914727-0f416b52-6dbe-4fa3-92b6-4755daea40fa.png)
+![image](https://user-images.githubusercontent.com/78562461/144916465-ce44f48f-b7f6-4772-a117-cade0b790465.png)
+
 
 
