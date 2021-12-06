@@ -1445,12 +1445,12 @@ Tunnel12 is up, line protocol is up
 	
  - we see that CSR is learning all the topology routes as follows:
  
-  - 10.0.0.0/16 is the On-Prem-Vnet prefix learned directly from On-Prem-VNG (ASN 65001)
-- 10.1.0.0/16 is the HUB-SCUS Vnet prefix that is advertised by ARS Routeserver in this Vnet (ASN 65515)
-- 10.2.0.0/16 is the On-Prem1-Vnet that is advertised by On-Prem1-VNG (ASN 65003) to HUB-VNG (ASN 65004) then advertised to ARS Routeserver (65515) then to the CSR
-- 10.3.0.0/16 is the HUB-EastUS prefix, this route is orginally advertised by ARS Routeserver1 (ASN 65515) to the CSR1 (ASN 65005) then to CSR  
-- 10.4.0.0/16 is the Spoke-Vnet that is peering directly with HUB-SCUS Vnet, this route is advertised by the ARS Routeserver (ASN 65515)
-- 10.5.0.0/16 is the Spoke1-Vnet prefix that is advertised by ARS Routeserver1 (ASN 65515) to the CSR1 (ASN 65005) then to CSR 
+   - 10.0.0.0/16 is the On-Prem-Vnet prefix learned directly from On-Prem-VNG (ASN 65001)
+   - 10.1.0.0/16 is the HUB-SCUS Vnet prefix that is advertised by ARS Routeserver in this Vnet (ASN 65515)
+   - 10.2.0.0/16 is the On-Prem1-Vnet that is advertised by On-Prem1-VNG (ASN 65003) to HUB-VNG (ASN 65004) then advertised to ARS Routeserver (65515) then to the CSR
+ - 10.3.0.0/16 is the HUB-EastUS prefix, this route is orginally advertised by ARS Routeserver1 (ASN 65515) to the CSR1 (ASN 65005) then to CSR  
+ - 10.4.0.0/16 is the Spoke-Vnet that is peering directly with HUB-SCUS Vnet, this route is advertised by the ARS Routeserver (ASN 65515)
+ - 10.5.0.0/16 is the Spoke1-Vnet prefix that is advertised by ARS Routeserver1 (ASN 65515) to the CSR1 (ASN 65005) then to CSR 
 - 192.168.1.4 is the tunnel interface ip (tunnel 11 in CSR1) that is advertised by CSR1 (ASN 65005). Note that we see 'r>' in front of the route which indicate RIB failure, it means this route has been learned with lower administrative distance than the one for BGP,
 	and in this case it is because we added static route for BGP peer IP (192.168.1.4) over the tunnel12.
 192.168.1.3 is the tunnel 12 interface in CSR NVA that is advertised by the CSR using Network command.![image](https://user-images.githubusercontent.com/78562461/144918182-0989a31e-901a-4e88-8107-1db0ea8dd451.png)
