@@ -1445,8 +1445,8 @@ Tunnel12 is up, line protocol is up
 	
  we see that CSR is learning all the topology routes as follows:
 
-- 10.0.0.0/16 is the On-Prem-Vnet prefix learned directly from On-Prem-VNG (ASN 65001)
-  - 10.1.0.0/16 is the HUB-SCUS Vnet prefix that is advertised by ARS Routeserver in this Vnet (ASN 65515)
+  - 10.0.0.0/16 is the On-Prem-Vnet prefix learned directly from On-Prem-VNG (ASN 65001)
+- 10.1.0.0/16 is the HUB-SCUS Vnet prefix that is advertised by ARS Routeserver in this Vnet (ASN 65515)
 - 10.2.0.0/16 is the On-Prem1-Vnet that is advertised by On-Prem1-VNG (ASN 65003) to HUB-VNG (ASN 65004) then advertised to ARS Routeserver (65515) then to the CSR
 - 10.3.0.0/16 is the HUB-EastUS prefix, this route is orginally advertised by ARS Routeserver1 (ASN 65515) to the CSR1 (ASN 65005) then to CSR  
 - 10.4.0.0/16 is the Spoke-Vnet that is peering directly with HUB-SCUS Vnet, this route is advertised by the ARS Routeserver (ASN 65515)
