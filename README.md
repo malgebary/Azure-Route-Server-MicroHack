@@ -1333,3 +1333,78 @@ router bgp 65002
   neighbor 192.168.1.4 activate
  exit-address-family
 ```
+
+- Login to ***CSR1*** and type `conf t` to get into configuration mode:
+	
+	`CSR1#conf t`
+	
+	add the following commands one block at a time:
+	
+	crypto ikev2 proposal to-csr-proposal
+	 encryption aes-cbc-256
+	 integrity sha1
+	 group 2
+	!
+	crypto ikev2 policy to-csr-policy
+	 match address local 10.3.0.4
+	 proposal to-csr-proposal
+	!
+	crypto ikev2 keyring to-csr-keyring
+	 peer CSRPublicIP
+	  address CSRPublicIP
+	  pre-shared-key Routeserver
+	 !
+	!
+	!
+	crypto ikev2 profile to-csr-profile
+	 match address local 10.3.0.4
+	 match identity remote address 10.1.0.4 255.255.255.255
+	 authentication remote pre-share
+	 authentication local pre-share
+	 keyring local to-csr-keyring
+	 lifetime 3600
+	 dpd 10 5 on-demand
+	!
+	!
+	crypto ipsec transform-set to-csr-TransformSet esp-gcm 256
+	 mode tunnel
+	!
+	crypto ipsec profile to-csr-IPsecProfile
+	 set transform-set to-csr-TransformSet
+	 set ikev2-profile to-csr-profile
+	!
+	interface Tunnel11
+	 ip address 192.168.1.4 255.255.255.255
+	 ip tcp adjust-mss 1350
+	 tunnel source 10.3.0.4
+	 tunnel mode ipsec ipv4
+	 tunnel destination CSRPublicIP
+	 tunnel protection ipsec profile to-csr-IPsecProfile
+	!
+	!
+	router bgp 65005
+	 bgp log-neighbor-changes
+	 neighbor 10.3.1.4 remote-as 65515
+	 neighbor 10.3.1.4 ebgp-multihop 255
+	 neighbor 10.3.1.5 remote-as 65515
+	 neighbor 10.3.1.5 ebgp-multihop 255
+	 neighbor 192.168.1.3 remote-as 65002
+	 neighbor 192.168.1.3 ebgp-multihop 255
+	 neighbor 192.168.1.3 update-source Tunnel11
+	 !
+	 address-family ipv4
+	  network 192.168.1.4 mask 255.255.255.255
+	  neighbor 10.3.1.4 activate
+	  neighbor 10.3.1.4 as-override<==== to be added later
+	  neighbor 10.3.1.5 activate
+	  neighbor 10.3.1.5 as-override <=== to be added later
+	  neighbor 192.168.1.3 activate
+	 exit-address-family
+	!
+	! add static route to ARS subnet that point to the default gateway of the CSR-Subnet to avoid recursive routing failure for ARS BGP endpoints learned via BGP
+	ip route 10.3.1.0 255.255.255.0 10.3.0.1
+	!
+	! add static route for BGP peer IP over the tunnel
+	ip route 192.168.1.3 255.255.255.255 Tunnel11
+
+
