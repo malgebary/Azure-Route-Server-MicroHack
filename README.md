@@ -1398,16 +1398,31 @@ router bgp 65002
 	 address-family ipv4
 	  network 192.168.1.4 mask 255.255.255.255
 	  neighbor 10.3.1.4 activate
-	  neighbor 10.3.1.4 as-override<==== to be added later
 	  neighbor 10.3.1.5 activate
-	  neighbor 10.3.1.5 as-override <=== to be added later
 	  neighbor 192.168.1.3 activate
 	 exit-address-family
 	!
-	! add static route to ARS subnet that point to the default gateway of the CSR-Subnet to avoid recursive routing failure for ARS BGP endpoints learned via BGP
+	!add static route to ARS subnet that point to the default gateway of the CSR-Subnet to avoid recursive routing failure for ARS BGP endpoints learned via BGP
 	ip route 10.3.1.0 255.255.255.0 10.3.0.1
 	!
-	! add static route for BGP peer IP over the tunnel
+	!add static route for BGP peer IP over the tunnel
 	ip route 192.168.1.3 255.255.255.255 Tunnel11
 
 ```
+
+- Verify that tunnel interface is up from either side
+```
+CSR1#sh ip interface tunnel11
+Tunnel11 is up, line protocol is up
+  Internet address is 192.168.1.4/32
+
+CSR#sh ip interface tunnel12
+Tunnel12 is up, line protocol is up
+  Internet address is 192.168.1.3/32
+```
+	
+- Verify BGP has established over ipsec tunnel
+
+![image](https://user-images.githubusercontent.com/78562461/144914727-0f416b52-6dbe-4fa3-92b6-4755daea40fa.png)
+
+
