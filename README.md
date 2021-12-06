@@ -1116,9 +1116,9 @@ After deploying above component the complete diagram will be as below:
 ![image](https://user-images.githubusercontent.com/78562461/144764716-ba02e71c-a1a6-4fff-8bf6-c4fcead85362.png)
 
 
-## Task1: Create the ***HUB-EastUS*** Vnet, test VM ***HUB1-VM***, ***CSR1*** NVA and ARS ***Routeserver1***
+## Task1: Create the HUB-EastUS Vnet, HUB1-VM, CSR1 NVA, and ARS Routeserver1
 	
--Create ***HUB-EastU***S Vnet
+-Create ***HUB-EastU*** Vnet
 
 ```
 az network vnet create --resource-group Route-Server --name HUB-Eastus --location eastus --address-prefixes 10.3.0.0/16 --subnet-name Subnet-1 --subnet-prefix 10.3.10.0/24 
@@ -1151,16 +1151,48 @@ az network routeserver create --name RouteServer1 --resource-group Route-Server 
 
 ## Task2: Create Spoke1-Vnet and Spoke1-VM
 	
--Create Spoke1-Vnet
+-Create ***Spoke1-Vnet***
 
 ```	
 az network vnet create --resource-group Route-Server --name Spoke1-Vnet  --location eastus --address-prefixes 10.5.0.0/16 --subnet-name Subnet-1 --subnet-prefix 10.5.10.0/24 
 ```
 
--Create Spok1-VM
+-Create ***Spok1-VM***
 
 ```	
 az network public-ip create --name Spoke1-VMPIP --resource-group Route-Server --location eastus --allocation-method Dynamic
 az network nic create --resource-group Route-Server -n Spoke1-VMNIC --location eastus --subnet Subnet-1 --private-ip-address 10.5.10.4 --vnet-name Spoke1-Vnet --public-ip-address Spoke1-VMPIP
 az vm create -n Spoke1-VM -g Route-Server --image UbuntuLTS --admin-username azureuser --admin-password Routeserver123 --size Standard_B1ls --location eastus --nics Spoke1-VMNIC
 ```
+## Task3: Create the peering between HUB-EastUS and Spok1-Vnet
+
+```	
+vNet1Id=$(az network vnet show --resource-group Route-Server --name Spoke1-Vnet --query id --out tsv)
+vNet2Id=$(az network vnet show --resource-group Route-Server --name HUB-EastUS --query id --out tsv)
+	
+az network vnet peering create --name Spoke1-To-HubEastus --resource-group Route-Server --vnet-name Spoke1-Vnet --remote-vnet $vNet2Id --allow-vnet-access --use-remote-gateways
+az network vnet peering create --name HubEastus-To-Spoke1 --resource-group Route-Server --vnet-name HUB-EastUS --remote-vnet $vNet1Id --allow-vnet-access --allow-gateway-transit
+```
+## Task4: Establish BGP connection between NVA CSR1 and ARS Routeserver1 
+	 
+- From ***Routeserver1*** side: create the BGP peering to ***CSR1*** interface 10.3.0.4
+`
+az network routeserver peering create --name CSR1 --peer-ip 10.3.0.4 --peer-asn 65005 --routeserver RouteServer1 --resource-group Route-Server
+`
+
+- From CSR1 side: first we need to know the ARS instances ips to create neighbors in CSR1 BGP process
+
+             az network routeserver show --name RouteServer1 --resource-group route-server
+
+            
+                             "virtualRouterAsn": 65515,
+                                "virtualRouterIps": [
+                                    "10.3.1.4", <=======
+                                    "10.3.1.5" <========
+	
+           -> Now SSH to CSR1, once login type 'conf t' as shown below to get into configuration mode:
+               CSR#conf t
+
+         add the following commands one block at a time:
+
+
