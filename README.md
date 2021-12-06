@@ -1307,7 +1307,7 @@ ip route 192.168.1.4 255.255.255.255 Tunnel12
 ```
 
 
-❗ Note: the above BGP setting assumes that you have already built the previous scenarios, make sure that complete BGP configuration will be as below:
+❗ Note: the above BGP configuration assumes that you have already built the previous scenarios, make sure that complete BGP configuration will be as below:
 
 ```
 router bgp 65002
