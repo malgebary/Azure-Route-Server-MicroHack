@@ -1143,3 +1143,24 @@ az vm create --resource-group Route-Server --location eastus --name CSR1 --size 
 ```
 -Create ARS ***RouteServer1***
 
+```
+az network public-ip create --name RouteServer1IP --resource-group Route-Server --version IPv4 --sku Standard --location eastus
+subnet_id=$(az network vnet subnet show --name RouteServerSubnet --resource-group Route-Server --vnet-name HUB-EastUS --query id -o tsv) 
+az network routeserver create --name RouteServer1 --resource-group Route-Server --hosted-subnet $subnet_id --public-ip-address RouteServer1IP --location eastus
+```
+
+## Task2: Create Spoke1-Vnet and Spoke1-VM
+	
+-Create Spoke1-Vnet
+
+```	
+az network vnet create --resource-group Route-Server --name Spoke1-Vnet  --location eastus --address-prefixes 10.5.0.0/16 --subnet-name Subnet-1 --subnet-prefix 10.5.10.0/24 
+```
+
+-Create Spok1-VM
+
+```	
+az network public-ip create --name Spoke1-VMPIP --resource-group Route-Server --location eastus --allocation-method Dynamic
+az network nic create --resource-group Route-Server -n Spoke1-VMNIC --location eastus --subnet Subnet-1 --private-ip-address 10.5.10.4 --vnet-name Spoke1-Vnet --public-ip-address Spoke1-VMPIP
+az vm create -n Spoke1-VM -g Route-Server --image UbuntuLTS --admin-username azureuser --admin-password Routeserver123 --size Standard_B1ls --location eastus --nics Spoke1-VMNIC
+```
