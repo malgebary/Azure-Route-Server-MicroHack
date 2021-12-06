@@ -1118,7 +1118,7 @@ After deploying above component the complete diagram will be as below:
 
 ## Task1: Create the HUB-EastUS Vnet, HUB1-VM, CSR1 NVA, and ARS Routeserver1
 	
--Create ***HUB-EastU*** Vnet
+- Create ***HUB-EastU*** Vnet
 
 ```
 az network vnet create --resource-group Route-Server --name HUB-Eastus --location eastus --address-prefixes 10.3.0.0/16 --subnet-name Subnet-1 --subnet-prefix 10.3.10.0/24 
@@ -1126,7 +1126,7 @@ az network vnet subnet create --address-prefix 10.3.0.0/24 --name CSR1-Subnet --
 az network vnet subnet create --address-prefix 10.3.1.0/27 --name RouteServerSubnet --resource-group Route-Server --vnet-name HUB-EastUS
 ```
 
--Create ***HUB1-VM***:
+- Create ***HUB1-VM***:
 
 ```	
 az network public-ip create --name HUB1-VMPIP --resource-group Route-Server --location eastus --allocation-method Dynamic
@@ -1134,14 +1134,14 @@ az network nic create --resource-group Route-Server -n HUB1-VMNIC --location eas
 az vm create -n HUB1-VM -g Route-Server --image UbuntuLTS --admin-username azureuser --admin-password Routeserver123 --size Standard_B1ls --location eastus --nics HUB1-VMNIC
 ```
 
--Create ***CSR1*** NVA in ***HUB-EastUs*** Vnet:
+- Create ***CSR1*** NVA in ***HUB-EastUs*** Vnet:
 
 ```
 az network public-ip create --name CSR1NVA-PublicIP --resource-group Route-Server --idle-timeout 30 --allocation-method Static --location eastus
 az network nic create --name CSR1Interface -g Route-Server --subnet CSR1-Subnet --vnet HUB-EastUS --public-ip-address CSR1NVA-PublicIP --ip-forwarding true --private-ip-address 10.3.0.4 --location eastus
 az vm create --resource-group Route-Server --location eastus --name CSR1 --size Standard_DS3_v2 --nics CSR1Interface --image cisco:cisco-csr-1000v:17_2_1-byol:17.2.120200508 --admin-username azureuser --admin-password Routeserver123
 ```
--Create ARS ***RouteServer1***
+- Create ARS ***RouteServer1***
 
 ```
 az network public-ip create --name RouteServer1IP --resource-group Route-Server --version IPv4 --sku Standard --location eastus
@@ -1151,7 +1151,7 @@ az network routeserver create --name RouteServer1 --resource-group Route-Server 
 
 ## Task2: Create Spoke1-Vnet and Spoke1-VM
 	
--Create ***Spoke1-Vnet***
+- Create ***Spoke1-Vnet***
 
 ```	
 az network vnet create --resource-group Route-Server --name Spoke1-Vnet  --location eastus --address-prefixes 10.5.0.0/16 --subnet-name Subnet-1 --subnet-prefix 10.5.10.0/24 
@@ -1164,7 +1164,7 @@ az network public-ip create --name Spoke1-VMPIP --resource-group Route-Server --
 az network nic create --resource-group Route-Server -n Spoke1-VMNIC --location eastus --subnet Subnet-1 --private-ip-address 10.5.10.4 --vnet-name Spoke1-Vnet --public-ip-address Spoke1-VMPIP
 az vm create -n Spoke1-VM -g Route-Server --image UbuntuLTS --admin-username azureuser --admin-password Routeserver123 --size Standard_B1ls --location eastus --nics Spoke1-VMNIC
 ```
-## Task3: Create the peering between HUB-EastUS and Spok1-Vnet
+## Task3: Create the peering between HUB-EastUS Vnet and Spok1-Vnet Vnet
 
 ```	
 vNet1Id=$(az network vnet show --resource-group Route-Server --name Spoke1-Vnet --query id --out tsv)
@@ -1194,13 +1194,13 @@ az network routeserver peering create --name CSR1 --peer-ip 10.3.0.4 --peer-asn 
 ```
 				    
 	
-   * SSH to ***CSR1***, once login type `conf t` as shown below to get into configuration mode:
+   SSH to ***CSR1***, once login type `conf t` as shown below to get into configuration mode:
 ```
                CSR#conf t
 ```
          
 	 
-   * add the following commands one block at a time:
+   add the following commands one block at a time:
 
 ```
 router bgp 65005
@@ -1217,7 +1217,7 @@ router bgp 65005
 !
 ```
 
-   * Verify if BGP has established between ARS routeserver1 and NVA CSR1
+   Verify if BGP has established between ARS routeserver1 and NVA CSR1
 	
 	CSR1#sh ip bgp summary
 	BGP router identifier 192.168.1.4, local AS number 65005
@@ -1237,16 +1237,97 @@ router bgp 65005
 	10.3.1.5        4        65515      19      29       10    0    0 00:13:05        2
 	
 
-    Task5: Build Ipsec tunnel between CSR NVA in HUB-Vnet and CSR1 NVA in HUB-EastUS Vnet
+   ## Task5: Build Ipsec tunnel between CSR NVA in HUB-Vnet and CSR1 NVA in HUB-EastUS Vnet
        
-	-  Document the CSR1 NVA public ip CSR1NVA-PublicIp and the public ip of the CSR NVA CSRPublicIP as we will need them to build the Ipsec tunnel in next step:
-	
+   - Document the ***CSR1*** NVA public ip ***CSR1NVA-PublicIp*** and the public ip of the ***CSR*** NVA ***CSRPublicIP*** as we will need them to build the Ipsec tunnel in next step:
+    
+    ```
 	az network public-ip show -g  Route-Server -n  CSR1NVA-PublicIP --query "{address: ipAddress}"
 	az network public-ip show -g  Route-Server -n  CSRPublicIP  --query "{address: ipAddress}"
-	
-          - SSH to the CSR NVA and type 'conf t' to get into configuration mode:
+     ```
+     
+  - SSH to the ***CSR*** NVA and type `conf t` to get into configuration mode:
 
-         CSR#conf t
+         `CSR#conf t`
 
-     add the following commands one block at a time, replace CSR1NVA-PublicIp with the ip you got from above step:![image](https://user-images.githubusercontent.com/78562461/144786641-857f3a48-d9dd-4291-8c29-63a1dc351263.png)
+   add the following commands one block at a time, replace ***CSR1NVA-PublicIp*** with the ip you got from above step:
+```
+crypto ikev2 proposal to-csr1-proposal
+ encryption aes-cbc-256
+ integrity sha1
+ group 2
+!
+crypto ikev2 policy to-csr1-policy
+ match address local 10.1.0.4
+ proposal to-csr1-proposal
+!
+crypto ikev2 keyring to-csr1-keyring
+ peer CSR1NVA-PublicIp
+  address CSR1NVA-PublicIp
+  pre-shared-key Routeserver
+ !
+!
+crypto ikev2 profile to-csr1-profile
+ match address local 10.1.0.4
+ match identity remote address 10.3.0.4 255.255.255.255
+ authentication remote pre-share
+ authentication local pre-share
+ keyring local to-csr1-keyring
+ lifetime 3600
+ dpd 10 5 on-demand
+!
+crypto ipsec transform-set to-csr1-TransformSet esp-gcm 256
+ mode tunnel
+!
+crypto ipsec profile to-csr1-IPsecProfile
+ set transform-set to-csr1-TransformSet
+ set ikev2-profile to-csr1-profile
+!
+interface Tunnel12
+ ip address 192.168.1.3 255.255.255.255
+ ip tcp adjust-mss 1350
+ tunnel source 10.1.0.4
+ tunnel mode ipsec ipv4
+ tunnel destination CSR1NVA-PublicIp
+ tunnel protection ipsec profile to-csr1-IPsecProfile
+!
+router bgp 65002
+ neighbor 192.168.1.4 remote-as 65005
+ neighbor 192.168.1.4 ebgp-multihop 255
+ neighbor 192.168.1.4 update-source Tunnel12
+ !
+ address-family ipv4
+  neighbor 192.168.1.4 activate
+  network 192.168.1.3 mask 255.255.255.255
+ exit-address-family
+!
+!add Static route for BGP peer IP over the tunnel
+ip route 192.168.1.4 255.255.255.255 Tunnel12
+```
 
+❗ Note: the above BGP setting assumes that you have already built the previous scenarios, make sure that complete BGP configuration will be as below:
+
+```
+router bgp 65002
+ bgp router-id 192.168.1.1
+ bgp log-neighbor-changes
+ neighbor 10.0.0.4 remote-as 65001
+ neighbor 10.0.0.4 ebgp-multihop 255
+ neighbor 10.0.0.4 update-source Loopback11
+ neighbor 10.1.2.4 remote-as 65515
+ neighbor 10.1.2.4 ebgp-multihop 255
+ neighbor 10.1.2.5 remote-as 65515
+ neighbor 10.1.2.5 ebgp-multihop 255
+ neighbor 192.168.1.4 remote-as 65005
+ neighbor 192.168.1.4 ebgp-multihop 255
+ neighbor 192.168.1.4 update-source Tunnel12
+ !
+ address-family ipv4
+  network 10.1.10.0 mask 255.255.255.0
+  network 192.168.1.3 mask 255.255.255.255
+  neighbor 10.0.0.4 activate
+  neighbor 10.1.2.4 activate
+  neighbor 10.1.2.5 activate
+  neighbor 192.168.1.4 activate
+ exit-address-family
+```
