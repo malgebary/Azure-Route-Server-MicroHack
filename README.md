@@ -1457,3 +1457,20 @@ Tunnel12 is up, line protocol is up
    
    ![image](https://user-images.githubusercontent.com/78562461/144920742-cbe6edee-7169-4f31-8049-e52cb86e467b.png)
 
+
+👉 From CSR NICs
+           
+   You can check from either NIC
+	
+Navigate to Network Interfaces -> CSROutsideInterface -> Help -> Effective routes
+Or:
+Navigate to Network Interfaces -> CSRInsideInterface -> Help -> Effective routes
+	
+- We see that the ***CSROutsideInterface*** and ***CSRInsideInterface*** NICs are not learning ***Spoke1-Vnet*** prefix 10.5.0.0/16 and ***HUB-EastUS*** Vnet prefix 10.3.0.0/16 which are supposed to be programmed in the NIC effective routes by the ARS ***Routeserver***, while it learned all other prefixes in the network diagram which are also programmed by the ARS in the NICs effective routes (10.0.0.0/16, 10.2.0.0/16, 192.68.1.4)! 
+
+![image](https://user-images.githubusercontent.com/78562461/144921682-f8fd3920-1444-469b-876f-696121a839fa.png)
+
+
+Let check next on the routes ARS ***Routserver*** learned from its peer ***CSR***
+
+
