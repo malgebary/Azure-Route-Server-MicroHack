@@ -1452,6 +1452,7 @@ Tunnel12 is up, line protocol is up
    - 10.4.0.0/16 is the ***Spoke-Vnet*** that is peering with ***HUB-SCUS Vnet***, this route is advertised by the ARS ***Routeserver*** (ASN 65515).
    - 10.5.0.0/16 is the ***Spoke1-Vnet*** prefix that is advertised by ARS ***Routeserver1*** (ASN 65515) to the ***CSR1*** (ASN 65005) then to ***CSR***.
    - 192.168.1.4 is the tunnel interface ip (tunnel 11 in ***CSR1***) that is advertised by ***CSR1*** (ASN 65005). Note that we see 'r>' in front of this route which indicate      RIB failure, it means this route has been learned with lower administrative distance than the one for BGP, and in this case it is because we added static route for BGP  peer IP (192.168.1.4) over the tunnel12.
+   
    -192.168.1.3 is the tunnel 12 interface in ***CSR*** NVA that is advertised by the ***CSR*** using Network command.
    
    
