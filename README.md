@@ -1439,9 +1439,9 @@ Tunnel12 is up, line protocol is up
 	
 👉 From CSR IOS XE:
 
-	```
-	sh ip bgp
-	```
+```
+    sh ip bgp
+```
 	
  - we see that CSR is learning all the topology routes as follows:
  
@@ -1474,3 +1474,13 @@ Navigate to Network Interfaces -> CSRInsideInterface -> Help -> Effective routes
 Let check next on the routes ARS ***Routserver*** learned from its peer ***CSR***
 
 
+2. ARS Routeserver learned routes
+```
+az network routeserver peering list-learned-routes --name CSR --routeserver RouteServer --resource-group Route-Server
+```
+
+- We see that the ARS is learning only about ***On-Prem-Vnet*** prefix 10.0.0.0/16, ***Subnet-1*** prefix in ***HUB-SCUS*** 10.1.10.0/24, 192.168.1.4 Tunnel11 (VTI interface) in ***CSR1*** NVA, and 192.168.1.3 is Tunnel 12 in ***CSR*** NVA, while it doesn't learn about 10.3.0.0/16 or 10.5.0.0/16, why?
+	
+❗ Note: output here showing routes from IN_0 which is 10.1.2.4 but it will be the same for IN_1 10.1.2.5
+
+![image](https://user-images.githubusercontent.com/78562461/144922817-9a8b0ea4-e7eb-453d-8f60-1780ceafaa22.png)
