@@ -1217,7 +1217,7 @@ router bgp 65005
 !
 ```
 
-   Verify if BGP has established between ARS routeserver1 and NVA CSR1
+   Verify if BGP has established between ARS ***Routeserver1*** and NVA ***CSR1***
 	
 	CSR1#sh ip bgp summary
 	BGP router identifier 192.168.1.4, local AS number 65005
