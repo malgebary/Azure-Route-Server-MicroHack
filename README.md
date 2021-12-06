@@ -1484,3 +1484,17 @@ az network routeserver peering list-learned-routes --name CSR --routeserver Rout
 ❗ Note: output here showing routes from IN_0 which is 10.1.2.4 but it will be the same for IN_1 10.1.2.5
 
 ![image](https://user-images.githubusercontent.com/78562461/144922817-9a8b0ea4-e7eb-453d-8f60-1780ceafaa22.png)
+
+
+
+
+💡 To know why, let us look at the advertised routes from ***CSR*** to ARS ***Routeserver***, you may use either ARS instances as the BGP neighbor in the following command:
+
+```	
+sh bgp neighbors 10.1.2.4 advertised-routes
+```
+	
+- We see the ***CSR*** is advertising 9 prefixes to the ARS ***Routeserver*** including 10.3.0.0/16 and 10.5.0.0/16, however we only see 10.0.0.0/16, 10.1.10.0/24, 192.168.1.3, and 192.168.1.4 prefixes been learned by the ARS ***Routeserver***, this is because the BGP loop prevention mechanism in which the router would drop BGP advertisement when it sees its own AS number in the AS path attribute, and as ARS has ASN of 65515 then any prefix has this ASN in its AS Path attribute will be dropped, and that is the case with 10.3.0.0/16 and 10.5.0.0/16, these two prefixes are originally advertised by the ARS ***Routeserver1*** (65515) then advertised to the ***CSR1*** (65505) then to the ***CSR***, and so when it gets to ARS ***Routeserver*** it will be dropped as ***Routeserver*** will see it is own ASN in the AS Path of this prefix.
+
+![image](https://user-images.githubusercontent.com/78562461/144934937-9e47e3e7-13cc-43b8-a1b6-e65502c01ab4.png)
+
