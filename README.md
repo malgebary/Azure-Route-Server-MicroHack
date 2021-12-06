@@ -1429,4 +1429,5 @@ Tunnel12 is up, line protocol is up
 
 
 
+✔️ From above we see that Ipsec and BGP are up between NVAs ***CSR*** and ***CSR1***
 
