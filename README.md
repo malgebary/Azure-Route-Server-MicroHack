@@ -1248,10 +1248,12 @@ az network public-ip show -g  Route-Server -n  CSRPublicIP  --query "{address: i
 
      
    ssh to the ***CSR*** NVA and type `conf t` to get into configuration mode:
-
-         `CSR#conf t`
+```
+         CSR#conf t
+```
 
    add the following commands one block at a time, replace ***CSR1NVA-PublicIp*** with the ip you got from above step:
+   
 ```
 crypto ikev2 proposal to-csr1-proposal
  encryption aes-cbc-256
@@ -1340,6 +1342,7 @@ router bgp 65002
 	
 	add the following commands one block at a time:
 	
+```
 	crypto ikev2 proposal to-csr-proposal
 	 encryption aes-cbc-256
 	 integrity sha1
@@ -1407,4 +1410,4 @@ router bgp 65002
 	! add static route for BGP peer IP over the tunnel
 	ip route 192.168.1.3 255.255.255.255 Tunnel11
 
-
+```
