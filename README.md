@@ -1176,23 +1176,77 @@ az network vnet peering create --name HubEastus-To-Spoke1 --resource-group Route
 ## Task4: Establish BGP connection between NVA CSR1 and ARS Routeserver1 
 	 
 - From ***Routeserver1*** side: create the BGP peering to ***CSR1*** interface 10.3.0.4
-`
+
+```
 az network routeserver peering create --name CSR1 --peer-ip 10.3.0.4 --peer-asn 65005 --routeserver RouteServer1 --resource-group Route-Server
-`
+```
 
-- From CSR1 side: first we need to know the ARS instances ips to create neighbors in CSR1 BGP process
+- From ***CSR1*** side: first we need to know the ARS instances ips to create neighbors in ***CSR1*** BGP process
 
-             az network routeserver show --name RouteServer1 --resource-group route-server
+```
+   az network routeserver show --name RouteServer1 --resource-group route-server
 
             
                              "virtualRouterAsn": 65515,
                                 "virtualRouterIps": [
                                     "10.3.1.4", <=======
-                                    "10.3.1.5" <========
+                                    "10.3.1.5" <=======
+```
+				    
 	
-           -> Now SSH to CSR1, once login type 'conf t' as shown below to get into configuration mode:
+   - SSH to ***CSR1***, once login type `conf t` as shown below to get into configuration mode:
+```
                CSR#conf t
+```
+         
+	 
+   - add the following commands one block at a time:
 
-         add the following commands one block at a time:
+```
+router bgp 65005
+ bgp log-neighbor-changes
+ neighbor 10.3.1.4 remote-as 65515
+ neighbor 10.3.1.4 ebgp-multihop 255
+ neighbor 10.3.1.5 remote-as 65515
+ neighbor 10.3.1.5 ebgp-multihop 255
+ !
+ address-family ipv4
+  neighbor 10.3.1.4 activate
+  neighbor 10.3.1.5 activate
+ exit-address-family
+!
+```
 
+   - Verify if BGP has established between ARS routeserver1 and NVA CSR1
+	
+	CSR1#sh ip bgp summary
+	BGP router identifier 192.168.1.4, local AS number 65005
+	BGP table version is 10, main routing table version 10
+	7 network entries using 1736 bytes of memory
+	9 path entries using 1224 bytes of memory
+	5/5 BGP path/bestpath attribute entries using 1440 bytes of memory
+	4 BGP AS-PATH entries using 128 bytes of memory
+	0 BGP route-map cache entries using 0 bytes of memory
+	0 BGP filter-list cache entries using 0 bytes of memory
+	BGP using 4528 total bytes of memory
+	BGP activity 7/0 prefixes, 9/0 paths, scan interval 60 secs
+	7 networks peaked at 03:53:47 Nov 30 2021 UTC (00:00:03.013 ago)
+	
+	Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+	10.3.1.4        4        65515      20      29       10    0    0 00:13:05        2
+	10.3.1.5        4        65515      19      29       10    0    0 00:13:05        2
+	
+
+    Task5: Build Ipsec tunnel between CSR NVA in HUB-Vnet and CSR1 NVA in HUB-EastUS Vnet
+       
+	-  Document the CSR1 NVA public ip CSR1NVA-PublicIp and the public ip of the CSR NVA CSRPublicIP as we will need them to build the Ipsec tunnel in next step:
+	
+	az network public-ip show -g  Route-Server -n  CSR1NVA-PublicIP --query "{address: ipAddress}"
+	az network public-ip show -g  Route-Server -n  CSRPublicIP  --query "{address: ipAddress}"
+	
+          - SSH to the CSR NVA and type 'conf t' to get into configuration mode:
+
+         CSR#conf t
+
+     add the following commands one block at a time, replace CSR1NVA-PublicIp with the ip you got from above step:![image](https://user-images.githubusercontent.com/78562461/144786641-857f3a48-d9dd-4291-8c29-63a1dc351263.png)
 
