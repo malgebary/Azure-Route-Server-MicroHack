@@ -1194,13 +1194,13 @@ az network routeserver peering create --name CSR1 --peer-ip 10.3.0.4 --peer-asn 
 ```
 				    
 	
-   - SSH to ***CSR1***, once login type `conf t` as shown below to get into configuration mode:
+   * SSH to ***CSR1***, once login type `conf t` as shown below to get into configuration mode:
 ```
                CSR#conf t
 ```
          
 	 
-   - add the following commands one block at a time:
+   * add the following commands one block at a time:
 
 ```
 router bgp 65005
@@ -1217,7 +1217,7 @@ router bgp 65005
 !
 ```
 
-   - Verify if BGP has established between ARS routeserver1 and NVA CSR1
+   * Verify if BGP has established between ARS routeserver1 and NVA CSR1
 	
 	CSR1#sh ip bgp summary
 	BGP router identifier 192.168.1.4, local AS number 65005
