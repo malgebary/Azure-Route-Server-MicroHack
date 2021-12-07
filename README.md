@@ -1541,6 +1541,7 @@ Only 4 prefixes have been learned, 10.0.0.0/16 ***On-Prem-Vnet*** prefix, 192.16
 	```
 	
    - Hit 'CTRL Z' to get back to enable mode and type 'wr' to save the configuration:
+   
 ```	
 	CSR#wr
 ```
