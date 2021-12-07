@@ -1500,7 +1500,7 @@ sh bgp neighbors 10.1.2.4 advertised-routes
 
 💡 We can see same behavior between ***CSR1*** and ARS ***Routeserver1*** in which routes advertised by ***CSR1*** to ***Routeserver1*** that has ASN 65515 in its AS Path will be dropped by the ***Routeserver1*** as shown below:
  
--Routes advertised by *** CSR1*** to ***Routeserver1***  
+-Routes advertised by ***CSR1*** to ***Routeserver1***  
  
  ![image](https://user-images.githubusercontent.com/78562461/144961495-3c189ab4-d847-4ffa-95f5-24490908d410.png)
 
@@ -1510,7 +1510,7 @@ sh bgp neighbors 10.1.2.4 advertised-routes
 az network routeserver peering list-learned-routes --name CSR1 --routeserver RouteServer1 --resource-group Route-Server
 ```
 	
-Only 4 prefixes have been learned, 10.0.0.0/16 ***On-Prem-Vnet*** prefix, 192.168.1.4 BGP peer ip of ***CSR1*** NVA, 192.168.1.3 tunnel12 (VTI interface) in ***CSR*** NVA and 10.1.10.4/24 which is ***Subnet-1*** prefix in ***HUB-SCUS*** Vnet
+🕵️‍♀️ Only 4 prefixes have been learned, 10.0.0.0/16 ***On-Prem-Vnet*** prefix, 192.168.1.4 BGP peer ip of ***CSR1*** NVA, 192.168.1.3 tunnel12 (VTI interface) in ***CSR*** NVA and 10.1.10.4/24 which is ***Subnet-1*** prefix in ***HUB-SCUS*** Vnet as they don't have ASN 65515 in the AS Path atribute.
 	
 ![image](https://user-images.githubusercontent.com/78562461/144961794-81cbf655-db44-40d7-bddf-7ea8251acc44.png)
 
@@ -1581,7 +1581,7 @@ Prior to configuring As-Override, the ***Routeserver*** was only learning 4 pref
 
  - 10.2.0.0/16 is the ***On-Prem1-Vnet*** prefix, we see that the ***Routeserver*** ASN 65515 has been replaced with NVA ***CSR*** ASN 65002 as shown in the red box. Also note that this route will not be injected in the ***HUB-SCUS*** VMs' NICs or ***Spoke-Vnet*** VMs' NICs with next hop as ***CSR*** NVA as this prefix learned from ***HUB-VNG*** gateway with shorter AS Path, so next hop to this prefix in NICs effective routes will appear as the ***HUB-VNG*** local instances (10.1.5.4 and 10.1.5.5).
 	
-- 10.3.0.0/16 the ***HUB-EastUS*** Vnet prefix and 10.5.0.0/16 is ***Spoke1-Vnet*** prefix, we can see they are now learned by the ARS ***Routeserver*** and not being dropped after the ASN has been replaced as shown in the red box from 65515 to 65002, and so ARS will inject these routes into NICs effective routes
+- 10.3.0.0/16 the ***HUB-EastUS*** Vnet prefix and 10.5.0.0/16 is ***Spoke1-Vnet*** prefix, we can see they are now learned by the ARS ***Routeserver*** and not being dropped after the ASN has been replaced as shown in the red box from 65515 to 65002, and so ARS will inject these routes into NICs effective routes.
 
 ![image](https://user-images.githubusercontent.com/78562461/145089454-22ff9391-97c9-4d21-8438-2918c7effcce.png)
 
