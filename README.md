@@ -10,7 +10,7 @@
 
 [Notes](#Notes)
 
-[Scenario 1: Connect on-premises network with CSR NVA in Azure and use ARS to inject on-premises routes into the Vnet](#Scenario-1-Connect-on-premise-network-with-CSR-NVA-in-Azure-Vnet-and-use-ARS-to-inject-on-premise-routes-into-the-Vnet)
+[Scenario 1: Connect on-premises network to CSR NVA in Azure and use ARS to inject on-premises routes into the Vnet](#Scenario-1-Connect-on-premise-network-with-CSR-NVA-in-Azure-Vnet-and-use-ARS-to-inject-on-premise-routes-into-the-Vnet)
 
 [Scenario 2: Route exchange between Virtual Network Gateway and CSR NVA](#Scenario-2-Route-exchange-between-Virtual-Network-Gateway-and-CSR-NVA)
 
@@ -68,13 +68,13 @@ At the end of the Lab the deployment will look like this:
 
 - All resources will be launched in one resource group `Route-Server`.
 
-## Scenario 1: Connect on-premise network with CSR NVA in Azure Vnet and use ARS to inject on-premise routes into the Vnet
+## Scenario 1: Connect on-premises network to CSR NVA in Azure Vnet and use ARS to inject on-premises routes into the Vnet
 
-In this scenario you will connect on-premise network (***On-Prem-Vnet***) with NVA in the ***HUB-SCUS*** Vnet, and we will observe the routing table before and after deploying ARS to the ***HUB-SCUS*** Vnet.
+In this scenario you will connect on-premises network (***On-Prem-Vnet***) with NVA in the ***HUB-SCUS*** Vnet, and we will observe the routing table before and after deploying ARS to the ***HUB-SCUS*** Vnet.
 
 This scenario consist of:
 
-1. ***On-prem-Vnet*** to simulate on-premise network, Vpn Gateway ***On-Prem-VNG*** to simulate gateway on the on-premise, and an VM ***On-Prem-VM***.
+1. ***On-prem-Vnet*** to simulate on-premises network, Vpn Gateway ***On-Prem-VNG*** to simulate gateway on the on-premises, and an VM ***On-Prem-VM***.
 2. ***HUB-SCUS*** Vnet represent Azure side that has NVA (***CSR***), VM (***HUB-VM***), and ARS (***RouteServer***).
 3. NVA ***CSR*** with two Nics, one external (CSROutsideInterface) and one Internal (CSRInsideInterface), external interface will be used as the source for Ipsec tunnel, while internal interface will be used as BGP peer with ARS.
 4. We will use loopback interface on the ***CSR*** (Loopback11) as update source for the BGP peering with ***On-Prem-VNG***, while will use the internal interface of the ***CSR*** as the BGP peer with ARS instances.
@@ -90,7 +90,7 @@ After deploying above, the diagram will look like following:
 
     az group create --name Route-Server --location centralus
 
--**Create the On-Premise Network:**
+-**Create the On-Premises Network:**
 
 **On-prem-Vnet**:
 
@@ -143,7 +143,7 @@ Here we are going to use Cisco CSR1000v as NVA. This NVA will have two Nics, one
     az vm create --resource-group Route-Server --location southcentralus --name CSR --size Standard_DS3_v2 --nics CSROutsideInterface CSRInsideInterface --image cisco:cisco-csr-1000v:17_2_1-byol:17.2.120200508 --admin-username azureuser --admin-password Routeserver123
 
 
-- **Build Ipsec tunnel between ***CSR*** NVA (respresent Azure side) and ***On-Prem-VNG*** gateway (represent On-Premise side):**
+- **Build Ipsec tunnel between ***CSR*** NVA (respresent Azure side) and ***On-Prem-VNG*** gateway (represent On-Premises side):**
 
 **Note:** for simplicity, we will build one tunnel between ***CSR*** and ***On-Prem-VNG***
 
@@ -233,11 +233,11 @@ ip route 10.0.0.4 255.255.255.255 Tunnel11
 ip route 10.1.10.0 255.255.255.0 10.1.1.1
 
 ```
-Type `exit` multiple times until the prompt shows `csr#` and save the configuration with `wr` as shown below:
+Type `exit` multiple times until the prompt shows `csr#` or simply hit `CTRL Z` and save the configuration with `wr` as shown below:
 
     CSR# wr
 
-• Now we need to create the tunnel (connection) from the on-premise side, and for that we will create the Local Network Gateway (LNG) and then the connection:
+• Now we need to create the tunnel (connection) from the on-premises side, and for that we will create the Local Network Gateway (LNG) and then the connection:
 
   **Create LNG:**
 
@@ -1516,5 +1516,33 @@ Only 4 prefixes have been learned, 10.0.0.0/16 ***On-Prem-Vnet*** prefix, 192.16
 
 ☝️ The consequences for this is that there will be no connectivity between VMs in let say group1 Vnets (***HUB-EastUS*** 10.3.0.0/16 and ***Spoke1-Vnet*** 10.5.0.0/16) and VMs in group 2 Vnets (***HUB-SCUS*** 10.1.0.0/16, ***Spoke-Vnet*** 10.4.0.0/16 and ***On-prem1-Vnet*** 10.2.0.0/16) as the prefixes in each group has been advertised by the ARS with ASN 65515 (either being a prefix for Vnet hosting the ARS, or being a prefix of peered Vnet using ARS in remote Vnet, or on-premises network using ARS to exchange routes with NVA) to the NVA, so when the advertisement reach the other ARS through the NVA (***CSR*** or ***CSR1***) the routes will be dropped and not programmed in the NICs effective route or advertised to on-premises through VPN Gateway.
 	
-![image](https://user-images.githubusercontent.com/78562461/144962229-c574ae5a-db50-4c5d-9e17-823d94fb7423.png)
+**How to solve this routing issue?**
+	
+👉 As a workaround solution to this loop prevention feature, we can use the BGP **AS-Override** feature when peering with ARS. AS-Override function causes to replace the AS number of originating router with the AS number of the sending BGP router. This way, ARS on each side will see the ASN of the NVA instead of seeing the ASN of the remote ARS (65515).
+	
+
+## Task 7: Configure AS-Override to solve the route propagation issue
+
+- On NVA ***CSR***
+	
+  - SSH to CSR and type 'conf t' as shown below:
+```
+      CSR#conf t
+```      
+	
+  - Copy and paste the following commands:
+	
+	```
+	router bgp 65002
+	address-family ipv4
+	  neighbor 10.1.2.4 as-override
+	  neighbor 10.1.2.5 as-override
+	 exit-address-family
+	```
+	
+   - Hit 'CTRL Z' to get back to enable mode and type 'wr' to save the configuration:
+```	
+	CSR#wr
+```
+
 
