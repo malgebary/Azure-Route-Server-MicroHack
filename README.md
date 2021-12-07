@@ -1514,7 +1514,7 @@ Only 4 prefixes have been learned, 10.0.0.0/16 ***On-Prem-Vnet*** prefix, 192.16
 	
 ![image](https://user-images.githubusercontent.com/78562461/144961794-81cbf655-db44-40d7-bddf-7ea8251acc44.png)
 
-The consequences for this is that there will be no connectivity between VMs in let say group1 Vnets (***HUB-EastUS*** 10.3.0.0/16 and ***Spoke1-Vnet*** 10.5.0.0/16) and VMs in group 2 Vnets (***HUB-SCUS*** 10.1.0.0/16, ***Spoke-Vnet*** 10.4.0.0/16 and ***On-prem1-Vnet*** 10.2.0.0/16) as the prefixes in each group has been advertised by the ARS (either being a prefix for Vnet hosting the ARS, or being a prefix of peered Vnet using ARS in remote Vnet, or on-premises network using ARS to exchange routes with NVA) to the NVA, so when the advertisement reach the other ARS through the NVA (CSR or CSR1) the routes will be dropped and not programmed in the NICs effective route or advertised to on-premises through VPN Gateway. 
+The consequences for this is that there will be no connectivity between VMs in let say group1 Vnets (***HUB-EastUS*** 10.3.0.0/16 and ***Spoke1-Vnet*** 10.5.0.0/16) and VMs in group 2 Vnets (***HUB-SCUS*** 10.1.0.0/16, ***Spoke-Vnet*** 10.4.0.0/16 and ***On-prem1-Vnet*** 10.2.0.0/16) as the prefixes in each group has been advertised by the ARS (either being a prefix for Vnet hosting the ARS, or being a prefix of peered Vnet using ARS in remote Vnet, or on-premises network using ARS to exchange routes with NVA) to the NVA, so when the advertisement reach the other ARS through the NVA (CSR or CSR1) the routes will be dropped and not programmed in the NICs effective route or advertised to on-premises through VPN Gateway..
 	
 ![image](https://user-images.githubusercontent.com/78562461/144962229-c574ae5a-db50-4c5d-9e17-823d94fb7423.png)
 
