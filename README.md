@@ -1157,7 +1157,7 @@ az network routeserver create --name RouteServer1 --resource-group Route-Server 
 az network vnet create --resource-group Route-Server --name Spoke1-Vnet  --location eastus --address-prefixes 10.5.0.0/16 --subnet-name Subnet-1 --subnet-prefix 10.5.10.0/24 
 ```
 
--Create ***Spok1-VM***
+- Create ***Spok1-VM***
 
 ```	
 az network public-ip create --name Spoke1-VMPIP --resource-group Route-Server --location eastus --allocation-method Dynamic
@@ -1481,7 +1481,7 @@ az network routeserver peering list-learned-routes --name CSR --routeserver Rout
 
 - We see that the ARS is learning only about ***On-Prem-Vnet*** prefix 10.0.0.0/16, ***Subnet-1*** prefix in ***HUB-SCUS*** 10.1.10.0/24, 192.168.1.4 Tunnel11 (VTI interface) in ***CSR1*** NVA, and 192.168.1.3 is Tunnel 12 in ***CSR*** NVA, while it doesn't learn about 10.3.0.0/16 or 10.5.0.0/16, why?
 	
-❗ Note: output here showing routes from IN_0 which is 10.1.2.4 but it will be the same for IN_1 10.1.2.5
+❗Note: output here showing routes from IN_0 which is 10.1.2.4 but it will be the same for IN_1 10.1.2.5
 
 ![image](https://user-images.githubusercontent.com/78562461/144922817-9a8b0ea4-e7eb-453d-8f60-1780ceafaa22.png)
 
@@ -1514,7 +1514,7 @@ Only 4 prefixes have been learned, 10.0.0.0/16 ***On-Prem-Vnet*** prefix, 192.16
 	
 ![image](https://user-images.githubusercontent.com/78562461/144961794-81cbf655-db44-40d7-bddf-7ea8251acc44.png)
 
-The consequences for this is that there will be no connectivity between VMs in let say group1 Vnets (***HUB-EastUS*** 10.3.0.0/16 and ***Spoke1-Vnet*** 10.5.0.0/16) and VMs in group 2 Vnets (***HUB-SCUS*** 10.1.0.0/16, ***Spoke-Vnet*** 10.4.0.0/16 and ***On-prem1-Vnet*** 10.2.0.0/16) as the prefixes in each group has been advertised by the ARS (either being a prefix for Vnet hosting the ARS, or being a prefix of peered Vnet using ARS in remote Vnet, or on-premises network using ARS to exchange routes with NVA) to the NVA, so when the advertisement reach the other ARS through the NVA (CSR or CSR1) the routes will be dropped and not programmed in the NICs effective route or advertised to on-premises through VPN Gateway.
+☝️ The consequences for this is that there will be no connectivity between VMs in let say group1 Vnets (***HUB-EastUS*** 10.3.0.0/16 and ***Spoke1-Vnet*** 10.5.0.0/16) and VMs in group 2 Vnets (***HUB-SCUS*** 10.1.0.0/16, ***Spoke-Vnet*** 10.4.0.0/16 and ***On-prem1-Vnet*** 10.2.0.0/16) as the prefixes in each group has been advertised by the ARS with ASN 65515 (either being a prefix for Vnet hosting the ARS, or being a prefix of peered Vnet using ARS in remote Vnet, or on-premises network using ARS to exchange routes with NVA) to the NVA, so when the advertisement reach the other ARS through the NVA (***CSR*** or ***CSR1***) the routes will be dropped and not programmed in the NICs effective route or advertised to on-premises through VPN Gateway.
 	
 ![image](https://user-images.githubusercontent.com/78562461/144962229-c574ae5a-db50-4c5d-9e17-823d94fb7423.png)
 
