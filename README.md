@@ -1583,4 +1583,5 @@ Prior to configuring As-Override, the ***Routeserver*** was only learning 4 pref
 	
 - 10.3.0.0/16 the ***HUB-EastUS*** Vnet prefix and 10.5.0.0/16 is ***Spoke1-Vnet*** prefix, we can see they are now learned by the ARS ***Routeserver*** and not being dropped after the ASN has been replaced as shown in the red box from 65515 to 65002, and so ARS will inject these routes into NICs effective routes
 
+![image](https://user-images.githubusercontent.com/78562461/145089454-22ff9391-97c9-4d21-8438-2918c7effcce.png)
 
