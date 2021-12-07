@@ -1510,7 +1510,7 @@ sh bgp neighbors 10.1.2.4 advertised-routes
 az network routeserver peering list-learned-routes --name CSR1 --routeserver RouteServer1 --resource-group Route-Server
 ```
 	
-🕵️‍♀️ Only 4 prefixes have been learned, 10.0.0.0/16 ***On-Prem-Vnet*** prefix, 192.168.1.4 BGP peer ip of ***CSR1*** NVA, 192.168.1.3 tunnel12 (VTI interface) in ***CSR*** NVA and 10.1.10.4/24 which is ***Subnet-1*** prefix in ***HUB-SCUS*** Vnet as they don't have ASN 65515 in the AS Path atribute.
+🕵️‍♀️ Only 4 prefixes have been learned by the ***Routeserver1*** as they don't have ASN 65515 in the AS Path atribute, 10.0.0.0/16 ***On-Prem-Vnet*** prefix, 192.168.1.4 BGP peer ip of ***CSR1*** NVA, 192.168.1.3 tunnel12 (VTI interface) in ***CSR*** NVA, and 10.1.10.4/24 ***Subnet-1*** prefix in ***HUB-SCUS*** Vnet.
 	
 ![image](https://user-images.githubusercontent.com/78562461/144961794-81cbf655-db44-40d7-bddf-7ea8251acc44.png)
 
@@ -1576,7 +1576,7 @@ CSR#wr
 Prior to configuring As-Override, the ***Routeserver*** was only learning 4 prefixes from NVA ***CSR*** which are 192.168.1.4, 192.168.1.3, 10.0.0.0/16, and 10.1.10.0/24, now in addition to those prefixes we see that it also learned the following prefixes (in red box):
 
   - 10.1.0.0/16 the ***HUB-SCUS*** Vnet prefix where the ARS ***Routeserver*** reside, 10.4.0.0/16 is the prefix of peered Vnet ***Spoke-Vnet***. Note that ARS will not inject
-   those routes in the VM NICs with next hop as the ***CSR*** NVA 10.1.14 because these are system routes, and so ARS will not override them. The ASN in red box is originally
+   those routes in the VM NICs with next hop as the ***CSR*** NVA 10.1.1.4, because these are system routes, and so ARS will not override them. The ASN in red box is originally
    65515 but with AS-Override it has been replaced with ***CSR*** ASN 65002.
 
  - 10.2.0.0/16 is the ***On-Prem1-Vnet*** prefix, we see that the ***Routeserver*** ASN 65515 has been replaced with NVA ***CSR*** ASN 65002 as shown in the red box. Also note that this route will not be injected in the ***HUB-SCUS*** VMs' NICs or ***Spoke-Vnet*** VMs' NICs with next hop as ***CSR*** NVA as this prefix learned from ***HUB-VNG*** gateway with shorter AS Path, so next hop to this prefix in NICs effective routes will appear as the ***HUB-VNG*** local instances (10.1.5.4 and 10.1.5.5).
@@ -1585,3 +1585,8 @@ Prior to configuring As-Override, the ***Routeserver*** was only learning 4 pref
 
 ![image](https://user-images.githubusercontent.com/78562461/145089454-22ff9391-97c9-4d21-8438-2918c7effcce.png)
 
+2. ARS ***Routeserver1*** learned routes:
+
+- In addition to the 4 prefixes we saw [earlier](Routes learned by ***Routeserver1***:), ***Routeserver1*** now learned the prefixes in red boxes after configuring AS-Override which are 10.1.0.0/16 ***HUB-SCUS*** Vnet, 10.4.0.0/16 ***Spoke-Vnet***, and 10.2.0.0/16 On-Prem1-Vnet and those routes will be now
+	injected in the NICs that are using this ARS. ASN in red box is the CSR1 NVA ASN that replaced the 65515 ASN of the ARS
+![image](https://user-images.githubusercontent.com/78562461/145094110-4cede0a6-c5fd-4554-ba79-8fbda22f4367.png)
