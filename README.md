@@ -10,7 +10,7 @@
 
 [Notes](#Notes)
 
-[Scenario 1: Connect on-premise network with CSR NVA in Azure Vnet and use ARS to inject on-premise routes into the Vnet](#Scenario-1-Connect-on-premise-network-with-CSR-NVA-in-Azure-Vnet-and-use-ARS-to-inject-on-premise-routes-into-the-Vnet)
+[Scenario 1: Connect on-premises network with CSR NVA in Azure and use ARS to inject on-premises routes into the Vnet](#Scenario-1-Connect-on-premise-network-with-CSR-NVA-in-Azure-Vnet-and-use-ARS-to-inject-on-premise-routes-into-the-Vnet)
 
 [Scenario 2: Route exchange between Virtual Network Gateway and CSR NVA](#Scenario-2-Route-exchange-between-Virtual-Network-Gateway-and-CSR-NVA)
 
@@ -24,7 +24,7 @@ Azure Route Server ([ARS](https://docs.microsoft.com/en-us/azure/route-server/ov
 
 ARS enables the NVA to advertise routes to other endpoints in the local/peered Vnet; as well as endpoints defined in on-premises networks connected via ExpressRoute or VPN.  Additionally, ARS allow transit between Virtual Network Gateways (ExpressRoute and VPN) which was not possible before. 
 
-In this MicroHack we will explore some routing scenarios that shows how ARS can be utilized to simplify configuration, management, and deployment of the NVAs in the Virtual Network and how will that simplify routing between Azure and on-premises.
+In this MicroHack we will explore some routing scenarios that shows how ARS can be utilized to simplify configuration, management, and deployment of the NVAs in the Virtual Network and how would that simplify routing between Azure and on-premises.
 
 # Objectives:
 
