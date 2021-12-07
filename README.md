@@ -86,13 +86,13 @@ After deploying above, the diagram will look like following:
 
 ## Task1: Deploy On-Prem-Vnet and HUB-SCUS Vnet without the ARS 
 
--**Create the resource group:**
+- **Create the resource group:**
 
     az group create --name Route-Server --location centralus
 
--**Create the On-Premises Network:**
+- **Create the On-Premises Network:**
 
-**On-prem-Vnet**:
+ **On-prem-Vnet**:
 
     az network vnet create --resource-group Route-Server --name On-Prem-Vnet --location northcentralus --address-prefixes 10.0.0.0/16 --subnet-name Subnet-1 --subnet-prefix 10.0.10.0/24 
     az network vnet subnet create --address-prefix 10.0.0.0/27 --name GatewaySubnet --resource-group Route-Server --vnet-name On-Prem-Vnet
@@ -115,7 +115,7 @@ After deploying above, the diagram will look like following:
     az network vnet-gateway create --name On-Prem-VNG --public-ip-address Azure-VNGpubip --resource-group Route-Server --vnet On-Prem-Vnet --gateway-type Vpn --vpn-type RouteBased --sku VpnGw1 --asn 65001 --bgp-peering-address 10.0.0.4 --location northcentralus
 
 
-**-Create the Azure HUB Network:**
+**- Create the Azure HUB Network:**
 
 **HUB-SCUS Vnet:**
 
