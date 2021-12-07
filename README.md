@@ -1585,8 +1585,14 @@ Prior to configuring As-Override, the ***Routeserver*** was only learning 4 pref
 
 ![image](https://user-images.githubusercontent.com/78562461/145089454-22ff9391-97c9-4d21-8438-2918c7effcce.png)
 
-2. ARS ***Routeserver1*** learned routes:
+2- ARS ***Routeserver1*** learned routes:
 
 - In addition to the 4 prefixes Routeserevr1 was learing (10.0.0.0/16, 192.168.1.4, 192.168.1.3 and 10.1.10.4/24), ***Routeserver1*** now learned the prefixes in red boxes after configuring AS-Override, which are 10.1.0.0/16 ***HUB-SCUS*** Vnet, 10.4.0.0/16 ***Spoke-Vnet***, and 10.2.0.0/16 ***On-Prem1-Vnet*** and those routes will be now injected in the NICs that are using this ARS. ASN in red box is the ***CSR1*** NVA ASN that replaced the 65515 ASN of the ARS.
 
-![image](https://user-images.githubusercontent.com/78562461/145094110-4cede0a6-c5fd-4554-ba79-8fbda22f4367.png)
+![image](https://user-images.githubusercontent.com/78562461/145095347-d6234c90-cbeb-4496-8776-efcd21d26ab7.png)
+
+🤝 after this change we have full network connectivity, for example you can ping from ***Spoke1-VM*** to all VMs in this topology with no single UDR has been used to route the traffic. 
+
+As there is no use for route tables, this design is suitable for large deployments with multiple spokes and/or multiple on-premises branches across multiple regions. 
+
+![image](https://user-images.githubusercontent.com/78562461/145097375-e62ab17b-c2c6-49cc-a1b9-ce087b9ad235.png)
