@@ -1460,7 +1460,7 @@ Tunnel12 is up, line protocol is up
 
 👉 From CSR NICs
            
-   You can check from either NIC
+   You can check from any NIC
 	
 Navigate to Network Interfaces -> CSROutsideInterface -> Help -> Effective routes
 Or:
@@ -1488,7 +1488,7 @@ az network routeserver peering list-learned-routes --name CSR --routeserver Rout
 
 
 
-💡 To know why, let us look at the advertised routes from ***CSR*** to ARS ***Routeserver***, you may use either ARS instances as the BGP neighbor in the following command:
+💡 To know why, let us look at the advertised routes from ***CSR*** to ARS ***Routeserver***, you may use any instance of ARS instances as the BGP neighbor in the following command:
 
 ```	
 sh bgp neighbors 10.1.2.4 advertised-routes
