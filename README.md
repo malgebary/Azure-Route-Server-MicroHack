@@ -115,7 +115,7 @@ After deploying above, the diagram will look like following:
     az network vnet-gateway create --name On-Prem-VNG --public-ip-address Azure-VNGpubip --resource-group Route-Server --vnet On-Prem-Vnet --gateway-type Vpn --vpn-type RouteBased --sku VpnGw1 --asn 65001 --bgp-peering-address 10.0.0.4 --location northcentralus
 
 
-**- Create the Azure HUB Network:**
+- **Create the Azure HUB Network:**
 
 **HUB-SCUS Vnet:**
 
