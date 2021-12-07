@@ -53,7 +53,7 @@ At the end of the Lab the deployment will look like this:
 
 - Log in to Azure Cloud Shell at https://shell.azure.com/ and select Bash.
 
-- If necessary select your target subscription:
+  - If necessary select your target subscription:
 
 	  az account set --subscription <Name or ID of subscription>
 
@@ -68,6 +68,8 @@ At the end of the Lab the deployment will look like this:
 	tunnel pre-shared key: `Routeserver`
 
 - All resources will be launched in one resource group `Route-Server`.
+	
+- The scenarios in this lab are built sequntially, so that scenario 2 depends on scenario 1 configuration and so on. 	
 
 ## Scenario 1: Connect on-premises network to CSR NVA in Azure Vnet and use ARS to inject on-premises routes into the Vnet
 
