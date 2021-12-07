@@ -1595,4 +1595,8 @@ Prior to configuring As-Override, the ***Routeserver*** was only learning 4 pref
 
 As there is no use for route tables, this design is suitable for large deployments with multiple spokes and/or multiple on-premises branches across multiple regions. 
 
+![image](https://user-images.githubusercontent.com/78562461/145097896-435f027c-63af-44e5-9c45-bbcdc3920345.png)
+
+
 ![image](https://user-images.githubusercontent.com/78562461/145097375-e62ab17b-c2c6-49cc-a1b9-ce087b9ad235.png)
+
