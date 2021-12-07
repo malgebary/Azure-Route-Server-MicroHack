@@ -1498,3 +1498,20 @@ sh bgp neighbors 10.1.2.4 advertised-routes
 
 ![image](https://user-images.githubusercontent.com/78562461/144934937-9e47e3e7-13cc-43b8-a1b6-e65502c01ab4.png)
 
+We can see same behavior between *** CSR1***  and ARS *** Routeserver1***  in which routes advertised by *** CSR1***  to *** Routeserver1***  that has ASN 65515 in its AS Path will be dropped by the *** Routeserver1*** as shown below:
+ 
+-Routes advertised by *** CSR1***  to *** Routeserver1***  
+ 
+ ![image](https://user-images.githubusercontent.com/78562461/144961495-3c189ab4-d847-4ffa-95f5-24490908d410.png)
+
+-Routes learned by Routeserver1:
+
+```
+az network routeserver peering list-learned-routes --name CSR1 --routeserver RouteServer1 --resource-group Route-Server
+```
+	
+Only 4 prefixes have been learned, 10.0.0.0/16, 192.168.1.4 BGP peer ip of CSR1 NVA, 192.168.1.3 tunnel12 (VTI interface) in CSR NVA and 10.1.10.4/24 which is Subnet-1 prefix in HUB-SCUS Vnet
+	
+![image](https://user-images.githubusercontent.com/78562461/144961794-81cbf655-db44-40d7-bddf-7ea8251acc44.png)
+
+
