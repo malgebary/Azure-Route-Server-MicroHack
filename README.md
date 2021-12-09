@@ -1602,7 +1602,10 @@ As there is no use for route tables, this design is suitable for large deploymen
 
 
 ![image](https://user-images.githubusercontent.com/78562461/145097375-e62ab17b-c2c6-49cc-a1b9-ce087b9ad235.png)
+	
+	
 
+```
 CSR#sh ip bgp
 BGP table version is 18, local router ID is 192.168.1.1
 Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
@@ -1622,4 +1625,6 @@ RPKI validation codes: V valid, I invalid, N Not found
  *>   10.3.0.0/16      10.3.0.4                               0 65005 65515 i
  *>   10.4.0.0/16      10.1.2.4                               0 65515 i
  *                     10.1.2.5                               0 65515 i
- *>   10.5.0.0/16      10.3.0.4                               0 65005 65515 i
+ *>   10.5.0.0/16      10.3.0.4                               0 65005 65515 i 
+	
+```
