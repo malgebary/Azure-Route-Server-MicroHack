@@ -1820,4 +1820,11 @@ To make it easier to verify connectivity and routing let divide the network in t
 	
 ```
 
-💡
+### From above, we see:
+
+- All VMs (in both Sides) have routes to all prefixes in the network which is great!
+	
+- If VMs in **Side1** needs to talk to VMs in **Side2** then it will go through ***CSR*** NVA (10.1.1.4) which reside in **Side1**, and if VMs in **Side2** need to talk to VMs in **Side1** then it go to ***CSR1*** NVA (10.3.0.4) which reside in ***Side2***, and this is similar to scenario 4 (except for traffic between 10.1.0.0/16 and 10.3.0.0/16 as this traffic will go over the global peering). However, if VMs in **side1** try to reach VM in Side2 we will get a loop in this scenario. Why?
+	
+	
+
