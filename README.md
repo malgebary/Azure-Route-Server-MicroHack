@@ -1623,13 +1623,14 @@ The complete scenario will look as follows:
 
 ## Task1: Configure Vnet peering between HUB-SCUS and HUB-EastUS Vnets
 
-
+```
 vNet1Id=$(az network vnet show --resource-group Route-Server --name HUB-SCUS --query id --out tsv)
 vNet2Id=$(az network vnet show --resource-group Route-Server --name HUB-EastUS --query id --out tsv)
 
 az network vnet peering create --name HUB-SCUS-To-HubEastus --resource-group Route-Server --vnet-name HUB-SCUS --remote-vnet $vNet2Id --allow-vnet-access --allow-forwarded-traffic
 az network vnet peering create --name HUBEastus-To-HUB-SCUS --resource-group Route-Server --vnet-name HUB-EastUS --remote-vnet $vNet1Id --allow-vnet-access --allow-forwarded-traffic
-
+	
+```
 ## Task2: configure BGP between CSR and CSR1 NVAs
    
 - In the configuration below we will remove the BGP peers established over IPsec tunnel which are (192.168.1.3 and 192.168.1.4) and configure new BGP session between ***CSR*** internal interface 10.1.1.4 and ***CSR1*** interface 10.3.0.4: 
@@ -1750,8 +1751,9 @@ $ az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --outpu
 
  > 23.x.x.x is the ***On-Prem1-VNG*** public ip
 	
-	```
-		hussein@Azure:~$ az network nic show-effective-route-table -g Route-Server -n on-prem1-VMNIC --output table
+	
+```
+	$ az network nic show-effective-route-table -g Route-Server -n on-prem1-VMNIC --output table
 	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
 	---------------------  -------  ----------------  ---------------------  -------------
 	Default                Active   10.2.0.0/16       VnetLocal
@@ -1762,14 +1764,14 @@ $ az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --outpu
 	VirtualNetworkGateway  Active   10.3.0.0/16       VirtualNetworkGateway  23.X.X.X
 	VirtualNetworkGateway  Active   10.0.0.0/16       VirtualNetworkGateway  23.X.X.X
 	Default                Active   0.0.0.0/0         Internet
-	```
+```
 	
 - ***On-Prem-VM*** effective routes
 	
 > 52.x.x.x is the ***On-Prem-VNG*** public ip
 	
 ```
-$ az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --output table
+        $ az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --output table
 	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
 	---------------------  -------  ----------------  ---------------------  --------------
 	Default                Active   10.0.0.0/16       VnetLocal
