@@ -1762,13 +1762,11 @@ $ az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --outpu
 	VirtualNetworkGateway  Active   10.3.0.0/16       VirtualNetworkGateway  23.X.X.X
 	VirtualNetworkGateway  Active   10.0.0.0/16       VirtualNetworkGateway  23.X.X.X
 	Default                Active   0.0.0.0/0         Internet
+	```
 	
-```
-
-
 - ***On-Prem-VM*** effective routes
 	
-> 52.x.x.x is the ***On-Prem-VNG*** public ip
+      > 52.x.x.x is the ***On-Prem-VNG*** public ip
 	
 ```
 $ az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --output table
