@@ -18,7 +18,7 @@
 
 [Scenario 4: Route server multi-region design with Ipsec](#Scenario-4-Route-server-multi-region-design-with-Ipsec)
 
-[Scenario 5: Route server multi-region design with Vnet peering](Scenario-5-Route-server-multi-region-design-with-Vnet-peering)
+[Scenario 5: Route server multi-region design with Vnet peering](#Scenario-5-Route-server-multi-region-design-with-Vnet-peering)
 
 # Introduction
 
@@ -889,12 +889,12 @@ Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State
 
 👉 **Learned Routes:** 
 	
-- As we know now, 10.0.0.0/16 is the ***On-Prem-Vnet*** prefix which is where the source VM (***On-Prem-VM***) is located. Let us look at the AS Path which explain how this route has been learned: ASN 65001 refer to ***On-Prem-VNG*** gateway, it is the gateway originally advertised this route, then advertised it through eBGP peering over Ipsec to ***CSR*** NVA which has ASN 65002, and as the ***CSR*** has eBGP peering with ARS both instances it advertised this route to the ARS which has the ASN 65515. ARS has the
+- As we know now, 10.0.0.0/16 is the ***On-Prem-Vnet*** prefix which is where the source VM (***On-Prem-VM***) is located. Let us look at the AS Path which explain how this route has been learned: ASN 65001 refer to ***On-Prem-VNG*** gateway, it is the gateway originally advertised this route, then advertised it through eBGP peering over IPsec to ***CSR*** NVA which has ASN 65002, and as the ***CSR*** has eBGP peering with ARS both instances it advertised this route to the ARS which has the ASN 65515. ARS has the
 **Branch-to-Branch** feature enabled, so it advertised this route to the ***HUB-VNG*** gateway which has the ASN 65004, and the ***HUB-VNG*** advertised it down to the ***On-Prem1-VNG*** gateway through the eBGP peering over Ipsec.
 	
 💡 Without **Branch-to-Branch** feature enabled on ARS, 10.0.0.0/16 will not be advertised from ***CSR*** to the ***HUB-VNG***, and 10.2.0.0/16 will not be advertised from ***HUB-VNG*** gateway to the ***CSR***. 
 	
-- 10.1.0.0/16 is the ***HUB-SCUS*** Vnet prefix that is learned through eBGP peering over Ipsec from peer 10.1.5.4 (***HUB-VNG*** gateway BGP peer ip).
+- 10.1.0.0/16 is the ***HUB-SCUS*** Vnet prefix that is learned through eBGP peering over IPsec from peer 10.1.5.4 (***HUB-VNG*** gateway BGP peer ip).
 
 ![image](https://user-images.githubusercontent.com/78562461/140253979-64f592e6-2b66-4001-8376-1c2091dee1e0.png)
 
