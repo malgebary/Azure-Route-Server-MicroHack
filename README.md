@@ -1603,7 +1603,7 @@ As there is no use for route tables, this design is suitable for large deploymen
 ![image](https://user-images.githubusercontent.com/78562461/145097896-435f027c-63af-44e5-9c45-bbcdc3920345.png)
 
 
-![image](https://user-images.githubusercontent.com/78562461/145097375-e62ab17b-c2c6-49cc-a1b9-ce087b9ad235.png)
+![image](https://user-images.githubusercontent.com/78562461/145623646-60cb00dc-0779-4d53-b165-1a20540579fb.png)
 	
 
 ## Scenario 5: Route server multi-region design with Vnet peering
