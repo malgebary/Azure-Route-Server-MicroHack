@@ -1711,9 +1711,9 @@ To make it easier to verify connectivity and routing let divide the network in t
 ![image](https://user-images.githubusercontent.com/78562461/145638689-a49379fd-a03c-482a-92ca-ecdd6690ec72.png)
 	
 	
-1- Check on effective routes for VMs in Side1
+1- Check on effective routes for VMs in **Side1**
 	
-	- ***HUB-VM*** effective routes
+- ***HUB-VM*** effective routes
 ```
 $ az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --output table
 	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
@@ -1748,21 +1748,74 @@ $ az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --outpu
 
 - ***On-Prem1-VM*** effective routes
 
-   > 23.x.x.x is the ***On-Prem1-VNG*** public ip
+ > 23.x.x.x is the ***On-Prem1-VNG*** public ip
 	
 	```
 		hussein@Azure:~$ az network nic show-effective-route-table -g Route-Server -n on-prem1-VMNIC --output table
 	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
 	---------------------  -------  ----------------  ---------------------  -------------
 	Default                Active   10.2.0.0/16       VnetLocal
-	VirtualNetworkGateway  Active   10.5.0.0/16       VirtualNetworkGateway  23.x.x.x
-	VirtualNetworkGateway  Active   10.1.5.4/32       VirtualNetworkGateway  23.x.x.x
-	VirtualNetworkGateway  Active   10.1.0.0/16       VirtualNetworkGateway  23.x.x.x
-	VirtualNetworkGateway  Active   10.4.0.0/16       VirtualNetworkGateway  23.x.x.x
-	VirtualNetworkGateway  Active   10.3.0.0/16       VirtualNetworkGateway  23.x.x.x
-	VirtualNetworkGateway  Active   10.0.0.0/16       VirtualNetworkGateway  23.x.x.x
+	VirtualNetworkGateway  Active   10.5.0.0/16       VirtualNetworkGateway  23.X.X.X
+	VirtualNetworkGateway  Active   10.1.5.4/32       VirtualNetworkGateway  23.X.X.X
+	VirtualNetworkGateway  Active   10.1.0.0/16       VirtualNetworkGateway  23.X.X.X
+	VirtualNetworkGateway  Active   10.4.0.0/16       VirtualNetworkGateway  23.X.X.X
+	VirtualNetworkGateway  Active   10.3.0.0/16       VirtualNetworkGateway  23.X.X.X
+	VirtualNetworkGateway  Active   10.0.0.0/16       VirtualNetworkGateway  23.X.X.X
 	Default                Active   0.0.0.0/0         Internet
 	
 ```
 
 
+- ***On-Prem-VM*** effective routes
+	
+> 52.x.x.x is the ***On-Prem-VNG*** public ip
+	
+```
+$ az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --output table
+	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
+	---------------------  -------  ----------------  ---------------------  --------------
+	Default                Active   10.0.0.0/16       VnetLocal
+	VirtualNetworkGateway  Active   10.4.0.0/16       VirtualNetworkGateway  52.X.X.X
+	VirtualNetworkGateway  Active   192.168.2.1/32    VirtualNetworkGateway  52.X.X.X
+	VirtualNetworkGateway  Active   10.2.0.0/16       VirtualNetworkGateway  52.X.X.X
+	VirtualNetworkGateway  Active   192.168.1.1/32    VirtualNetworkGateway  52.X.X.X
+	VirtualNetworkGateway  Active   10.1.0.0/16       VirtualNetworkGateway  52.X.X.X
+	VirtualNetworkGateway  Active   10.3.0.0/16       VirtualNetworkGateway  52.X.X.X
+	VirtualNetworkGateway  Active   10.1.10.0/24      VirtualNetworkGateway  52.X.X.X
+	VirtualNetworkGateway  Active   10.5.0.0/16       VirtualNetworkGateway  52.X.X.X
+	Default                Active   0.0.0.0/0         Internet
+```
+	
+2- Check on effective routes for VMs in **side2**
+	
+- ***HUB1-VM*** effective routes
+
+```
+$ az network nic show-effective-route-table -g Route-Server -n HUB1-VMNIC --output table
+	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
+	---------------------  -------  ----------------  ---------------------  -------------
+	Default                Active   10.3.0.0/16       VnetLocal
+	Default                Active   10.5.0.0/16       VNetPeering
+	VirtualNetworkGateway  Active   10.0.0.0/16       VirtualNetworkGateway  10.3.0.4
+	VirtualNetworkGateway  Active   10.2.0.0/16       VirtualNetworkGateway  10.3.0.4
+	VirtualNetworkGateway  Active   10.4.0.0/16       VirtualNetworkGateway  10.3.0.4
+	Default                Active   0.0.0.0/0         Internet
+        Default                Active   10.1.0.0/16       VNetGlobalPeering
+```
+	
+- Spoke1-VM effective routes
+	
+```
+	hussein@Azure:~$ az network nic show-effective-route-table -g Route-Server -n Spoke1-VMNIC --output table
+	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
+	---------------------  -------  ----------------  ---------------------  -------------
+	Default                Active   10.5.0.0/16       VnetLocal
+	Default                Active   10.3.0.0/16       VNetPeering
+	VirtualNetworkGateway  Active   10.0.0.0/16       VirtualNetworkGateway  10.3.0.4
+	VirtualNetworkGateway  Active   10.2.0.0/16       VirtualNetworkGateway  10.3.0.4
+	VirtualNetworkGateway  Active   10.1.10.0/24      VirtualNetworkGateway  10.3.0.4
+	VirtualNetworkGateway  Active   10.4.0.0/16       VirtualNetworkGateway  10.3.0.4
+	VirtualNetworkGateway  Active   10.1.0.0/16       VirtualNetworkGateway  10.3.0.4
+	Default                Active   0.0.0.0/0         Internet
+	
+```
