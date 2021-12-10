@@ -1820,7 +1820,7 @@ To make it easier to verify connectivity and routing let divide the network in t
 	
 ```
 
-### From above, we see:
+👉 **From above, we see:**
 
 - All VMs (in both Sides) have routes to all prefixes in the network which is great!
 	
