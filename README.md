@@ -1677,7 +1677,7 @@ router bgp 65002
 CSR#
 ```
 
-	• Login to CSR1 and type `conf t` and hit enter to get into configuration mode then past the following commands:
+• Login to CSR1 and type `conf t` and hit enter to get into configuration mode then past the following commands:
 
 ```
 router bgp 65005
@@ -1697,7 +1697,7 @@ ip route 10.1.1.4 255.255.255.255 10.3.0.1
 CSR#sh ip bgp summary
 ```
 	
-We see that BGP session between the new BGP endpoints 10.1.1.4 (CSR) and 10.3.0.4 (CSR1) has been established, and we don't see the BGP endpoints 192.168.1.4 and 192.168.1.3 in the BGP sessions from either NVA. ![image](https://user-images.githubusercontent.com/78562461/145637224-83a1799e-8904-431a-a337-853dc2e6bb49.png)
+We see that BGP session between the new BGP endpoints 10.1.1.4 (***CSR***) and 10.3.0.4 (***CSR1***) has been established, and we don't see the BGP endpoints 192.168.1.4 and 192.168.1.3 in the BGP sessions from either NVA.
 
 
 ![image](https://user-images.githubusercontent.com/78562461/145636461-89f685b9-45e0-4201-bb7f-392dde07e822.png)
