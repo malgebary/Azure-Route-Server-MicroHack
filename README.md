@@ -1631,7 +1631,7 @@ az network vnet peering create --name HUBEastus-To-HUB-SCUS --resource-group Rou
 
 ## Task2: configure BGP between CSR and CSR1 NVAs
    
-- In the configuration below we will remove the BGP peers established over Ipsec tunnel which are (192.168.1.3 and 192.168.1.4) and configure new BGP session between ***CSR*** internal interface 10.1.1.4 and ***CSR1*** interface 10.3.0.4: 
+- In the configuration below we will remove the BGP peers established over IPsec tunnel which are (192.168.1.3 and 192.168.1.4) and configure new BGP session between ***CSR*** internal interface 10.1.1.4 and ***CSR1*** interface 10.3.0.4: 
 	
 	• Login to CSR NVA and type `conf t` and hit enter to get into the configuration mode then paste the following commands:
 ```
@@ -1690,7 +1690,6 @@ router bgp 65005
 ip route 10.1.1.4 255.255.255.255 10.3.0.1
 ```
 	
-After pasting above commands make sure that complete BGP configuration should look as follow:
 
-![image](https://user-images.githubusercontent.com/78562461/145625059-1133ffda-acea-40de-baf3-afa55f270751.png)
+
 
