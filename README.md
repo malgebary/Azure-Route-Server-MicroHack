@@ -1706,7 +1706,7 @@ We see that BGP session between the new BGP endpoints 10.1.1.4 (***CSR***) and 1
 ## Task 3: Verify routing and connectivity
 
 
-To make it easier to verify connectivity and routing let divide the network in two Sides (**Side1** and **Side2**) as shown below:![image](https://user-images.githubusercontent.com/78562461/145637902-3fa851b0-11ad-4733-9dee-3e0003d25a06.png)
+To make it easier to verify connectivity and routing let divide the network in two Sides (**Side1** and **Side2**) as shown below:
 
 ![image](https://user-images.githubusercontent.com/78562461/145638689-a49379fd-a03c-482a-92ca-ecdd6690ec72.png)
 	
@@ -1766,7 +1766,7 @@ $ az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --outpu
 	
 - ***On-Prem-VM*** effective routes
 	
-      > 52.x.x.x is the ***On-Prem-VNG*** public ip
+> 52.x.x.x is the ***On-Prem-VNG*** public ip
 	
 ```
 $ az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --output table
@@ -1789,7 +1789,7 @@ $ az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --ou
 - ***HUB1-VM*** effective routes
 
 ```
-$ az network nic show-effective-route-table -g Route-Server -n HUB1-VMNIC --output table
+        $ az network nic show-effective-route-table -g Route-Server -n HUB1-VMNIC --output table
 	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
 	---------------------  -------  ----------------  ---------------------  -------------
 	Default                Active   10.3.0.0/16       VnetLocal
@@ -1804,7 +1804,7 @@ $ az network nic show-effective-route-table -g Route-Server -n HUB1-VMNIC --outp
 - Spoke1-VM effective routes
 	
 ```
-	hussein@Azure:~$ az network nic show-effective-route-table -g Route-Server -n Spoke1-VMNIC --output table
+	$ az network nic show-effective-route-table -g Route-Server -n Spoke1-VMNIC --output table
 	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
 	---------------------  -------  ----------------  ---------------------  -------------
 	Default                Active   10.5.0.0/16       VnetLocal
