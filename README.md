@@ -1691,7 +1691,8 @@ router bgp 65005
 ip route 10.1.1.4 255.255.255.255 10.3.0.1
 ```
 	
-	• Check on BGP session if it has established between the new BGP endpoints 10.1.1.4 and 10.3.0.4 using 'sh ip bgp summary' in enable mode:
+• Check on BGP session if it has established between the new BGP endpoints 10.1.1.4 and 10.3.0.4 using 'sh ip bgp summary' in enable mode:
+	
 ```
 CSR#sh ip bgp summary
 ```
