@@ -1716,7 +1716,7 @@ To make it easier to verify connectivity and routing let divide the network in t
 	
 - ***HUB-VM*** effective routes
 ```
-$ az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --output table
+        $ az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --output table
 	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
 	---------------------  -------  ----------------  ---------------------  -------------
 	Default                Active   10.1.0.0/16       VnetLocal
