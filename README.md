@@ -18,6 +18,8 @@
 
 [Scenario 4: Route server multi-region design with Ipsec](#Scenario-4-Route-server-multi-region-design-with-Ipsec)
 
+[Scenario 5: Route server multi-region design with Vnet peering](Scenario-5-Route-server-multi-region-design-with-Vnet-peering)
+
 # Introduction
 
 Azure Route Server ([ARS](https://docs.microsoft.com/en-us/azure/route-server/overview)) enables dynamic routing between Network Virtual Appliance (NVA) and Virtual Network (Vnet) by supporting Border Gateway Protocol (BGP). Before ARS, users had to create a User Defined Route (UDR) to NVA, and need to manually update the routing table on the NVA whenever Vnet addresses get updated. With the introduction of Azure Route Server, users can now inject a similar route without having to create the UDRs, or manually update the NVA with new Vnet prefixes.
@@ -1594,7 +1596,7 @@ Prior to configuring As-Override, the ***Routeserver*** was only learning 4 pref
 
 ![image](https://user-images.githubusercontent.com/78562461/145095347-d6234c90-cbeb-4496-8776-efcd21d26ab7.png)
 
-🤝 after this change we have full network connectivity, for example you can ping from ***Spoke1-VM*** to all VMs in this topology with no single UDR has been used to route the traffic. 
+🤝 after this change we have full network connectivity, for example you can ping from ***Spoke1-VM*** to ***Spoke-VM*** and to all other VMs in this topology with no UDR has been used to route the traffic. 
 
 As there is no use for route tables, this design is suitable for large deployments with multiple spokes and/or multiple on-premises branches across multiple regions. 
 
@@ -1604,3 +1606,14 @@ As there is no use for route tables, this design is suitable for large deploymen
 ![image](https://user-images.githubusercontent.com/78562461/145097375-e62ab17b-c2c6-49cc-a1b9-ce087b9ad235.png)
 	
 
+## Scenario 5: Route server multi-region design with Vnet peering
+
+In previous scenario we were able to achieve full network connectivity by using ARS and building BGP over IPsec tunnel between the NVAs, however, previous design is useful in scenarios where encryption is needed and bandwidth restrictions are tolerable
+as IPsec tunnel or Vxlan tunnel has throughput limitation. In this scenario we will establish BGP over Vnet peering between the NVAs instead of using IPsec tunnel. Vnet peering provides a low latency and high bandwidth connection that is useful in scenarios
+such as cross-region data replication and database failover scenarios. 
+
+
+In this scenario we will have same components as in scenario 4 but we will have global Vnet peering between HUB-EastUS Vnet and HUB-SCUS Vnet and configure BGP over the Vnet peering between the NVAs CSR and
+CSR1 and we will explore if there will be routing changes when having Vnet peering versus Ipsec tunnel between NVAs.
+
+The complete scenario will look as follows:![image](https://user-images.githubusercontent.com/78562461/145614954-99c81e35-a67d-4d71-ab05-b891a1991d2e.png)
