@@ -1803,7 +1803,7 @@ To make it easier to verify connectivity and routing let divide the network in t
         Default                Active   10.1.0.0/16       VNetGlobalPeering
 ```
 	
-- Spoke1-VM effective routes
+- ***Spoke1-VM*** effective routes
 	
 ```
 	$ az network nic show-effective-route-table -g Route-Server -n Spoke1-VMNIC --output table
@@ -1819,3 +1819,5 @@ To make it easier to verify connectivity and routing let divide the network in t
 	Default                Active   0.0.0.0/0         Internet
 	
 ```
+
+💡
