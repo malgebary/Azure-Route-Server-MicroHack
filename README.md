@@ -1634,7 +1634,7 @@ az network vnet peering create --name HUBEastus-To-HUB-SCUS --resource-group Rou
    
 - In the configuration below we will remove the BGP peers established over IPsec tunnel which are (192.168.1.3 and 192.168.1.4) and configure new BGP session between ***CSR*** internal interface 10.1.1.4 and ***CSR1*** interface 10.3.0.4: 
 	
-	• Login to CSR NVA and type `conf t` and hit enter to get into the configuration mode then paste the following commands:
+	• Login to ***CSR*** NVA, type `conf t` and hit enter to get into the configuration mode then paste the following commands:
 ```
 router bgp 65002
  no neighbor 192.168.1.4 remote-as 65005
@@ -1677,7 +1677,7 @@ router bgp 65002
 CSR#
 ```
 
-• Login to CSR1 and type `conf t` and hit enter to get into configuration mode then past the following commands:
+• Login to ***CSR1*** and type `conf t` and hit enter to get into configuration mode then past the following commands:
 
 ```
 router bgp 65005
@@ -1691,7 +1691,7 @@ router bgp 65005
 ip route 10.1.1.4 255.255.255.255 10.3.0.1
 ```
 	
-• Check on BGP session if it has established between the new BGP endpoints 10.1.1.4 and 10.3.0.4 using 'sh ip bgp summary' in enable mode:
+• Check on BGP session if it has established between the new BGP endpoints 10.1.1.4 and 10.3.0.4 using `sh ip bgp summary` in enable mode:
 	
 ```
 CSR#sh ip bgp summary
@@ -1702,5 +1702,67 @@ We see that BGP session between the new BGP endpoints 10.1.1.4 (***CSR***) and 1
 
 ![image](https://user-images.githubusercontent.com/78562461/145636461-89f685b9-45e0-4201-bb7f-392dde07e822.png)
 ![image](https://user-images.githubusercontent.com/78562461/145636541-936c008c-c978-4a0d-bf74-85f8b0e37a88.png)
+
+## Task 3: Verify routing and connectivity
+
+
+To make it easier to verify connectivity and routing let divide the network in two Sides (**Side1** and **Side2**) as shown below:![image](https://user-images.githubusercontent.com/78562461/145637902-3fa851b0-11ad-4733-9dee-3e0003d25a06.png)
+
+![image](https://user-images.githubusercontent.com/78562461/145638689-a49379fd-a03c-482a-92ca-ecdd6690ec72.png)
+	
+	
+1- Check on effective routes for VMs in Side1
+	
+	- ***HUB-VM*** effective routes
+```
+$ az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --output table
+	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
+	---------------------  -------  ----------------  ---------------------  -------------
+	Default                Active   10.1.0.0/16       VnetLocal
+	VirtualNetworkGateway  Active   10.2.0.0/16       VirtualNetworkGateway  10.1.5.4
+	VirtualNetworkGateway  Active   10.2.0.0/16       VirtualNetworkGateway  10.1.5.5
+	VirtualNetworkGateway  Active   10.0.0.0/16       VirtualNetworkGateway  10.1.1.4
+	VirtualNetworkGateway  Active   10.5.0.0/16       VirtualNetworkGateway  10.1.1.4
+	Default                Active   0.0.0.0/0         Internet
+	Default                Active   10.4.0.0/16       VNetGlobalPeering
+	Default                Active   10.3.0.0/16       VNetGlobalPeering
+
+```
+
+	
+- ***Spoke-VM*** effective routes
+	
+```
+	$ az network nic show-effective-route-table -g Route-Server -n Spoke-VMNIC --output table
+	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
+	---------------------  -------  ----------------  ---------------------  -------------
+	Default                Active   10.4.0.0/16       VnetLocal
+	VirtualNetworkGateway  Active   10.2.0.0/16       VirtualNetworkGateway  10.1.5.4
+	VirtualNetworkGateway  Active   10.2.0.0/16       VirtualNetworkGateway  10.1.5.5
+	VirtualNetworkGateway  Active   10.3.0.0/16       VirtualNetworkGateway  10.1.1.4
+	VirtualNetworkGateway  Active   10.0.0.0/16       VirtualNetworkGateway  10.1.1.4
+	VirtualNetworkGateway  Active   10.5.0.0/16       VirtualNetworkGateway  10.1.1.4
+	Default                Active   0.0.0.0/0         Internet
+	Default                Active   10.1.0.0/16       VNetGlobalPeering
+```
+
+- ***On-Prem1-VM*** effective routes
+
+   > 23.x.x.x is the ***On-Prem1-VNG*** public ip
+	
+	```
+		hussein@Azure:~$ az network nic show-effective-route-table -g Route-Server -n on-prem1-VMNIC --output table
+	Source                 State    Address Prefix    Next Hop Type          Next Hop IP
+	---------------------  -------  ----------------  ---------------------  -------------
+	Default                Active   10.2.0.0/16       VnetLocal
+	VirtualNetworkGateway  Active   10.5.0.0/16       VirtualNetworkGateway  23.x.x.x
+	VirtualNetworkGateway  Active   10.1.5.4/32       VirtualNetworkGateway  23.x.x.x
+	VirtualNetworkGateway  Active   10.1.0.0/16       VirtualNetworkGateway  23.x.x.x
+	VirtualNetworkGateway  Active   10.4.0.0/16       VirtualNetworkGateway  23.x.x.x
+	VirtualNetworkGateway  Active   10.3.0.0/16       VirtualNetworkGateway  23.x.x.x
+	VirtualNetworkGateway  Active   10.0.0.0/16       VirtualNetworkGateway  23.x.x.x
+	Default                Active   0.0.0.0/0         Internet
+	
+```
 
 
