@@ -1617,7 +1617,8 @@ In this design we will have same components as in scenario 4 but we will have gl
 
 The complete scenario will look as follows:
 	
-![image](https://user-images.githubusercontent.com/78562461/145636745-54a6fbe1-c69f-4b4b-82d2-e1599422998a.png)
+![image](https://user-images.githubusercontent.com/78562461/145637084-4ee5f2e3-c10d-4510-961d-9b4d81c5a9ac.png)
+
 
 
 ## Task1: Configure Vnet peering between HUB-SCUS and HUB-EastUS Vnets
@@ -1694,7 +1695,9 @@ ip route 10.1.1.4 255.255.255.255 10.3.0.1
 ```
 CSR#sh ip bgp summary
 ```
-- We see that BGP session between the new BGP endpoints 10.1.1.4 (CSR) and 10.3.0.4 (CSR1) has been established, and we don't see the BGP endpoints 192.168.1.4 and 192.168.1.3 in the BGP sessions from either NVA. ![image](https://user-images.githubusercontent.com/78562461/145636327-3126d32b-4172-41ae-8362-566733399541.png)
+	
+We see that BGP session between the new BGP endpoints 10.1.1.4 (CSR) and 10.3.0.4 (CSR1) has been established, and we don't see the BGP endpoints 192.168.1.4 and 192.168.1.3 in the BGP sessions from either NVA. ![image](https://user-images.githubusercontent.com/78562461/145637224-83a1799e-8904-431a-a337-853dc2e6bb49.png)
+
 
 ![image](https://user-images.githubusercontent.com/78562461/145636461-89f685b9-45e0-4201-bb7f-392dde07e822.png)
 ![image](https://user-images.githubusercontent.com/78562461/145636541-936c008c-c978-4a0d-bf74-85f8b0e37a88.png)
