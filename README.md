@@ -1619,3 +1619,75 @@ The complete scenario will look as follows:
 	
 ![image](https://user-images.githubusercontent.com/78562461/145624754-4f19ce52-45d5-415e-a215-b2cf0fd4aff1.png)
 
+
+## Task1: Configure Vnet peering between HUB-SCUS and HUB-EastUS Vnets
+
+
+vNet1Id=$(az network vnet show --resource-group Route-Server --name HUB-SCUS --query id --out tsv)
+vNet2Id=$(az network vnet show --resource-group Route-Server --name HUB-EastUS --query id --out tsv)
+
+az network vnet peering create --name HUB-SCUS-To-HubEastus --resource-group Route-Server --vnet-name HUB-SCUS --remote-vnet $vNet2Id --allow-vnet-access --allow-forwarded-traffic
+az network vnet peering create --name HUBEastus-To-HUB-SCUS --resource-group Route-Server --vnet-name HUB-EastUS --remote-vnet $vNet1Id --allow-vnet-access --allow-forwarded-traffic
+
+## Task2: configure BGP between CSR and CSR1 NVAs
+   
+- In the configuration below we will remove the BGP peers established over Ipsec tunnel which are (192.168.1.3 and 192.168.1.4) and configure new BGP session between ***CSR*** internal interface 10.1.1.4 and ***CSR1*** interface 10.3.0.4: 
+	
+	• Login to CSR NVA and type `conf t` and hit enter to get into the configuration mode then paste the following commands:
+```
+router bgp 65002
+ no neighbor 192.168.1.4 remote-as 65005
+ no network 192.168.1.3 mask 255.255.255.255
+ neighbor 10.3.0.4 remote-as 65005
+ neighbor 10.3.0.4 ebgp-multihop 255
+ address-family ipv4
+  neighbor 10.3.0.4 activate
+! Adding static route to BGP peer to avoid recursive routing failure for CSR1 BGP endpoints learned via BGP
+ip route 10.3.0.4 255.255.255.255 10.1.1.1
+	
+```
+	
+After pasting above commands make sure that complete BGP configuration should look as follow:
+
+CSR#sh running-config | sec bgp
+router bgp 65002
+ bgp router-id 192.168.1.1
+ bgp log-neighbor-changes
+ neighbor 10.0.0.4 remote-as 65001
+ neighbor 10.0.0.4 ebgp-multihop 255
+ neighbor 10.0.0.4 update-source Loopback11
+ neighbor 10.1.2.4 remote-as 65515
+ neighbor 10.1.2.4 ebgp-multihop 255
+ neighbor 10.1.2.5 remote-as 65515
+ neighbor 10.1.2.5 ebgp-multihop 255
+ neighbor 10.3.0.4 remote-as 65005
+ neighbor 10.3.0.4 ebgp-multihop 255
+ !
+ address-family ipv4
+  network 10.1.10.0 mask 255.255.255.0
+  neighbor 10.0.0.4 activate
+  neighbor 10.1.2.4 activate
+  neighbor 10.1.2.4 as-override
+  neighbor 10.1.2.5 activate
+  neighbor 10.1.2.5 as-override
+  neighbor 10.3.0.4 activate
+ exit-address-family
+CSR#
+
+
+	• Login to CSR1 and type 'conf t' and hit enter to get into configuration mode then past the following commands:
+
+router bgp 65005
+ no neighbor 192.168.1.3 remote-as 65002
+ no network 192.168.1.4 mask 255.255.255.255
+ neighbor 10.1.1.4 remote-as 65002
+ neighbor 10.1.1.4 ebgp-multihop 255
+ address-family ipv4
+  neighbor 10.1.1.4 activate
+! Adding static route to BGP peer to avoid recursive routing failure for CSR BGP endpoints learned via BGP
+ip route 10.1.1.4 255.255.255.255 10.3.0.1
+
+After pasting above commands make sure that complete BGP configuration should look as follow:
+
+![image](https://user-images.githubusercontent.com/78562461/145625059-1133ffda-acea-40de-baf3-afa55f270751.png)
+
