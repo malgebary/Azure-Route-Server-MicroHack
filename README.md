@@ -1690,6 +1690,13 @@ router bgp 65005
 ip route 10.1.1.4 255.255.255.255 10.3.0.1
 ```
 	
+	• Check on BGP session if it has established between the new BGP endpoints 10.1.1.4 and 10.3.0.4 using 'sh ip bgp summary' in enable mode:
+```
+CSR#sh ip bgp summary
+```
+- We see that BGP session between the new BGP endpoints 10.1.1.4 (CSR) and 10.3.0.4 (CSR1) has been established, and we don't see the BGP endpoints 192.168.1.4 and 192.168.1.3 in the BGP sessions from either NVA. ![image](https://user-images.githubusercontent.com/78562461/145636327-3126d32b-4172-41ae-8362-566733399541.png)
 
+![image](https://user-images.githubusercontent.com/78562461/145636461-89f685b9-45e0-4201-bb7f-392dde07e822.png)
+![image](https://user-images.githubusercontent.com/78562461/145636541-936c008c-c978-4a0d-bf74-85f8b0e37a88.png)
 
 
