@@ -1649,6 +1649,7 @@ ip route 10.3.0.4 255.255.255.255 10.1.1.1
 	
 After pasting above commands make sure that complete BGP configuration should look as follow:
 
+```
 CSR#sh running-config | sec bgp
 router bgp 65002
  bgp router-id 192.168.1.1
@@ -1673,10 +1674,11 @@ router bgp 65002
   neighbor 10.3.0.4 activate
  exit-address-family
 CSR#
+```
 
+	• Login to CSR1 and type `conf t` and hit enter to get into configuration mode then past the following commands:
 
-	• Login to CSR1 and type 'conf t' and hit enter to get into configuration mode then past the following commands:
-
+```
 router bgp 65005
  no neighbor 192.168.1.3 remote-as 65002
  no network 192.168.1.4 mask 255.255.255.255
@@ -1686,7 +1688,8 @@ router bgp 65005
   neighbor 10.1.1.4 activate
 ! Adding static route to BGP peer to avoid recursive routing failure for CSR BGP endpoints learned via BGP
 ip route 10.1.1.4 255.255.255.255 10.3.0.1
-
+```
+	
 After pasting above commands make sure that complete BGP configuration should look as follow:
 
 ![image](https://user-images.githubusercontent.com/78562461/145625059-1133ffda-acea-40de-baf3-afa55f270751.png)
