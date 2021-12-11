@@ -1824,7 +1824,38 @@ To make it easier to verify connectivity and routing let divide the network in t
 
 - All VMs (in both Sides) have routes to all prefixes in the network which is great!
 	
-- If VMs in **Side1** needs to talk to VMs in **Side2** then it will go through ***CSR*** NVA (10.1.1.4) which reside in **Side1**, and if VMs in **Side2** need to talk to VMs in **Side1** then it go to ***CSR1*** NVA (10.3.0.4) which reside in ***Side2***, this is similar to scenario 4 (except for traffic between 10.1.0.0/16 and 10.3.0.0/16 as this traffic will go over the global peering). But, if VMs in **side1** try to reach VM in Side2 or the opposit way we will get a loop in this scenario. **Why?**
+- If VMs in **Side1** needs to talk to VMs in **Side2** then it will go through ***CSR*** NVA (10.1.1.4) which reside in **Side1**, and if VMs in **Side2** need to talk to VMs in **Side1** then it go to ***CSR1*** NVA (10.3.0.4) which reside in ***Side2***, this is similar to scenario 4 (except for traffic between 10.1.0.0/16 and 10.3.0.0/16 as this traffic will go over the global peering). But, if VMs in **side1** try to reach VM in Side2 or the other direction we will get a loop in this scenario. **Why?**
 	
+💡 ARS doesn't differentiate between the VMs subnet and the NVA subnet, meaning if ARS learn a route it will programs it for all the VMs in the virtual network including the NVA subnet itself. ***How is that a problem in this scenario?*** let say VM1 tries to talk to VM2, VM1 next hop will be NVA1, NVA1 has next hop to VM2 through NVA1 as well so that will cause a loop. The same applies if VM2 tries to reach VM1, traffic will be looping at NVA2.
 	
+**For example:** if ***Spoke-VM*** (10.4.10.4) tries to ping ***Spoke1-VM*** (10.5.10.4), traffic will go to ***CSR*** NVA 10.1.1.4 according to the route table of ***Spoke-VM***, traffic then will reach NVA ***CSR*** which has ***CSR1*** NVA (10.3.0.4) as next hop to reach ***Spoke1-VM*** in its internal
+route table as shown in [1], but as the Azure route table for the ***CSR*** NIC [2] has next hop to destination as the NVA ***CSR*** itself, the traffic to ***Spoke1-VM*** will be sent back to the ***CSR*** NVA (10.1.1.4) and so we will get a loop, and we will get the same results
+in the other direction (from ***Spoke1-VM*** to ***Spoke-VM***).
 
+[1]
+	
+```
+CSR#sh ip bgp
+BGP table version is 18, local router ID is 192.168.1.1
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+              r RIB-failure, S Stale, m multipath, b backup-path, f RT-Filter,
+              x best-external, a additional-path, c RIB-compressed,
+              t secondary path, L long-lived-stale,
+Origin codes: i - IGP, e - EGP, ? - incomplete
+RPKI validation codes: V valid, I invalid, N Not found
+
+     Network          Next Hop            Metric LocPrf Weight Path
+ *>   10.0.0.0/16      10.0.0.4                               0 65001 i
+ *>   10.1.0.0/16      10.1.2.4                               0 65515 i
+ *                     10.1.2.5                               0 65515 i
+ *>   10.1.10.0/24     10.1.1.1                 0         32768 i
+ *>   10.2.0.0/16      10.1.2.4                               0 65515 65004 65003 i
+ *                     10.1.2.5                               0 65515 65004 65003 i
+ *>   10.3.0.0/16      10.3.0.4                               0 65005 65515 i
+ *>   10.4.0.0/16      10.1.2.4                               0 65515 i
+ *                     10.1.2.5                               0 65515 i
+ *>   10.5.0.0/16      10.3.0.4                               0 65005 65515 i
+	
+```
+
+vvv
