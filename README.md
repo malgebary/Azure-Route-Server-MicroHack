@@ -10,7 +10,7 @@
 
 [Notes](#Notes)
 
-[Scenario 1: Connect on-premises network to CSR NVA in Azure and use ARS to inject on-premises routes into the Vnet](#Scenario-1-Connect-on-premise-network-with-CSR-NVA-in-Azure-Vnet-and-use-ARS-to-inject-on-premise-routes-into-the-Vnet)
+[Scenario 1: Connect on-premises network to Azure and use ARS for route distribution](#Scenario-1-Connect-on-premises-network-to-Azure-and-use-ARS-for-route-distribution)
 
 [Scenario 2: Route exchange between Virtual Network Gateway and CSR NVA](#Scenario-2-Route-exchange-between-Virtual-Network-Gateway-and-CSR-NVA)
 
@@ -73,9 +73,9 @@ At the end of the Lab the deployment will look like this:
 	
 - The scenarios in this lab are built sequntially, so that scenario 2 depends on scenario 1 configuration and so on. 	
 
-## Scenario 1: Connect on-premises network to CSR NVA in Azure Vnet and use ARS to inject on-premises routes into the Vnet
+## Scenario 1: Connect on-premises network to Azure and use ARS for route distribution
 
-In this scenario you will connect on-premises network (***On-Prem-Vnet***) with NVA in the ***HUB-SCUS*** Vnet, and we will observe the routing table before and after deploying ARS to the ***HUB-SCUS*** Vnet.
+In this scenario you will connect on-premises network (***On-Prem-Vnet***) to Azure through NVA (CSR 1000V) in the ***HUB-SCUS*** Vnet, and we will observe the routing table before and after deploying ARS in the ***HUB-SCUS*** Vnet.
 
 This scenario consist of:
 
@@ -103,7 +103,7 @@ After deploying above, the diagram will look like following:
     az network vnet subnet create --address-prefix 10.0.0.0/27 --name GatewaySubnet --resource-group Route-Server --vnet-name On-Prem-Vnet
 
 
-**On-Prem-VM (Linux):**
+**On-Prem-VM:**
 
     az network public-ip create --name On-PremVMIP --resource-group Route-Server --location northcentralus --allocation-method Dynamic
     
