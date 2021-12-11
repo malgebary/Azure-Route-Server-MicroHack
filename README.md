@@ -1608,7 +1608,7 @@ As there is no use for route tables, this design is suitable for large deploymen
 
 ## Scenario 5: Route server multi-region design with Vnet peering
 
-In previous scenario we were able to achieve full network connectivity by using ARS and building BGP over IPsec tunnel between the NVAs, however, previous design is useful in scenarios where encryption is needed and bandwidth restrictions are tolerable as IPsec tunnel or Vxlan tunnel has throughput limitation. In this scenario we will establish BGP over Vnet peering between the NVAs instead of using IPsec tunnel.
+In previous scenario we were able to achieve full network connectivity by using ARS and building BGP over IPsec tunnel between the NVAs, however, previous design is useful in scenarios where encryption is needed and bandwidth restrictions are tolerable as IPsec tunnel or VxLAN tunnel has throughput limitation. In this scenario we will establish BGP over Vnet peering between the NVAs instead of using IPsec tunnel.
 	
 [Vnet peering](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-peering-overview) provides a low latency and high bandwidth connection that is useful in scenarios such as cross-region data replication and database failover scenarios. 
 
@@ -1829,7 +1829,7 @@ To make it easier to verify connectivity and routing let divide the network in t
 💡 ARS doesn't differentiate between the VMs subnet and the NVA subnet, meaning if ARS learn a route it will programs it for all the VMs in the virtual network including the NVA subnet itself. ***How is that a problem in this scenario?*** let say VM1 tries to talk to VM2, VM1 next hop will be NVA1, NVA1 has next hop to VM2 through NVA1 as well, so get a loop at NVA1. The same applies if VM2 tries to reach VM1, traffic will be looping at NVA2.
 	
 **For example:** if ***Spoke-VM*** (10.4.10.4) tries to ping ***Spoke1-VM*** (10.5.10.4), traffic will go to ***CSR*** NVA 10.1.1.4 according to the route table of ***Spoke-VM***, traffic then will reach NVA ***CSR*** which is pointing to ***CSR1*** NVA (10.3.0.4) as next hop to reach ***Spoke1-VM*** in its internal
-route table as shown in [1], but as the Azure route table for the ***CSR*** NIC [2] has next hop to destination as the NVA ***CSR*** itself, the traffic to ***Spoke1-VM*** will be sent back to the ***CSR*** NVA (10.1.1.4) and we will get a loop. We will have similar results in the other direction (from ***Spoke1-VM*** to ***Spoke-VM***) in which traffic will get looped at ***CSR1***.
+route table as shown in [1], but the Azure route table for the ***CSR*** NIC has next hop to destination as the NVA ***CSR*** itself as shown in [2], the traffic to ***Spoke1-VM*** will be sent back to the ***CSR*** NVA (10.1.1.4) and we will get a loop as shown in [3]. We will have similar behavior in the other direction (from ***Spoke1-VM*** to ***Spoke-VM***) in which traffic will get looped at ***CSR1***.
 
 [1]
 	
@@ -1857,4 +1857,93 @@ RPKI validation codes: V valid, I invalid, N Not found
 	
 ```
 
+[2]
+	
+![image](https://user-images.githubusercontent.com/78562461/145663303-520d0cf5-7df1-4fe3-9f33-5b6ba0d83507.png)
 
+[3]
+
+Traceroute and ping from ***Spoke-VM*** to ***Spoke1-VM*** (Side1 to Side2):
+
+```
+azureuser@Spoke-VM:~$ ping 10.5.10.4
+PING 10.5.10.4 (10.5.10.4) 56(84) bytes of data.
+From 10.1.1.4 icmp_seq=1 Time to live exceeded
+From 10.1.1.4 icmp_seq=2 Time to live exceeded
+From 10.1.1.4 icmp_seq=3 Time to live exceeded
+From 10.1.1.4 icmp_seq=4 Time to live exceeded
+^C
+--- 10.5.10.4 ping statistics ---
+4 packets transmitted, 0 received, +4 errors, 100% packet loss, time 3004ms
+
+azureuser@Spoke-VM:~$ traceroute 10.5.10.4
+traceroute to 10.5.10.4 (10.5.10.4), 30 hops max, 60 byte packets
+ 1  10.1.1.4 (10.1.1.4)  38.937 ms  38.917 ms  38.904 ms
+ 2  10.1.1.4 (10.1.1.4)  40.475 ms  40.462 ms  40.449 ms
+ 3  10.1.1.4 (10.1.1.4)  43.270 ms  43.257 ms  43.245 ms
+ 4  10.1.1.4 (10.1.1.4)  45.023 ms  45.011 ms  44.998 ms
+```
+
+Traceroute from ***Spoke1-VM*** to Spoke-VM (Side2 to Side1)
+
+```
+azureuser@Spoke1-VM:~$ traceroute 10.4.10.4
+traceroute to 10.4.10.4 (10.4.10.4), 30 hops max, 60 byte packets
+ 1  10.3.0.4 (10.3.0.4)  5.622 ms  5.598 ms  5.585 ms
+ 2  10.3.0.4 (10.3.0.4)  5.573 ms  6.566 ms  6.555 ms
+ 3  10.3.0.4 (10.3.0.4)  8.674 ms  8.662 ms  8.651 ms
+ 4  10.3.0.4 (10.3.0.4)  10.306 ms  10.294 ms  10.281 ms
+ 5  10.3.0.4 (10.3.0.4)  12.658 ms  12.645 ms  12.633 ms
+ 6  10.3.0.4 (10.3.0.4)  14.189 ms  15.422 ms  15.405 ms
+ 7  10.3.0.4 (10.3.0.4)  17.601 ms  17.588 ms  18.202 ms
+ 8  10.3.0.4 (10.3.0.4)  20.144 ms  20.132 ms  20.120 ms
+```
+
+	
+☝️ Why we didn't get this looping issue in scenario 4 even though the NVAs NICs route table are the same as in this scenario?
+
+The reason is that in scenario 4 we used Ipsec encapsulation to prevent packets reaches Azure networking. In this case Azure network will have no visibility about the source and destination, it will only see packets going between the NVAs and so the Azure route table will not affect this traffic and the traffic will take the right address of next hop (which will be the far end NVA) as shown in the NVA internal route table.
+
+
+**Now how to fix this looping issue in this scenario?**
+
+We will need to create UDRs and assign them to the NVAs subnet to override the Azure route table. We will create two UDRs: **To-Side2** and **To-Side1**:
+. UDR **To-Side2** will be associated to the ***CSR*** subnet (***internal***), we will point the traffic destined to Side2 prefix 10.5.0.0/16 to go through ***CSR1*** NVA (instead of ***CSR*** NVA).
+. UDR **To-Side1** will be associated to the ***CSR1*** subnet (***CSR1-Subnet***), we will point the traffic destined to Side1 prefixes (10.4.0.0/16, 10.2.0.0/16,10.0.0.0/16) to go through ***CSR*** (instead of ***CSR1***).  
+
+- Create UDR **To-Side2** and associate it to the ***CSR*** ***Internal*** subnet:
+
+```
+az network route-table create --name To-Side2 --resource-group Route-Server --location southcentralus
+az network route-table route create --name Spok1-Vnet --resource-group Route-Server --route-table-name To-Side2 --address-prefix 10.5.0.0/16 --next-hop-type VirtualAppliance --next-hop-ip-address 10.3.0.4
+az network vnet subnet update --name internal --vnet-name HUB-SCUS --resource-group Route-Server --route-table To-Side2
+```
+	
+- Create UDR **To-Side1** and associate it to the ***CSR1-Subnet***:
+
+```
+az network route-table create --name To-Side1 --resource-group Route-Server --location eastus
+az network route-table route create --name Spok-Vnet --resource-group Route-Server --route-table-name To-Side1 --address-prefix 10.4.0.0/16 --next-hop-type VirtualAppliance --next-hop-ip-address 10.1.1.4
+az network route-table route create --name On-prem1-Vnet --resource-group Route-Server --route-table-name To-Side1 --address-prefix 10.2.0.0/16 --next-hop-type VirtualAppliance --next-hop-ip-address 10.1.1.4
+az network route-table route create --name On-Prem-Vnet --resource-group Route-Server --route-table-name To-Side1 --address-prefix 10.0.0.0/16 --next-hop-type VirtualAppliance --next-hop-ip-address 10.1.1.4
+az network vnet subnet update --name CSR1-subnet --vnet-name HUB-EastUS --resource-group Route-Server --route-table To-Side1
+	
+```
+
+
+😊 After applying the UDR, ***Spoke-VM*** can reach ***Spoke1-VM*** and vice versa:
+
+azureuser@Spoke-VM:~$ traceroute 10.5.10.4
+traceroute to 10.5.10.4 (10.5.10.4), 30 hops max, 60 byte packets
+ 1  10.1.1.4 (10.1.1.4)  37.028 ms  37.052 ms  36.993 ms
+ 2  10.3.0.4 (10.3.0.4)  73.435 ms  73.422 ms  73.407 ms
+ 3  10.5.10.4 (10.5.10.4)  75.200 ms  75.187 ms *
+
+
+azureuser@Spoke1-VM:~$ traceroute 10.4.10.4
+traceroute to 10.4.10.4 (10.4.10.4), 30 hops max, 60 byte packets
+ 1  10.3.0.4 (10.3.0.4)  2.023 ms  1.975 ms  1.963 ms
+ 2  10.1.1.4 (10.1.1.4)  36.549 ms  36.535 ms  38.433 ms
+ 3  * 10.4.10.4 (10.4.10.4)  73.625 ms *
+
+❗ The use of Vnet peering in this design eliminate the throughput limitation associated with IPsec tunnel that is used in scenario 4, however, unlike scenario 4, this design is not scalable if more Vnets are introduced as the UDR is statically configured.
