@@ -1608,7 +1608,7 @@ As there is no use for route tables, this design is suitable for large deploymen
 
 ## Scenario 5: Route server multi-region design with Vnet peering
 
-In previous scenario we were able to achieve full network connectivity by using ARS and building BGP over IPsec tunnel between the NVAs, however, previous design is useful in scenarios where encryption is needed and bandwidth restrictions are tolerable as IPsec tunnel or VxLAN tunnel has throughput limitation. In this scenario we will establish BGP over Vnet peering between the NVAs instead of using IPsec tunnel.
+In previous scenario we were able to achieve full network connectivity by using ARS and building BGP over IPsec tunnel between the NVAs. However, previous design is useful in scenarios where encryption is needed and bandwidth restrictions are tolerable, as IPsec tunnel or VxLAN tunnel has throughput limitation. In this scenario we will establish BGP over Vnet peering between the NVAs instead of using IPsec tunnel.
 	
 [Vnet peering](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-peering-overview) provides a low latency and high bandwidth connection that is useful in scenarios such as cross-region data replication and database failover scenarios. 
 
