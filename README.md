@@ -945,11 +945,11 @@ For this scenario we will add the following component:
 
 2. ***Spoke-VM*** to check on routing and test connectivity.
 
-After deploying above the Network will look as below:
+After deploying above the network will look as below:
 
-![image](https://user-images.githubusercontent.com/78562461/145701
+![image](https://user-images.githubusercontent.com/78562461/145701573-297fd361-0135-4b23-9add-91aa2900d57b.png)
 
-
+	
 ## Task1: Create the Spoke-Vnet and the Spoke-VM
 
 - Create the Spoke-Vnet:
@@ -1116,7 +1116,7 @@ rtt min/avg/max/mdev = 58.128/58.656/59.337/0.542 ms
 
 ## Scenario 4: Route server multi-region design with IPsec 
 
-In this scenario we will have another route server in EastUS region, and will configure BGP over IPsec tunnel between the NVAs. We will explore how routes will be exchanged between the NVAs and route servers and its effect on overall routing between Vnets and on-premises networks.
+In this scenario we will have another route server in EastUS region, and will configure BGP over IPsec tunnel between the NVAs. We will explore how routes will be exchanged between the NVAs and route servers and its effect on overall routing between Spoke Vnets and on-premises networks.
 	
 For this scenario we will add the following components:
 
@@ -1126,12 +1126,13 @@ For this scenario we will add the following components:
 	
 After deploying above component the complete diagram will be as below:
 	
-![image](https://user-images.githubusercontent.com/78562461/144764716-ba02e71c-a1a6-4fff-8bf6-c4fcead85362.png)
+![image](https://user-images.githubusercontent.com/78562461/145701591-595fdcdd-e2c3-4999-a006-22c912b66dec.png)
+
 
 
 ## Task1: Create the HUB-EastUS Vnet, HUB1-VM, CSR1 NVA, and ARS Routeserver1
 	
-- Create ***HUB-EastU*** Vnet
+- ***HUB-EastU*** Vnet
 
 ```
 az network vnet create --resource-group Route-Server --name HUB-Eastus --location eastus --address-prefixes 10.3.0.0/16 --subnet-name Subnet-1 --subnet-prefix 10.3.10.0/24 
@@ -1139,7 +1140,7 @@ az network vnet subnet create --address-prefix 10.3.0.0/24 --name CSR1-Subnet --
 az network vnet subnet create --address-prefix 10.3.1.0/27 --name RouteServerSubnet --resource-group Route-Server --vnet-name HUB-EastUS
 ```
 
-- Create ***HUB1-VM***:
+- ***HUB1-VM***:
 
 ```	
 az network public-ip create --name HUB1-VMPIP --resource-group Route-Server --location eastus --allocation-method Dynamic
@@ -1147,14 +1148,14 @@ az network nic create --resource-group Route-Server -n HUB1-VMNIC --location eas
 az vm create -n HUB1-VM -g Route-Server --image UbuntuLTS --admin-username azureuser --admin-password Routeserver123 --size Standard_B1ls --location eastus --nics HUB1-VMNIC
 ```
 
-- Create ***CSR1*** NVA in ***HUB-EastUs*** Vnet:
+- ***CSR1*** NVA in ***HUB-EastUs*** Vnet:
 
 ```
 az network public-ip create --name CSR1NVA-PublicIP --resource-group Route-Server --idle-timeout 30 --allocation-method Static --location eastus
 az network nic create --name CSR1Interface -g Route-Server --subnet CSR1-Subnet --vnet HUB-EastUS --public-ip-address CSR1NVA-PublicIP --ip-forwarding true --private-ip-address 10.3.0.4 --location eastus
 az vm create --resource-group Route-Server --location eastus --name CSR1 --size Standard_DS3_v2 --nics CSR1Interface --image cisco:cisco-csr-1000v:17_2_1-byol:17.2.120200508 --admin-username azureuser --admin-password Routeserver123
 ```
-- Create ARS ***RouteServer1***
+- ARS ***RouteServer1***
 
 ```
 az network public-ip create --name RouteServer1IP --resource-group Route-Server --version IPv4 --sku Standard --location eastus
@@ -1164,13 +1165,13 @@ az network routeserver create --name RouteServer1 --resource-group Route-Server 
 
 ## Task2: Create Spoke1-Vnet and Spoke1-VM
 	
-- Create ***Spoke1-Vnet***
+- ***Spoke1-Vnet***
 
 ```	
 az network vnet create --resource-group Route-Server --name Spoke1-Vnet  --location eastus --address-prefixes 10.5.0.0/16 --subnet-name Subnet-1 --subnet-prefix 10.5.10.0/24 
 ```
 
-- Create ***Spok1-VM***
+- ***Spok1-VM***
 
 ```	
 az network public-ip create --name Spoke1-VMPIP --resource-group Route-Server --location eastus --allocation-method Dynamic
@@ -1434,7 +1435,7 @@ Tunnel12 is up, line protocol is up
   Internet address is 192.168.1.3/32
 ```
 	
-- Verify BGP has established over ipsec tunnel
+- Verify BGP has established over IPsec tunnel
 
 ![image](https://user-images.githubusercontent.com/78562461/144916765-475b0172-8cbc-4a43-97c4-efce1884249f.png)
 
@@ -1507,7 +1508,7 @@ az network routeserver peering list-learned-routes --name CSR --routeserver Rout
 sh bgp neighbors 10.1.2.4 advertised-routes
 ```
 	
-- We see the ***CSR*** is advertising 9 prefixes to the ARS ***Routeserver*** including 10.3.0.0/16 and 10.5.0.0/16, however we only see 10.0.0.0/16, 10.1.10.0/24, 192.168.1.3, and 192.168.1.4 prefixes been learned by the ARS ***Routeserver***, this is because the BGP loop prevention mechanism in which the router would drop BGP advertisement when it sees its own AS number in the AS path attribute, and as ARS has ASN of 65515 then any prefix has this ASN in its AS Path attribute will be dropped, and that is the case with 10.3.0.0/16 and 10.5.0.0/16, these two prefixes are originally advertised by the ARS ***Routeserver1*** (65515) then advertised to the ***CSR1*** (65505) then to the ***CSR***, and so when it gets to ARS ***Routeserver*** it will be dropped as ***Routeserver*** will see it is own ASN in the AS Path of this prefix.
+- We see the ***CSR*** is advertising 9 prefixes to the ARS ***Routeserver*** including 10.3.0.0/16 and 10.5.0.0/16, however we only see 10.0.0.0/16, 10.1.10.0/24, 192.168.1.3, and 192.168.1.4 prefixes been learned by the ARS ***Routeserver***, this is due to the BGP loop prevention mechanism, in which the router would drop BGP advertisement when it sees its own AS number in the AS path attribute, and as ARS has ASN of 65515 then any prefix has this ASN in its AS Path attribute will be dropped, and that is the case with 10.3.0.0/16 and 10.5.0.0/16, these two prefixes are originally advertised by the ARS ***Routeserver1*** (65515) then advertised to the ***CSR1*** (65505) then to the ***CSR***, and so when it gets to ARS ***Routeserver*** it will be dropped as ***Routeserver*** will see it is own ASN in the AS Path of this prefix.
 
 ![image](https://user-images.githubusercontent.com/78562461/144934937-9e47e3e7-13cc-43b8-a1b6-e65502c01ab4.png)
 
@@ -1523,7 +1524,7 @@ sh bgp neighbors 10.1.2.4 advertised-routes
 az network routeserver peering list-learned-routes --name CSR1 --routeserver RouteServer1 --resource-group Route-Server
 ```
 	
-🕵️‍♀️ Only 4 prefixes have been learned by the ***Routeserver1*** as they don't have ASN 65515 in the AS Path atribute, 10.0.0.0/16 ***On-Prem-Vnet*** prefix, 192.168.1.4 BGP peer ip of ***CSR1*** NVA, 192.168.1.3 tunnel12 (VTI interface) in ***CSR*** NVA, and 10.1.10.4/24 ***Subnet-1*** prefix in ***HUB-SCUS*** Vnet.
+🕵️‍♀️ Only 4 prefixes have been learned by the ***Routeserver1*** as they don't have ASN 65515 in the AS Path atribute which are: 10.0.0.0/16 ***On-Prem-Vnet*** prefix, 192.168.1.4 BGP peer ip of ***CSR1*** NVA, 192.168.1.3 tunnel12 (VTI interface) in ***CSR*** NVA, and 10.1.10.4/24 ***Subnet-1*** prefix in ***HUB-SCUS*** Vnet.
 	
 ![image](https://user-images.githubusercontent.com/78562461/144961794-81cbf655-db44-40d7-bddf-7ea8251acc44.png)
 
