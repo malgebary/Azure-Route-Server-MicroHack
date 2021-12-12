@@ -596,7 +596,7 @@ Default                Active   0.0.0.0/0         Internet
 
 ```
 
-👉 The completed route exchange through BGP between ***On-Prem-VM*** and ***HUB-VM*** is shown below:
+👉 The complete route exchange through BGP between on-premises and Azure is shown below:
 
 ![image](https://user-images.githubusercontent.com/78562461/140006065-29623306-8c94-4483-90c0-38cb5e6e5f0a.png)
 
@@ -618,13 +618,16 @@ rtt min/avg/max/mdev = 35.894/36.614/36.929/0.418 ms
 
 ## Scenario 2: Route exchange between Virtual Network Gateway and CSR NVA 
 
-In this scenario we will add the following components:
+In this scenario we will connect another on-premises network in Central US to Vnet ***HUB-SCUS*** using Azure Virtua Network Gateway, we will explore if ARS can help in exchanging routes between the Virtual Network Gateway and the CSR, and if so, how will that affect the overall connectivity between endpoints in this scenario.
+
+	
+In this scenario we will add the following component:
 
 1- ***HUB-VNG*** which represent virtual network gateway in the ***HUB-SCUS*** Vnet in active-active mode.
 
-2- New Vnet called ***On-Prem1-Vnet*** represent another on-premise network, this Vnet will have ***On-Prem1-VNG*** which represent On-premise gateway, and will also have testing VM ***On-Prem1-VM***.
+2- New Vnet called ***On-Prem1-Vnet*** represent on-premises network in Central US, this Vnet will have ***On-Prem1-VNG*** which represent on-premises gateway, and will also have testing VM ***On-Prem1-VM***.
 
-3- Ipsec site to site single tunnel between the two virtual network gateways (***Hub-VNG*** and ***On-Prem1-VNG***) using BGP as the dynamic routing protocol.
+3- IPsec site to site single tunnel between the two virtual network gateways (***Hub-VNG*** and ***On-Prem1-VNG***) using BGP as the dynamic routing protocol.
 
 Once above get deployed the complete diagram will look as below:
 
