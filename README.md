@@ -1116,7 +1116,7 @@ rtt min/avg/max/mdev = 58.128/58.656/59.337/0.542 ms
 
 ## Scenario 4: Route server multi-region design with IPsec 
 
-In this scenario we will have another route server in EastUS region, and will configure BGP over IPsec tunnel between the NVAs. We will explore how routes will be exchanged between the NVAs and route servers and its effect on overall routing between Spoke Vnets and on-premises networks.
+In this scenario we will have another route server in EastUS region, and will configure BGP over IPsec tunnel between the NVAs. We will explore how routes will be exchanged between the NVAs and route servers and its effect on overall routing between Vnets and on-premises networks.
 	
 For this scenario we will add the following components:
 
