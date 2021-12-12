@@ -947,8 +947,8 @@ For this scenario we will add the following component:
 
 After deploying above the Network will look as below:
 
+![image](https://user-images.githubusercontent.com/78562461/145701363-10deba95-e0b6-45d1-a13f-bd7d6e961c8b.png)
 
-![image](https://user-images.githubusercontent.com/78562461/143797709-23374e81-1eef-41d5-a769-722f8462847e.png)
 
 
 ## Task1: Create the Spoke-Vnet and the Spoke-VM
