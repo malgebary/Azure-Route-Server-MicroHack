@@ -596,7 +596,7 @@ Default                Active   0.0.0.0/0         Internet
 
 ```
 
-👉 The completed BGP path between ***On-Prem-VM*** and ***HUB-VM*** is shown below:
+👉 The completed route exchange through BGP between ***On-Prem-VM*** and ***HUB-VM*** is shown below:
 
 ![image](https://user-images.githubusercontent.com/78562461/140006065-29623306-8c94-4483-90c0-38cb5e6e5f0a.png)
 
