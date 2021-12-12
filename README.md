@@ -362,6 +362,7 @@ PING 10.0.10.4 (10.0.10.4) 56(84) bytes of data.
 
 ![image](https://user-images.githubusercontent.com/78562461/139952513-ba1af818-1b2c-4801-a9f9-343f0e8452ce.png)
 
+```	
 $ az network nic show-effective-route-table -g Route-Server -n OnPrem-VMNIC --output table
 Source                 State    Address Prefix    Next Hop Type          Next Hop IP
 ---------------------  -------  ----------------  ---------------------  -------------
@@ -371,7 +372,7 @@ VirtualNetworkGateway  Active   192.168.1.1/32    VirtualNetworkGateway  20.X.X.
 VirtualNetworkGateway  Active   192.168.2.1/32    VirtualNetworkGateway  20.X.X.X
 VirtualNetworkGateway  Active   10.1.10.0/24      VirtualNetworkGateway  20.X.X.X
 Default                Active   0.0.0.0/0         Internet
-
+```
 
 💡 Traditionally, to have ***HUB-VM*** able to ping ***On-Prem-VM*** we need to create a UDR and associate it to ***subnet-1*** (where ***HUB-VM*** reside) to direct traffic destined to 10.0.10.0/24 (or in general to remote Vnet 10.0.0.0/16) to the ***CSR*** internal interface 10.1.1.4. But with ARS there is no need for UDR, ARS will inject the route it learns from ***CSR*** (NVA) automatically. We will see this next.
 
