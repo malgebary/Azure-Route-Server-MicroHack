@@ -364,7 +364,7 @@ PING 10.0.10.4 (10.0.10.4) 56(84) bytes of data.
 
 
 
-💡 Traditionally, to have ***HUB-VM*** able to ping ***On-Prem-VM*** we would need to add UDR and associate it to ***subnet-1*** (where ***HUB-VM*** reside) to direct traffic destined to 10.0.10.0/24 (or in general to remote Vnet 10.0.0.0/16) to the ***CSR*** internal interface 10.1.1.4. But with ARS there is no need for UDR, ARS will inject the route it learns from ***CSR*** (NVA) automatically. We will see this next.
+💡 Traditionally, to have ***HUB-VM*** able to ping ***On-Prem-VM*** we need to create a UDR and associate it to ***subnet-1*** (where ***HUB-VM*** reside) to direct traffic destined to 10.0.10.0/24 (or in general to remote Vnet 10.0.0.0/16) to the ***CSR*** internal interface 10.1.1.4. But with ARS there is no need for UDR, ARS will inject the route it learns from ***CSR*** (NVA) automatically. We will see this next.
 
 
 
@@ -449,9 +449,9 @@ On the ***CSR*** do `show ip bgp summary`: we see BGP is up with 10.1.2.4 and 10
 
       az network routeserver peering list-learned-routes --name CSR --routeserver RouteServer --resource-group Route-Server
 	
-**·** We see all routes have Next Hop 10.1.1.4 which is the ***CSR*** internal (LAN) interface that the ARS ***RouteServer*** is peering with. Pay attention to the asPath, the one with 65002-65001 shows this route actually been advertised from (***On-Prem-VNG***) which is here 10.0.0.0/16, while route 10.1.10.0/24 with asPath 65002 is a route been advertised by the ***CSR*** itself .
+**·** We see all routes have next hop as 10.1.1.4 which is the ***CSR*** internal (LAN) interface that the ARS ***RouteServer*** is peering with. Pay attention to the asPath, the one with 65002-65001 shows this route has been advertised from (***On-Prem-VNG***) which is here 10.0.0.0/16, while route 10.1.10.0/24 with asPath 65002 is a route been advertised by the ***CSR*** itself .
 
-Note that the ARS has two instances IN_0 (10.1.2.4) and IN_1 (10.1.2.5) and we will see same routes learned the same way for the other instance.
+Note that the ARS has two instances for high availabilty, IN_0 (10.1.2.4) and IN_1 (10.1.2.5), and so both will have same learned routes.
 
 ![image](https://user-images.githubusercontent.com/78562461/140400321-3c67f0e0-17a3-4ce3-979e-e600260371b5.png)
 
@@ -508,13 +508,13 @@ RPKI validation codes: V valid, I invalid, N Not found
  ```
 	
 - Route with Next Hop 10.1.2.4 and 10.1.2.5 with ASN 65515 is a route learned from ARS, and here it shows the ***CSR*** learned the ***HUB-SCUS*** Vnet prefix (10.1.0.0/16)
-  from ARS and it will send it then through eBGP over Ipsec to ***On-prem-VNG***, this way ***On-Prem-Vnet*** will learn the ***HUB-SCUS*** prefix. Note that the route
+  from ARS, and it will send it then through eBGP over IPsec to ***On-prem-VNG***, this way ***On-Prem-Vnet*** will learn the ***HUB-SCUS*** prefix. Note that the route
   10.1.0.0/16 is learned from the two Route Server instances 10.1.2.4 and 10.1.2.5, but the path through 10.1.2.4 has been chosen as best (**>**) based on [BGP Best Path Selection Algorithm](https://www.cisco.com/c/en/us/support/docs/ip/border-gateway-protocol-bgp/13753-25.html).
 
 	
 - Route with Next Hop 10.0.0.4 with ASN 65001 is a route received from ***On-Prem-VNG***, which is here 10.0.0.0/16, ***CSR*** will send it to ARS (as we saw above in ARS learned routes) through eBGP, and ARS in turn will advertise it to the ***HUB-SCUS*** Vnet (will see that later).
 	
-- Route with Next Hop 10.1.1.1 and no ASN, but with weight 32768 is a route advertised by the ***CSR*** itself, here it is the route 10.1.10.0/24 which refer to ***HUB-VM*** subnet (***Subnet-1***).
+- Route with Next Hop 10.1.1.1 and no ASN but with weight 32768 is a route advertised by the ***CSR*** itself, here it is the route 10.1.10.0/24 which refer to ***HUB-VM*** subnet (***Subnet-1***).
 
 
 :point_right: Check on effective routes on the ***CSR*** NICs, either by using the portal or by the following Cli commands:
@@ -526,7 +526,7 @@ RPKI validation codes: V valid, I invalid, N Not found
    
 * Both NICs return the below table, notice that 10.0.0.0/16 (***On-Prem-Vnet***) got injected automatically (by ARS) to the ***CSR*** NICs' route table with Next Hop Ip as the ***CSR*** LAN Interface and Next Hop Type as Virtual Network Gateway, so traffic will be directed to the ***CSR*** directly. This shows that **ARS is not in the data path**, it only exchange BGP routes with NVA and program the routes it learns in the NICs' route table.
 
-:exclamation: Note that we don't see 10.1.10.0/24 route got programmed in the NICs' route table which is ***Subnet-1*** prefix that belong to the Vnet (***HUB-SCUS***), even though it is learned by the ARS from the ***CSR*** as shown in ARS learned routes above, why?
+:exclamation: We don't see 10.1.10.0/24 route got programmed in the NICs' route table which is ***Subnet-1*** prefix that belong to the Vnet (***HUB-SCUS***), even though it is learned by the ARS from the ***CSR*** as shown in ARS learned routes above, why?
 
 :bulb: Because ARS will not program any route equal to the Vnet/Subnets prefix into the Vnet. In other words, ARS will not program routes it knows through system routes and so we cannot override the Vnet system routes using ARS.
 
@@ -574,17 +574,17 @@ We see ***On-Prem-Vnet*** prefix 10.0.0.0/16 is injected automatically by ARS in
 	
 - Use Azure Cli  `az network nic show-effective-route-table -g Route-Server -n OnPrem-VMNIC --output table`
 	
-- We see that all routes learned by the ***On-Prem-VNG*** gateway is injected to the NIC with the next hop as the public ip of the ***On-prem-VNG*** gateway (20.88.39.59 in this example).
+- We see that all routes learned by the ***On-Prem-VNG*** gateway is injected to the NIC with the next hop as the public ip of the ***On-prem-VNG*** gateway (20.X.X.X) in this example).
 
 ```
 $ az network nic show-effective-route-table -g Route-Server -n OnPrem-VMNIC --output table
 Source                 State    Address Prefix    Next Hop Type          Next Hop IP
 ---------------------  -------  ----------------  ---------------------  -------------
 Default                Active   10.0.0.0/16       VnetLocal
-VirtualNetworkGateway  Active   10.1.0.0/16       VirtualNetworkGateway  20.88.39.59
-VirtualNetworkGateway  Active   192.168.1.1/32    VirtualNetworkGateway  20.88.39.59
-VirtualNetworkGateway  Active   192.168.2.1/32    VirtualNetworkGateway  20.88.39.59
-VirtualNetworkGateway  Active   10.1.10.0/24      VirtualNetworkGateway  20.88.39.59
+VirtualNetworkGateway  Active   10.1.0.0/16       VirtualNetworkGateway  20.X.X.X
+VirtualNetworkGateway  Active   192.168.1.1/32    VirtualNetworkGateway  20.X.X.X
+VirtualNetworkGateway  Active   192.168.2.1/32    VirtualNetworkGateway  20.X.X.X
+VirtualNetworkGateway  Active   10.1.10.0/24      VirtualNetworkGateway  20.X.X.X
 Default                Active   0.0.0.0/0         Internet
 
 ```
