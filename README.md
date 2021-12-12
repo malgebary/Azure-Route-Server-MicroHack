@@ -360,14 +360,12 @@ PING 10.0.10.4 (10.0.10.4) 56(84) bytes of data.
 
 👉 **For  5,** Check route table of ***On-Prem-VM***  `az network nic show-effective-route-table -g Route-Server -n OnPrem-VMNIC  --output table`, we see ***On-Prem-VM*** is learning the route to the ***HUB-VM*** (as it is advertised through BGP from ***CSR*** over the tunnel), however, the ping will still fail as the ***HUB-VM*** doesn't have route back to 10.0.10.4 as shown above.
 
-![image](https://user-images.githubusercontent.com/78562461/139952513-ba1af818-1b2c-4801-a9f9-343f0e8452ce.png)
 
 ```	
 $ az network nic show-effective-route-table -g Route-Server -n OnPrem-VMNIC --output table
 Source                 State    Address Prefix    Next Hop Type          Next Hop IP
 ---------------------  -------  ----------------  ---------------------  -------------
 Default                Active   10.0.0.0/16       VnetLocal
-VirtualNetworkGateway  Active   10.1.0.0/16       VirtualNetworkGateway  20.X.X.X
 VirtualNetworkGateway  Active   192.168.1.1/32    VirtualNetworkGateway  20.X.X.X
 VirtualNetworkGateway  Active   192.168.2.1/32    VirtualNetworkGateway  20.X.X.X
 VirtualNetworkGateway  Active   10.1.10.0/24      VirtualNetworkGateway  20.X.X.X
