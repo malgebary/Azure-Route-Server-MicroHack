@@ -449,7 +449,7 @@ On the ***CSR*** do `show ip bgp summary`: we see BGP is up with 10.1.2.4 and 10
 
 🙂 **Let inspect routing table on ***RouteServer***, ***CSR***, ***On-prem-VNG*** gateway, ***On-Prem-VM***, and ***HUB-VM*** after deploying the ARS to answer above question:**
 	 
-### 1. RouteServer Routes:
+**1. RouteServer Routes:**
 
    :exclamation: Note: we can check on Learned/advertised routes per peer at a time, which is here we have one peer (***CSR***):
    
@@ -495,7 +495,7 @@ $ az network routeserver peering list-advertised-routes --name CSR --routeserver
   ```
 
 
-### 2. CSR (NVA) Routes:
+**2. CSR (NVA) Routes:**
 	
 :point_right: Check on BGP routes by typing `show ip bgp` in enable mode:
 ```
@@ -534,7 +534,7 @@ RPKI validation codes: V valid, I invalid, N Not found
    
 * Both NICs return the below table, notice that 10.0.0.0/16 (***On-Prem-Vnet***) got injected automatically (by ARS) to the ***CSR*** NICs' route table with Next Hop Ip as the ***CSR*** LAN Interface and Next Hop Type as Virtual Network Gateway, so traffic will be directed to the ***CSR*** directly. This shows that **ARS is not in the data path**, it only exchange BGP routes with NVA and program the routes it learns in the NICs' route table.
 
-:exclamation: We don't see 10.1.10.0/24 route got programmed in the NICs' route table which is ***Subnet-1*** prefix that belong to the Vnet (***HUB-SCUS***), even though it is learned by the ARS from the ***CSR*** as shown in ARS learned routes above, why?
+:exclamation: We don't see 10.1.10.0/24 route programmed in the NICs' route table which is ***Subnet-1*** prefix that belong to the Vnet (***HUB-SCUS***), even though it is learned by the ARS from the ***CSR*** as shown in ARS learned routes above, why?
 
 :bulb: Because ARS will not program any route equal to the Vnet/Subnets prefix into the Vnet. In other words, ARS will not program routes it knows through system routes and so we cannot override the Vnet system routes using ARS.
 
@@ -553,13 +553,13 @@ Default                Active   100.64.0.0/10     None
 .
 ```
 
-### 3. Effective Route on HUB-VM: 
+**3. Effective Route on HUB-VM:** 
 
  Use Azure Cli:
  
      az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --output table
 	
-We see ***On-Prem-Vnet*** prefix 10.0.0.0/16 is injected automatically by ARS in the NIC route table with Next Hop Ip as the ip of the LAN interface of the ***CSR***:
+We see ***On-Prem-Vnet*** prefix 10.0.0.0/16 is programed by ARS in the NIC route table with Next Hop Ip as the ip of the LAN interface of the ***CSR***:
 
 ![image](https://user-images.githubusercontent.com/78562461/140001830-19a3fba2-aabf-4806-979b-70a5996bcd49.png)
 
@@ -576,13 +576,12 @@ We see ***On-Prem-Vnet*** prefix 10.0.0.0/16 is injected automatically by ARS in
 ![image](https://user-images.githubusercontent.com/78562461/140002829-5b74b986-8ea9-41ff-82d6-dffcb796705d.png)
 
 
-
-
-### 4. Effective Route on On-Prem-VM:
+	
+**4. Effective Route on On-Prem-VM:**
 	
 - Use Azure Cli  `az network nic show-effective-route-table -g Route-Server -n OnPrem-VMNIC --output table`
 	
-- We see that all routes learned by the ***On-Prem-VNG*** gateway is injected to the NIC with the next hop as the public ip of the ***On-prem-VNG*** gateway (20.X.X.X) in this example).
+- We see that all routes learned by the ***On-Prem-VNG*** gateway is injected to the NIC with the next hop as the public ip of the ***On-prem-VNG*** gateway (20.X.X.X in this example).
 
 ```
 $ az network nic show-effective-route-table -g Route-Server -n OnPrem-VMNIC --output table
