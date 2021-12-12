@@ -451,7 +451,7 @@ On the ***CSR*** do `show ip bgp summary`: we see BGP is up with 10.1.2.4 and 10
 	 
 **1. RouteServer Routes:**
 
-   :exclamation: Note: we can check on Learned/advertised routes per peer at a time, which is here we have one peer (***CSR***):
+   :exclamation: Note: we can check on learned/advertised routes per peer at a time, which is here we have one peer (***CSR***):
    
    :point_right: Learned Routes from ***CSR***:
 
@@ -459,7 +459,7 @@ On the ***CSR*** do `show ip bgp summary`: we see BGP is up with 10.1.2.4 and 10
 	
 **·** We see all routes have next hop as 10.1.1.4 which is the ***CSR*** internal (LAN) interface that the ARS ***RouteServer*** is peering with. Pay attention to the asPath, the one with 65002-65001 shows this route has been advertised from (***On-Prem-VNG***) which is here 10.0.0.0/16, while route 10.1.10.0/24 with asPath 65002 is a route been advertised by the ***CSR*** itself .
 
-Note that the ARS has two instances for high availabilty, IN_0 (10.1.2.4) and IN_1 (10.1.2.5), and so both will have same learned routes.
+❗ ARS has two instances for high availabilty, IN_0 (10.1.2.4) and IN_1 (10.1.2.5), and both will have same learned/advertised routes.
 
 ![image](https://user-images.githubusercontent.com/78562461/140400321-3c67f0e0-17a3-4ce3-979e-e600260371b5.png)
 
@@ -515,26 +515,26 @@ RPKI validation codes: V valid, I invalid, N Not found
  *>   10.1.10.0/24     10.1.1.1                 0         32768 i
  ```
 	
-- Route with Next Hop 10.1.2.4 and 10.1.2.5 with ASN 65515 is a route learned from ARS, and here it shows the ***CSR*** learned the ***HUB-SCUS*** Vnet prefix (10.1.0.0/16)
+- Route with Next Hop 10.1.2.4 and 10.1.2.5 and ASN 65515 is a route learned from ARS, and here it shows the ***CSR*** learned the ***HUB-SCUS*** Vnet prefix (10.1.0.0/16)
   from ARS, and it will send it then through eBGP over IPsec to ***On-prem-VNG***, this way ***On-Prem-Vnet*** will learn the ***HUB-SCUS*** prefix. Note that the route
   10.1.0.0/16 is learned from the two Route Server instances 10.1.2.4 and 10.1.2.5, but the path through 10.1.2.4 has been chosen as best (**>**) based on [BGP Best Path Selection Algorithm](https://www.cisco.com/c/en/us/support/docs/ip/border-gateway-protocol-bgp/13753-25.html).
 
 	
-- Route with Next Hop 10.0.0.4 with ASN 65001 is a route received from ***On-Prem-VNG***, which is here 10.0.0.0/16, ***CSR*** will send it to ARS (as we saw above in ARS learned routes) through eBGP, and ARS in turn will advertise it to the ***HUB-SCUS*** Vnet (will see that later).
+- Route with Next Hop 10.0.0.4 and ASN 65001 is a route received from ***On-Prem-VNG***, which is here 10.0.0.0/16, ***CSR*** will send it to ARS (as we saw above in ARS learned routes) through eBGP, and ARS in turn will advertise it to the ***HUB-SCUS*** Vnet (will see that later).
 	
 - Route with Next Hop 10.1.1.1 and no ASN but with weight 32768 is a route advertised by the ***CSR*** itself, here it is the route 10.1.10.0/24 which refer to ***HUB-VM*** subnet (***Subnet-1***).
 
 
-:point_right: Check on effective routes on the ***CSR*** NICs, either by using the portal or by the following Cli commands:
+:point_right: Check on effective routes on the ***CSR*** NICs, either by using the portal or by using the following Cli commands:
   
    ```
  az network nic show-effective-route-table -g Route-Server -n CSROutsideInterface --output table
  az network nic show-effective-route-table -g Route-Server -n CSRInsideInterface --output table
    ```
    
-* Both NICs return the below table, notice that 10.0.0.0/16 (***On-Prem-Vnet***) got injected automatically (by ARS) to the ***CSR*** NICs' route table with Next Hop Ip as the ***CSR*** LAN Interface and Next Hop Type as Virtual Network Gateway, so traffic will be directed to the ***CSR*** directly. This shows that **ARS is not in the data path**, it only exchange BGP routes with NVA and program the routes it learns in the NICs' route table.
+* Both NICs return the below table. Note that 10.0.0.0/16 (***On-Prem-Vnet***) got injected by ARS in the ***CSR*** NICs' route table, with Next Hop IP as the ***CSR*** LAN Interface and Next Hop Type as Virtual Network Gateway, so traffic will be directed to the ***CSR*** directly. This shows that **ARS is not in the data path**, it only exchange BGP routes with NVA and program the routes it learns in the NICs' route table.
 
-:exclamation: We don't see 10.1.10.0/24 route programmed in the NICs' route table which is ***Subnet-1*** prefix that belong to the Vnet (***HUB-SCUS***), even though it is learned by the ARS from the ***CSR*** as shown in ARS learned routes above, why?
+:exclamation: We don't see 10.1.10.0/24 route programmed in the NICs' route table, this route is ***Subnet-1*** prefix that belong to the Vnet (***HUB-SCUS***), even though it is learned by the ARS from the ***CSR*** as shown in ARS learned routes above, why?
 
 :bulb: Because ARS will not program any route equal to the Vnet/Subnets prefix into the Vnet. In other words, ARS will not program routes it knows through system routes and so we cannot override the Vnet system routes using ARS.
 
@@ -559,7 +559,7 @@ Default                Active   100.64.0.0/10     None
  
      az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --output table
 	
-We see ***On-Prem-Vnet*** prefix 10.0.0.0/16 is programed by ARS in the NIC route table with Next Hop Ip as the ip of the LAN interface of the ***CSR***:
+We see ***On-Prem-Vnet*** prefix 10.0.0.0/16 is programed by ARS in the NIC route table with Next Hop IP as the ip of the LAN interface of the ***CSR***:
 
 ![image](https://user-images.githubusercontent.com/78562461/140001830-19a3fba2-aabf-4806-979b-70a5996bcd49.png)
 
@@ -581,7 +581,7 @@ We see ***On-Prem-Vnet*** prefix 10.0.0.0/16 is programed by ARS in the NIC rout
 	
 - Use Azure Cli  `az network nic show-effective-route-table -g Route-Server -n OnPrem-VMNIC --output table`
 	
-- We see that all routes learned by the ***On-Prem-VNG*** gateway is injected to the NIC with the next hop as the public ip of the ***On-prem-VNG*** gateway (20.X.X.X in this example).
+- All routes learned by the ***On-Prem-VNG*** gateway are injected in the NIC with the Next Hop as the public ip of the ***On-prem-VNG*** gateway (20.X.X.X in this example).
 
 ```
 $ az network nic show-effective-route-table -g Route-Server -n OnPrem-VMNIC --output table
@@ -600,7 +600,7 @@ Default                Active   0.0.0.0/0         Internet
 
 ![image](https://user-images.githubusercontent.com/78562461/140006065-29623306-8c94-4483-90c0-38cb5e6e5f0a.png)
 
-🙂 From above we can see that ***HUB-VM*** has route now to ***On-Prem-VM*** after introducing ARS with no UDR needed, and so ping will work:
+🙂 From above we can see that ***HUB-VM*** has route now to ***On-Prem-VM*** after introducing ARS with no UDR needed, so ping will work:
 
 
 ```
@@ -618,12 +618,12 @@ rtt min/avg/max/mdev = 35.894/36.614/36.929/0.418 ms
 
 ## Scenario 2: Route exchange between Virtual Network Gateway and CSR NVA 
 
-In this scenario we will connect another on-premises network in Central US to Vnet ***HUB-SCUS*** using Azure Virtual Network Gateway, we will explore how ARS can help in exchanging routes between the Virtual Network Gateway and the CSR, and how will that affect the overall connectivity between endpoints in this scenario.
+In this scenario we will connect another on-premises network in Central US to Vnet ***HUB-SCUS*** using Azure Virtual Network Gateway. You will explore how ARS can help in exchanging routes between the Virtual Network Gateway and the CSR, and how will that affect the overall connectivity between endpoints in this scenario.
 
 	
 In this scenario we will add the following component:
 
-1- ***HUB-VNG*** which represent virtual network gateway in the ***HUB-SCUS*** Vnet in active-active mode.
+1- ***HUB-VNG*** represent virtual network gateway in the ***HUB-SCUS*** Vnet in active-active mode.
 
 2- New Vnet called ***On-Prem1-Vnet*** represent on-premises network in Central US, this Vnet will have ***On-Prem1-VNG*** which represent on-premises gateway, and will also have testing VM ***On-Prem1-VM***.
 
@@ -745,10 +745,10 @@ You can check one connection from either side to get the status of the tunnel. N
 	
 Navigate to Network interfaces -> OnPrem-VMNIC -> Help -> Effective routes:
 	
-- 10.1.0.0/16 is the ***HUB-SCUS*** Vnet prefix.
-- 1.2.0.0/16 is the ***On-Prem1-Vnet*** prefix (where the destination ***On-Prem1-VM*** is located) so we can see the source VM learned the route to destination VM.
-- 192.168.1.1 is the ***CSR*** BGP peer ip and 192.168.2.1 is ***CSR*** Tunnel11 ip.
-- 10.1.10.0/24 is the ***Subnet-1*** in ***HUB-SCUS*** Vnet (this prefix is advertised by the ***CSR*** using Network command).
+- 10.1.0.0/16 is ***HUB-SCUS*** Vnet prefix.
+- 1.2.0.0/16 is ***On-Prem1-Vnet*** prefix (where the destination ***On-Prem1-VM*** is located), so we can see the source VM learned the route to destination VM.
+- 192.168.1.1 is ***CSR*** BGP peer ip and 192.168.2.1 is ***CSR*** Tunnel11 ip.
+- 10.1.10.0/24 is ***Subnet-1*** in ***HUB-SCUS*** Vnet (this prefix is advertised by the ***CSR*** using Network command).
 
 All those routes are showing **Next Hop Type** as **Virtual Network Gateway** which refer to the ***On-Prem-VNG*** gateway. Next we will check how this gateway learned those routes.
 
@@ -769,11 +769,11 @@ Navigate to Virtual Network Gateways -> On-Prem-VNG -> Monitoring -> BGP Peers:
 	
 👉 **Learned Routes:** 
 	
-- 10.2.0.0/16 is the Vnet prefix of the destination VM ***On-Prem1-VM***. Check the AS Path to see how the gateway learned the route to the destination: ASN 65003 refer to the destination gateway (***On-Prem1-VNG***) which originally advertised this route to the ***HUB-VNG*** gateway that has the ASN 65004 through eBGP peering, this route then advertised to the Route Server as **Branch-to-Branch** feature is enabled, so we see the ASN 65515 in the AS Path, then Route Server advertised it to the ***CSR*** which has the ASN 65002 and ***CSR*** advertise it down to the ***On-Prem-VNG***.
+- 10.2.0.0/16 is the Vnet prefix of the destination VM ***On-Prem1-VM***. Check the AS Path to see how the gateway learned the route to the destination: ASN 65003 refer to the destination gateway (***On-Prem1-VNG***) which originally advertised this route to the ***HUB-VNG*** gateway that has the ASN 65004 through eBGP peering, this route then advertised to the Route Server as **Branch-to-Branch** feature is enabled, so we see the ASN 65515 in the AS Path, then Route Server advertised it to the ***CSR*** which has the ASN 65002, and ***CSR*** advertise it down to the ***On-Prem-VNG***.
 	
-- 10.1.0.0/16 is the ***HUB-SCUS*** Vnet prefix that is learned by the gateway from ***CSR*** ASN 65002 through eBGP peering over Ipsec, note that this prefix originally advertised by the Route Server through eBGP peering to the ***CSR***, and that why we see 65002-65515 in the AS path.
+- 10.1.0.0/16 is ***HUB-SCUS*** Vnet prefix that is learned by the gateway from ***CSR*** ASN 65002 through eBGP peering over IPsec, note that this prefix originally advertised by the Route Server through eBGP peering to the ***CSR***, and that why we see 65002-65515 in the AS path.
 	
-- 10.1.10.0/24 is the ***Subnet-1*** prefix in the ***HUB-SCUS*** Vnet, note that the AS Path shows only 65002 which is the ASN of ***CSR*** as this route is advertised using Network command in the ***CSR*** BGP configuration (CSR BGP configuration is shown below).
+- 10.1.10.0/24 is ***Subnet-1*** prefix in the ***HUB-SCUS*** Vnet, the AS Path shows only 65002 which is the ASN of ***CSR*** as this route is advertised using Network command in the ***CSR*** BGP configuration (CSR BGP configuration is shown below).
 
 ![image](https://user-images.githubusercontent.com/78562461/140190954-78a8f084-9e5d-43e4-942c-eb8e9e229bc2.png)
 
@@ -832,9 +832,9 @@ Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State
 
 `show ip bgp`
 	
-- 10.0.0.0/16 is the ***On-Prem-Vnet*** prefix (source prefix), it shows it got learned from ***On-prem-VNG*** (ASN 65001).
+- 10.0.0.0/16 is learned from ***On-prem-VNG*** (ASN 65001).
 	
-- 10.2.0.0/16 is the ***On-prem1-Vnet*** (destination prefix) that is learned from the Route Server instances 10.1.2.4 and 10.1.2.5. Check the AS Path to track how the ***CSR*** learned this prefix: ASN 65003 refer to ***On-prem1-VNG*** that own the prefix 10.2.0.0/16, then 65004 is the ASN of ***HUB-VNG*** gateway which learned this prefix from ***On-Prem1-VNG***, Route Server with ASN 65515 then learned this prefix and advertised it to ***CSR*** which in turn advertised it down to ***On-Prem-VNG*** as we saw earlier.  
+- 10.2.0.0/16 is the destination prefix that is learned from the Route Server instances 10.1.2.4 and 10.1.2.5. Check the AS Path to track how the ***CSR*** learned this prefix: ASN 65003 refer to ***On-prem1-VNG*** that own this prefix 10.2.0.0/16, then 65004 is the ASN of ***HUB-VNG*** gateway which learned this prefix from ***On-Prem1-VNG***, Route Server with ASN 65515 then learned this prefix and advertised it to ***CSR*** which in turn advertised it down to ***On-Prem-VNG*** as we saw earlier.  
 	
 - 10.1.0.0/16 is the ***HUB-SCUS*** prefix where the ***CSR*** reside, this prefix learned from the Route Server instances, the ***CSR*** will advertise it then to the ***On-Prem-VNG*** gateway.
 
@@ -850,7 +850,7 @@ Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State
 	
 - Both ARS instances IN_0 (10.1.2.5) and IN_1 ( 10.1.2.4) learn the same routes from the ***CSR***. 
 	
-- 10.1.10.0/24 is the ***Subnet-1*** prefix that the ***CSR*** (ASN 65002) advertised manually using Network command, 10.0.0.0/16 is ***On-Prem-Vnet*** prefix that is learned from ***On-Prem-VNG*** (ASN 65001) and the ***CSR*** (65002) advertised it then to ARS. 
+- 10.1.10.0/24 is ***Subnet-1*** prefix that the ***CSR*** (ASN 65002) advertised manually, 10.0.0.0/16 is ***On-Prem-Vnet*** prefix that is learned from ***On-Prem-VNG*** (ASN 65001) and the ***CSR*** (65002) advertised it then to ARS. 
 
 
 ![image](https://user-images.githubusercontent.com/78562461/140200447-531d93bd-8197-413a-820f-18e1578ea3e0.png)
@@ -861,7 +861,7 @@ Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State
 	
 - Although ARS will not inject the ***HUB-Vnet*** prefix 10.1.0.0/16 into the NICs effective routes, it will advertise this prefix to the ***CSR*** over eBGP, so ***CSR*** can advertise it down to ***On-Prem-VNG*** gateway.
 	
-- 10.2.0.0/16 is the ***On-Prem1-Vnet*** prefix that is learned from ***HUB-VNG (65004)*** which has learned it from ***On-Prem1-VNG*** (65003).
+- 10.2.0.0/16 is learned from ***HUB-VNG (65004)*** which has learned it from ***On-Prem1-VNG*** (65003).
 
 ![image](https://user-images.githubusercontent.com/78562461/140241249-f9037e9e-1847-4a4b-be9b-ea283981498f.png)
 
@@ -899,11 +899,11 @@ Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State
 
 👉 **Learned Routes:** 
 	
-- As we know now, 10.0.0.0/16 is the ***On-Prem-Vnet*** prefix which is where the source VM (***On-Prem-VM***) is located. Let us look at the AS Path which explain how this route has been learned: ASN 65001 refer to ***On-Prem-VNG*** gateway, it then advertised it through eBGP peering over IPsec to ***CSR*** NVA which has ASN 65002, and as the ***CSR*** has eBGP peering with ARS, it advertised this route to the ARS which has the ASN 65515. ARS has the **Branch-to-Branch** feature enabled, so it advertised this route to the ***HUB-VNG*** gateway which has the ASN 65004, and the ***HUB-VNG*** advertised it down to the ***On-Prem1-VNG*** gateway through the eBGP peering over IPsec.
+- 10.0.0.0/16 is ***On-Prem-Vnet*** prefix which is where the source VM (***On-Prem-VM***) is located. Let us look at the AS Path which explain how this route has been learned: ASN 65001 refer to ***On-Prem-VNG*** gateway, it then advertised it through eBGP peering over IPsec to ***CSR*** NVA which has ASN 65002, and as the ***CSR*** has eBGP peering with ARS, it advertised this route to the ARS which has the ASN 65515. ARS has the **Branch-to-Branch** feature enabled, so it advertised this route to the ***HUB-VNG*** gateway which has the ASN 65004, and the ***HUB-VNG*** advertised it down to the ***On-Prem1-VNG*** gateway through the eBGP peering over IPsec.
 	
-💡 Without **Branch-to-Branch** feature enabled on ARS, 10.0.0.0/16 will not be advertised from ***CSR*** to the ***HUB-VNG***, and 10.2.0.0/16 will not be advertised from ***HUB-VNG*** gateway to the ***CSR***. This feature is also used to enable route transit between VPN gateway and express route gateway which was not possible before
+💡 Without **Branch-to-Branch** feature enabled on ARS, 10.0.0.0/16 will not be advertised from ***CSR*** to the ***HUB-VNG***, and 10.2.0.0/16 will not be advertised from ***HUB-VNG*** gateway to the ***CSR***. This feature is also used to enable route transit between VPN gateway and express route gateway which was not possible before.
 	
-- 10.1.0.0/16 is the ***HUB-SCUS*** Vnet prefix that is learned through eBGP peering over IPsec from peer 10.1.5.4 (***HUB-VNG*** gateway BGP peer ip).
+- 10.1.0.0/16 is learned through eBGP peering over IPsec from peer 10.1.5.4.
 
 ![image](https://user-images.githubusercontent.com/78562461/140253979-64f592e6-2b66-4001-8376-1c2091dee1e0.png)
 
