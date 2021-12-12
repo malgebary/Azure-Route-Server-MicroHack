@@ -364,7 +364,7 @@ PING 10.0.10.4 (10.0.10.4) 56(84) bytes of data.
 
 
 
-💡 Traditionally, to have ***HUB-VM*** able to ping ***On-Prem-VM*** we would need to add UDR on the ***subnet-1*** (where ***HUB-VM*** reside) to direct traffic destined to 10.0.10.0/24 (or in general to remote Vnet 10.0.0.0/16) to the ***CSR*** internal interface 10.1.1.4. But with ARS there is no need for UDR, ARS will inject the route it learns from ***CSR*** (NVA) automatically. We will see this next 👇.
+💡 Traditionally, to have ***HUB-VM*** able to ping ***On-Prem-VM*** we would need to add UDR and associate it to ***subnet-1*** (where ***HUB-VM*** reside) to direct traffic destined to 10.0.10.0/24 (or in general to remote Vnet 10.0.0.0/16) to the ***CSR*** internal interface 10.1.1.4. But with ARS there is no need for UDR, ARS will inject the route it learns from ***CSR*** (NVA) automatically. We will see this next.
 
 
 
@@ -526,9 +526,9 @@ RPKI validation codes: V valid, I invalid, N Not found
    
 * Both NICs return the below table, notice that 10.0.0.0/16 (***On-Prem-Vnet***) got injected automatically (by ARS) to the ***CSR*** NICs' route table with Next Hop Ip as the ***CSR*** LAN Interface and Next Hop Type as Virtual Network Gateway, so traffic will be directed to the ***CSR*** directly. This shows that **ARS is not in the data path**, it only exchange BGP routes with NVA and program the routes it learns in the NICs' route table.
 
-:exclamation: Note that we don't see 10.1.10.0/24 route got programmed in the Nics' route table which is ***Subnet-1*** prefix that belong to the Vnet (***HUB-SCUS***), even though it is learned by the ARS from the ***CSR*** as shown in ARS learned routes above, why?
+:exclamation: Note that we don't see 10.1.10.0/24 route got programmed in the NICs' route table which is ***Subnet-1*** prefix that belong to the Vnet (***HUB-SCUS***), even though it is learned by the ARS from the ***CSR*** as shown in ARS learned routes above, why?
 
-:bulb: Because ARS will not program any route equal or more specific to the Vnet/Subnets prefix into the Vnet, meaning that we cannot override the system Vnet routes.
+:bulb: Because ARS will not program any route equal to the Vnet/Subnets prefix into the Vnet. In other words, ARS will not program routes it knows through system routes and so we cannot override the Vnet system routes using ARS.
 
 ```
 
