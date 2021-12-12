@@ -75,12 +75,12 @@ At the end of the Lab the deployment will look like this:
 
 ## Scenario 1: Connect on-premises network to Azure and use ARS for route distribution
 
-In this scenario you will connect on-premises network (***On-Prem-Vnet***) to Azure through NVA (CSR 1000V) in the ***HUB-SCUS*** Vnet, and we will observe the routing table before and after deploying ARS in the ***HUB-SCUS*** Vnet.
+In this scenario you will connect on-premises network (***On-Prem-Vnet***) to Azure through NVA (CSR 1000V) deployed in ***HUB-SCUS*** Vnet, and we will observe the routing table before and after deploying ARS in the ***HUB-SCUS*** Vnet.
 
 This scenario consist of:
 
 1. ***On-prem-Vnet*** to simulate on-premises network, Vpn Gateway ***On-Prem-VNG*** to simulate gateway on the on-premises, and an VM ***On-Prem-VM***.
-2. ***HUB-SCUS*** Vnet represent Azure side that has NVA (***CSR***), VM (***HUB-VM***), and ARS (***RouteServer***).
+2. ***HUB-SCUS*** Vnet represent Azure side that has: NVA (***CSR***), VM (***HUB-VM***), and ARS (***RouteServer***).
 3. NVA ***CSR*** with two Nics, one external (CSROutsideInterface) and one Internal (CSRInsideInterface), external interface will be used as the source for Ipsec tunnel, while internal interface will be used as BGP peer with ARS.
 4. We will use loopback interface on the ***CSR*** (Loopback11) as update source for the BGP peering with ***On-Prem-VNG***, while will use the internal interface of the ***CSR*** as the BGP peer with ARS instances.
 	
@@ -138,7 +138,7 @@ After deploying above, the diagram will look like following:
 
 **CSR NVA:**
 
-Here we are going to use Cisco CSR1000v as NVA. This NVA will have two Nics, one external (CSROutsideInterface) and one Internal (CSRInsideInterface). Before deploying the ***CSR***, you need to accept license agreement:
+Here we are going to use Cisco CSR1000v as NVA. This NVA will have two NICs, one external (CSROutsideInterface) and one Internal (CSRInsideInterface). Before deploying the ***CSR***, you need to accept license agreement:
 
     az vm image terms accept --urn cisco:cisco-csr-1000v:17_2_1-byol:latest 
 
