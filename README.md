@@ -26,7 +26,7 @@ Azure Route Server ([ARS](https://docs.microsoft.com/en-us/azure/route-server/ov
 
 ARS enables the NVA to advertise routes to other endpoints in the local/peered Vnet; as well as endpoints defined in on-premises networks connected via ExpressRoute or VPN.  Additionally, ARS allow transit between Virtual Network Gateways (ExpressRoute and VPN) which was not possible before. 
 
-In this MicroHack we will explore some routing scenarios that shows how ARS can be utilized to simplify configuration, management, and deployment of the NVAs in the Virtual Network and how would that simplify routing between Azure and on-premises.
+In this MicroHack we will explore some routing scenarios that shows how ARS can be utilized to simplify configuration, management, and deployment of the NVAs in the Virtual Network and how would that simplify routing within Azure and between Azure and on-premises.
 
 # Objectives:
 
@@ -41,7 +41,7 @@ Azure Cli will be used to build this Lab. the complete lab consist of:
 
   1. Six Vnets: ***On-Prem-Vnet***, ***On-prem1-Vnet***, ***HUB-SCUS***, ***HUB-EastUS***, ***Spoke-Vnet***, and ***Spoke1-Vnet***.
   2. Three Virtual Network Gateways:***On-Prem-VNG***, ***On-Prem1-VNG***, and ***HUB-VNG***.
-  3. Eight VMs: ***On-Prem-VM***, ***On-Prem1-VM***, ***HUB-VM***, ***HUb1-VM***, ***CSR***, ***CSR1***, ***Spoke-VM***, and ***Spoke1-VM***.
+  3. Eight VMs: ***On-Prem-VM***, ***On-Prem1-VM***, ***HUB-VM***, ***HUB1-VM***, ***CSR***, ***CSR1***, ***Spoke-VM***, and ***Spoke1-VM***.
   4. Two Azure Route Severs: ***RouteServer***, and ***RouteServer1***.
 	
   
@@ -130,7 +130,7 @@ After deploying above, the diagram will look like following:
     az network vnet subnet create --address-prefix 10.1.2.0/27 --name RouteServerSubnet --resource-group Route-Server --vnet-name HUB-SCUS
     az network vnet subnet create --address-prefix 10.1.5.0/27 --name GatewaySubnet --resource-group Route-Server --vnet-name HUB-SCUS
 
-**HUB-VM (Linux):**
+**HUB-VM:**
 
     az network public-ip create --name HUB-VMPIP --resource-group Route-Server --location southcentralus --allocation-method Dynamic
     az network nic create --resource-group Route-Server -n HUB-VMNIC --location southcentralus --subnet Subnet-1 --private-ip-address 10.1.10.4 --vnet-name HUB-SCUS --public-ip-address  HUB-VMPIP
@@ -148,7 +148,7 @@ Here we are going to use Cisco CSR1000v as NVA. This NVA will have two Nics, one
     az vm create --resource-group Route-Server --location southcentralus --name CSR --size Standard_DS3_v2 --nics CSROutsideInterface CSRInsideInterface --image cisco:cisco-csr-1000v:17_2_1-byol:17.2.120200508 --admin-username azureuser --admin-password Routeserver123
 
 
-- **Build Ipsec tunnel between ***CSR*** NVA (respresent Azure side) and ***On-Prem-VNG*** gateway (represent On-Premises side):**
+- **Build IPsec tunnel between ***CSR*** NVA (respresent Azure side) and ***On-Prem-VNG*** gateway (represent On-Premises side):**
 
 **Note:** for simplicity, we will build one tunnel between ***CSR*** and ***On-Prem-VNG***
 
@@ -246,7 +246,7 @@ Type `exit` multiple times until the prompt shows `csr#` or simply hit `CTRL Z` 
 
   **Create LNG:**
 
-    az network local-gateway create --gateway-ip-address CSRPublicIP --name CSR --resource-group Route-Server --asn 65002 --bgp-peering-address 192.168.1.1 --local-address-prefixes 192.168.1.1/32 192.168.2.1/32
+   az network local-gateway create --gateway-ip-address CSRPublicIP --name CSR --resource-group Route-Server --asn 65002 --bgp-peering-address 192.168.1.1 --local-address-prefixes 192.168.1.1/32 192.168.2.1/32
 
   **Create the connection:**
 
