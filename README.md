@@ -768,7 +768,7 @@ Navigate to Virtual Network Gateways -> On-Prem-VNG -> Monitoring -> BGP Peers:
 	
 👉 **Learned Routes:** 
 	
-- 10.2.0.0/16 is the Vnet prefix of the destination VM ***On-Prem1-VM***. Check the AS Path to see how the gateway learned the route to the destination: ASN 65003 refer to the destination gateway (***On-Prem1-VNG***) which originally advertised this route to the ***HUB-VNG*** gateway that has the ASN 65004 through eBGP peering, this route then advertised to the Route Server as **Branch-to-Branch** feature is enabled, so we see the ASN 65515 in the AS Path, then Route Server advertised it to the ***CSR*** which has the ASN 65002, and ***CSR*** advertise it down to the ***On-Prem-VNG***.
+- 10.2.0.0/16 is the Vnet prefix of the destination VM ***On-Prem1-VM***. Check the AS Path to know how the gateway learned the route to the destination: ASN 65003 refer to the destination gateway (***On-Prem1-VNG***) which originally advertised this route to the ***HUB-VNG*** gateway that has the ASN 65004 through eBGP peering, this route then advertised to the Route Server as **Branch-to-Branch** feature is enabled, so we see the ASN 65515 in the AS Path, then Route Server advertised it to the ***CSR*** which has the ASN 65002, and ***CSR*** advertise it down to the ***On-Prem-VNG***.
 	
 - 10.1.0.0/16 is ***HUB-SCUS*** Vnet prefix that is learned by the gateway from ***CSR*** ASN 65002 through eBGP peering over IPsec, note that this prefix originally advertised by the Route Server through eBGP peering to the ***CSR***, and that why we see 65002-65515 in the AS path.
 	
@@ -911,7 +911,7 @@ Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State
 
  Navigate to Network interfaces -> On-Prem1-VMNIC -> Help -> Effective routes:
 	
-- We can see that the VM learned 10.0.0.0/16 (where the source VM located), 10.1.5.4 is the BGP peer ip of the ***HUB-VNG*** gateway, 10.1.0.0/16 is the ***HUB-SCUS*** Vnet prefix, all those routes have been learned with Next Hop Type **virtual network gateway** which refer to ***On-Prem1-VNG*** gateway.
+- We can see that the VM learned 10.0.0.0/16 where the source VM located, 10.1.5.4 is the BGP peer ip of the ***HUB-VNG*** gateway, 10.1.0.0/16 is the ***HUB-SCUS*** Vnet prefix, all those routes have been learned with Next Hop Type **virtual network gateway** which refer to ***On-Prem1-VNG*** gateway.
 
 ![image](https://user-images.githubusercontent.com/78562461/140254549-9f4af6a0-daca-47c6-bf8b-e997f3d0a82f.png)
 
