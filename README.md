@@ -746,14 +746,13 @@ You can check one connection from either side to get the status of the tunnel. N
 Navigate to Network interfaces -> OnPrem-VMNIC -> Help -> Effective routes:
 	
 - 10.1.0.0/16 is ***HUB-SCUS*** Vnet prefix.
-- 1.2.0.0/16 is ***On-Prem1-Vnet*** prefix (where the destination ***On-Prem1-VM*** is located), so we can see the source VM learned the route to destination VM.
+- 10.2.0.0/16 is ***On-Prem1-Vnet*** prefix where the destination ***On-Prem1-VM*** is located, this shows that source VM has learned the route to destination VM.
 - 192.168.1.1 is ***CSR*** BGP peer ip and 192.168.2.1 is ***CSR*** Tunnel11 ip.
 - 10.1.10.0/24 is ***Subnet-1*** in ***HUB-SCUS*** Vnet (this prefix is advertised by the ***CSR*** using Network command).
 
 All those routes are showing **Next Hop Type** as **Virtual Network Gateway** which refer to the ***On-Prem-VNG*** gateway. Next we will check how this gateway learned those routes.
 
-![image](https://user-images.githubusercontent.com/78562461/141040848-b54ed58c-c9c8-4558-b440-0ab89fb90bd1.png)
-
+![image](https://user-images.githubusercontent.com/78562461/145740608-0375f10e-482f-47ff-80df-6cc752a6df0f.png)
 
 2. **Check ***On-Prem-VNG*** gateway:** 
 	
