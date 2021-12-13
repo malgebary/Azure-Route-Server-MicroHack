@@ -1115,7 +1115,7 @@ rtt min/avg/max/mdev = 58.128/58.656/59.337/0.542 ms
 
 ## Scenario 4: Route server multi-region design with IPsec 
 
-In this scenario we will have another route server in EastUS region, and will configure BGP over IPsec tunnel between the NVAs. We will explore how routes will be exchanged between the NVAs and route servers and its effect on overall routing between Vnets and on-premises networks.
+In this scenario, we will have another route server in EastUS region, and will configure BGP over IPsec tunnel between the NVAs. We will explore how routes can be exchanged between the NVAs and route servers and how that affects routing within the Vnets and with on-premises networks.
 	
 For this scenario we will add the following components:
 
@@ -1177,7 +1177,7 @@ az network public-ip create --name Spoke1-VMPIP --resource-group Route-Server --
 az network nic create --resource-group Route-Server -n Spoke1-VMNIC --location eastus --subnet Subnet-1 --private-ip-address 10.5.10.4 --vnet-name Spoke1-Vnet --public-ip-address Spoke1-VMPIP
 az vm create -n Spoke1-VM -g Route-Server --image UbuntuLTS --admin-username azureuser --admin-password Routeserver123 --size Standard_B1ls --location eastus --nics Spoke1-VMNIC
 ```
-## Task3: Create the peering between HUB-EastUS Vnet and Spok1-Vnet Vnet
+## Task3: Create the peering between HUB-EastUS and Spok1-Vnet Vnets
 
 ```	
 vNet1Id=$(az network vnet show --resource-group Route-Server --name Spoke1-Vnet --query id --out tsv)
@@ -1250,7 +1250,7 @@ router bgp 65005
 	10.3.1.5        4        65515      19      29       10    0    0 00:13:05        2
 	
 
-   ## Task5: Build Ipsec tunnel between CSR NVA in HUB-SCUS Vnet and CSR1 NVA in HUB-EastUS Vnet
+   ## Task5: Build IPsec tunnel between CSR NVA in HUB-SCUS Vnet and CSR1 NVA in HUB-EastUS Vnet
        
    - Document the ***CSR1*** NVA public ip ***CSR1NVA-PublicIp*** and the public ip of the ***CSR*** NVA ***CSRPublicIP*** as we will need them to build the Ipsec tunnel in next step:
    
@@ -1442,7 +1442,7 @@ Tunnel12 is up, line protocol is up
 
 
 
-✔️ From above we see that Ipsec and BGP are up between NVAs ***CSR*** and ***CSR1***
+✔️ From above we see that IPsec and BGP are up between NVAs ***CSR*** and ***CSR1***
 
 
 
@@ -1507,7 +1507,7 @@ az network routeserver peering list-learned-routes --name CSR --routeserver Rout
 sh bgp neighbors 10.1.2.4 advertised-routes
 ```
 	
-- We see the ***CSR*** is advertising 9 prefixes to the ARS ***Routeserver*** including 10.3.0.0/16 and 10.5.0.0/16, however we only see 10.0.0.0/16, 10.1.10.0/24, 192.168.1.3, and 192.168.1.4 prefixes been learned by the ARS ***Routeserver***, this is due to the BGP loop prevention mechanism, in which the router would drop BGP advertisement when it sees its own AS number in the AS path attribute, and as ARS has ASN of 65515 then any prefix has this ASN in its AS Path attribute will be dropped, and that is the case with 10.3.0.0/16 and 10.5.0.0/16, these two prefixes are originally advertised by the ARS ***Routeserver1*** (65515) then advertised to the ***CSR1*** (65505) then to the ***CSR***, and so when it gets to ARS ***Routeserver*** it will be dropped as ***Routeserver*** will see it is own ASN in the AS Path of this prefix.
+- Above shows ***CSR*** is advertising 9 prefixes to the ARS ***Routeserver*** including 10.3.0.0/16 and 10.5.0.0/16, however we only see 10.0.0.0/16, 10.1.10.0/24, 192.168.1.3, and 192.168.1.4 prefixes been learned by the ARS ***Routeserver***, this is due to the BGP loop prevention mechanism, in which the router would drop BGP advertisement when it sees its own AS number in the AS path attribute, and as ARS has ASN of 65515 then any prefix has this ASN in its AS Path attribute will be dropped, and that is the case with 10.3.0.0/16 and 10.5.0.0/16, these two prefixes are originally advertised by the ARS ***Routeserver1*** (65515) then advertised to the ***CSR1*** (65505) then to the ***CSR***, and so when it gets to ARS ***Routeserver*** it will be dropped as ***Routeserver*** will see it is own ASN in the AS Path of this prefix.
 
 ![image](https://user-images.githubusercontent.com/78562461/144934937-9e47e3e7-13cc-43b8-a1b6-e65502c01ab4.png)
 
@@ -1588,11 +1588,10 @@ CSR#wr
 
 Prior to configuring As-Override, the ***Routeserver*** was only learning 4 prefixes from NVA ***CSR*** which are 192.168.1.4, 192.168.1.3, 10.0.0.0/16, and 10.1.10.0/24, now in addition to those prefixes we see that it also learned the following prefixes (in red box):
 
-  - 10.1.0.0/16 the ***HUB-SCUS*** Vnet prefix where the ARS ***Routeserver*** reside, 10.4.0.0/16 is the prefix of peered Vnet ***Spoke-Vnet***. Note that ARS will not inject
-   those routes in the VM NICs with next hop as the ***CSR*** NVA 10.1.1.4, because these are system routes, and so ARS will not override them. The ASN in red box is originally
-   65515 but with AS-Override it has been replaced with ***CSR*** ASN 65002.
+  - 10.1.0.0/16 is ***HUB-SCUS*** Vnet prefix where the ARS ***Routeserver*** reside, 10.4.0.0/16 is the prefix of peered Vnet ***Spoke-Vnet***. Note that ARS will not inject
+   those routes in the ***HUB-SCUS*** VMs' NICs or ***Spoke-Vnet*** VMs' NICs with next hop as the ***CSR*** NVA 10.1.1.4, because these are system routes, and ARS will not override them. The ASN in red box is originally 65515 but with AS-Override it has been replaced with ***CSR*** ASN 65002.
 
- - 10.2.0.0/16 is the ***On-Prem1-Vnet*** prefix, we see that the ***Routeserver*** ASN 65515 has been replaced with NVA ***CSR*** ASN 65002 as shown in the red box. Also note that this route will not be injected in the ***HUB-SCUS*** VMs' NICs or ***Spoke-Vnet*** VMs' NICs with next hop as ***CSR*** NVA as this prefix learned from ***HUB-VNG*** gateway with shorter AS Path, so next hop to this prefix in NICs effective routes will appear as the ***HUB-VNG*** local instances (10.1.5.4 and 10.1.5.5).
+ - 10.2.0.0/16 is ***On-Prem1-Vnet*** prefix, we see that the ***Routeserver*** ASN 65515 has been replaced with NVA ***CSR*** ASN 65002 as shown in the red box. Also note this route will not be injected in the ***HUB-SCUS*** VMs' NICs or ***Spoke-Vnet*** VMs' NICs with next hop as ***CSR*** NVA as this prefix learned from ***HUB-VNG*** gateway with shorter AS Path, so next hop to this prefix in NICs effective routes will appear as the ***HUB-VNG*** local instances (10.1.5.4 and 10.1.5.5).
 	
 - 10.3.0.0/16 the ***HUB-EastUS*** Vnet prefix and 10.5.0.0/16 is ***Spoke1-Vnet*** prefix, we can see they are now learned by the ARS ***Routeserver*** and not being dropped after the ASN has been replaced as shown in the red box from 65515 to 65002, and so ARS will inject these routes into NICs effective routes.
 
