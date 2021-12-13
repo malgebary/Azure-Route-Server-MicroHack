@@ -743,7 +743,11 @@ You can check one connection from either side to get the status of the tunnel. N
 	
 1- **Check on routing from source VM (***On-Prem-VM***):**
 	
-Navigate to Network interfaces -> OnPrem-VMNIC -> Help -> Effective routes:
+Navigate to Network interfaces -> OnPrem-VMNIC -> Help -> Effective routes
+	
+Or use Cli:
+	
+az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --output table
 	
 - 10.1.0.0/16 is ***HUB-SCUS*** Vnet prefix.
 - 10.2.0.0/16 is ***On-Prem1-Vnet*** prefix where the destination ***On-Prem1-VM*** is located, this shows that source VM has learned the route to destination VM.
@@ -751,8 +755,19 @@ Navigate to Network interfaces -> OnPrem-VMNIC -> Help -> Effective routes:
 - 10.1.10.0/24 is ***Subnet-1*** in ***HUB-SCUS*** Vnet (this prefix is advertised by the ***CSR*** using Network command).
 
 All those routes are showing **Next Hop Type** as **Virtual Network Gateway** which refer to the ***On-Prem-VNG*** gateway. Next we will check how this gateway learned those routes.
-
-![image](https://user-images.githubusercontent.com/78562461/145740608-0375f10e-482f-47ff-80df-6cc752a6df0f.png)
+	
+```
+$ az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --output table
+Source                 State    Address Prefix    Next Hop Type          Next Hop IP
+---------------------  -------  ----------------  ---------------------  --------------
+Default                Active   10.0.0.0/16       VnetLocal
+VirtualNetworkGateway  Active   192.168.2.1/32    VirtualNetworkGateway  52.X.X.X
+VirtualNetworkGateway  Active   10.2.0.0/16       VirtualNetworkGateway  52.X.X.X
+VirtualNetworkGateway  Active   10.1.10.0/24      VirtualNetworkGateway  52.X.X.X
+VirtualNetworkGateway  Active   10.1.0.0/16       VirtualNetworkGateway  52.X.X.X
+VirtualNetworkGateway  Active   192.168.1.1/32    VirtualNetworkGateway  52.X.X.X
+Default                Active   0.0.0.0/0         Internet
+```
 
 2. **Check ***On-Prem-VNG*** gateway:** 
 	
@@ -888,7 +903,7 @@ Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State
 6. **Check On-Prem1-VNG:**
  
  Navigate to Virtual Network Gateways ->  On-Prem1-VNG -> Monitoring -> BGP Peers
-	
+
 👉 **BGP Peers:** 
 	
 - 10.1.5.4 is the BGP peer address of ***HUB-VNG*** gateway, 10.2.2.30 is the local BGP ip for the ***On-Prem1-VNG*** gateway. From below we see they are successfully connected.
@@ -909,11 +924,22 @@ Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State
 
 7. **Lastly**, ***On-Prem1-VM***:
 
- Navigate to Network interfaces -> On-Prem1-VMNIC -> Help -> Effective routes:
+ Navigate to Network interfaces -> On-Prem1-VMNIC -> Help -> Effective routes
+	
+  or use Cli:
+	
+az network nic show-effective-route-table -g Route-Server -n on-prem1-VMNIC --output table
 	
 - We can see that the VM learned 10.0.0.0/16 where the source VM located, 10.1.5.4 is the BGP peer ip of the ***HUB-VNG*** gateway, 10.1.0.0/16 is the ***HUB-SCUS*** Vnet prefix, all those routes have been learned with Next Hop Type **virtual network gateway** which refer to ***On-Prem1-VNG*** gateway.
 
-![image](https://user-images.githubusercontent.com/78562461/140254549-9f4af6a0-daca-47c6-bf8b-e997f3d0a82f.png)
+$ az network nic show-effective-route-table -g Route-Server -n on-prem1-VMNIC --output table
+Source                 State    Address Prefix    Next Hop Type          Next Hop IP
+---------------------  -------  ----------------  ---------------------  --------------
+Default                Active   10.2.0.0/16       VnetLocal
+VirtualNetworkGateway  Active   10.1.5.4/32       VirtualNetworkGateway  23.X.X.X
+VirtualNetworkGateway  Active   10.1.0.0/16       VirtualNetworkGateway  23.X.X.X
+VirtualNetworkGateway  Active   10.0.0.0/16       VirtualNetworkGateway  23.X.X.X
+Default                Active   0.0.0.0/0         Internet
 
 
 🙂 From above we see that source ***On-Prem-VM*** (10.0.10.4) knows the route to destination ***On-Prem1-VM*** (10.2.10.4) and vice versa with no UDR has been used due to using ARS, and we see ping work fine:
@@ -1322,7 +1348,7 @@ ip route 192.168.1.4 255.255.255.255 Tunnel12
 ```
 
 
-❗Note: the above BGP configuration assumes that you have already built the previous scenarios, make sure that complete BGP configuration will be as below:
+❗the above BGP configuration assumes that you have already built the previous scenarios, make sure that complete BGP configuration will be as below:
 
 ```
 router bgp 65002
@@ -1423,7 +1449,7 @@ router bgp 65002
 
 ```
 
-- Verify that tunnel interface is up from either side
+- Verify that tunnel interface is up from any side
 ```
 CSR1#sh ip interface tunnel11
 Tunnel11 is up, line protocol is up
@@ -1456,16 +1482,16 @@ Tunnel12 is up, line protocol is up
     sh ip bgp
 ```
 	
- - we see that CSR is learning all the topology routes as follows:
+ - ***CSR*** NVA is learning all the topology routes as follows:
  
-   - 10.0.0.0/16 is the ***On-Prem-Vnet*** prefix learned directly from ***On-Prem-VNG*** (ASN 65001).
-   - 10.1.0.0/16 is the ***HUB-SCUS*** Vnet prefix that is advertised by ARS ***Routeserver*** in this Vnet (ASN 65515).
-   - 10.2.0.0/16 is the ***On-Prem1-Vnet*** that is advertised by ***On-Prem1-VNG*** (ASN 65003) to ***HUB-VNG*** (ASN 65004) then advertised to ARS ***Routeserver*** (65515) then to the ***CSR***.
-   - 10.3.0.0/16 is the ***HUB-EastUS*** prefix, this route is orginally advertised by ARS ***Routeserver1*** (ASN 65515) to the ***CSR1*** (ASN 65005) then to ***CSR***.
-   - 10.4.0.0/16 is the ***Spoke-Vnet*** that is peering with ***HUB-SCUS Vnet***, this route is advertised by the ARS ***Routeserver*** (ASN 65515).
-   - 10.5.0.0/16 is the ***Spoke1-Vnet*** prefix that is advertised by ARS ***Routeserver1*** (ASN 65515) to the ***CSR1*** (ASN 65005) then to ***CSR***.
-   - 192.168.1.4 is the tunnel interface ip (tunnel 11 in ***CSR1***) that is advertised by ***CSR1*** (ASN 65005). Note that we see 'r>' in front of this route which indicate      RIB failure, it means this route has been learned with lower administrative distance than the one for BGP, and in this case it is because we added static route for BGP  peer IP (192.168.1.4) over the tunnel12.
-   - 192.168.1.3 is the tunnel 12 interface in ***CSR*** NVA that is advertised by the ***CSR*** using Network command.
+   - 10.0.0.0/16 is ***On-Prem-Vnet*** prefix learned directly from ***On-Prem-VNG*** (ASN 65001).
+   - 10.1.0.0/16 is ***HUB-SCUS*** Vnet prefix that is advertised by ARS ***Routeserver*** in this Vnet (ASN 65515).
+   - 10.2.0.0/16 is ***On-Prem1-Vnet*** that is advertised by ***On-Prem1-VNG*** (ASN 65003) to ***HUB-VNG*** (ASN 65004), then advertised to ARS ***Routeserver*** (65515) then to the ***CSR***.
+   - 10.3.0.0/16 is ***HUB-EastUS*** prefix, this route is orginally advertised by ARS ***Routeserver1*** (ASN 65515) to the ***CSR1*** (ASN 65005) then to ***CSR***.
+   - 10.4.0.0/16 is ***Spoke-Vnet*** that is peering with ***HUB-SCUS Vnet***, this route is advertised by the ARS ***Routeserver*** (ASN 65515).
+   - 10.5.0.0/16 is ***Spoke1-Vnet*** prefix that is advertised by ARS ***Routeserver1*** (ASN 65515) to the ***CSR1*** (ASN 65005) then to ***CSR***.
+   - 192.168.1.4 is tunnel interface ip (tunnel 11 in ***CSR1***) that is advertised by ***CSR1*** (ASN 65005). Note that we see 'r>' in front of this route which indicate      RIB failure, it means this route has been learned with lower administrative distance than the one for BGP, and in this case it is because we added static route for BGP peer IP (192.168.1.4) over the tunnel12.
+   - 192.168.1.3 is tunnel 12 interface in ***CSR*** NVA that is advertised by the ***CSR*** using Network command.
   
    
    ![image](https://user-images.githubusercontent.com/78562461/144920742-cbe6edee-7169-4f31-8049-e52cb86e467b.png)
@@ -1523,7 +1549,7 @@ sh bgp neighbors 10.1.2.4 advertised-routes
 az network routeserver peering list-learned-routes --name CSR1 --routeserver RouteServer1 --resource-group Route-Server
 ```
 	
-🕵️‍♀️ Only 4 prefixes have been learned by the ***Routeserver1*** as they don't have ASN 65515 in the AS Path atribute which are: 10.0.0.0/16 ***On-Prem-Vnet*** prefix, 192.168.1.4 BGP peer ip of ***CSR1*** NVA, 192.168.1.3 tunnel12 (VTI interface) in ***CSR*** NVA, and 10.1.10.4/24 ***Subnet-1*** prefix in ***HUB-SCUS*** Vnet.
+🕵️‍♀️ Only 4 prefixes have been learned by the ***Routeserver1*** as they don't have ASN 65515 in the AS Path atribute which are: 10.0.0.0/16, 192.168.1.4, 192.168.1.3, and 10.1.10.0/24.
 	
 ![image](https://user-images.githubusercontent.com/78562461/144961794-81cbf655-db44-40d7-bddf-7ea8251acc44.png)
 
@@ -1586,12 +1612,12 @@ CSR#wr
   az network routeserver peering list-learned-routes --name CSR --routeserver RouteServer --resource-group Route-Server
 ```
 
-Prior to configuring As-Override, the ***Routeserver*** was only learning 4 prefixes from NVA ***CSR*** which are 192.168.1.4, 192.168.1.3, 10.0.0.0/16, and 10.1.10.0/24, now in addition to those prefixes we see that it also learned the following prefixes (in red box):
+Prior to configuring As-Override, the ***Routeserver*** was only learning 4 prefixes from NVA ***CSR*** which are 192.168.1.4, 192.168.1.3, 10.0.0.0/16, and 10.1.10.0/24, now in addition to those prefixes, it also learned the following prefixes (in red box):
 
   - 10.1.0.0/16 is ***HUB-SCUS*** Vnet prefix where the ARS ***Routeserver*** reside, 10.4.0.0/16 is the prefix of peered Vnet ***Spoke-Vnet***. Note that ARS will not inject
    those routes in the ***HUB-SCUS*** VMs' NICs or ***Spoke-Vnet*** VMs' NICs with next hop as the ***CSR*** NVA 10.1.1.4, because these are system routes, and ARS will not override them. The ASN in red box is originally 65515 but with AS-Override it has been replaced with ***CSR*** ASN 65002.
 
- - 10.2.0.0/16 is ***On-Prem1-Vnet*** prefix, we see that the ***Routeserver*** ASN 65515 has been replaced with NVA ***CSR*** ASN 65002 as shown in the red box. Also note this route will not be injected in the ***HUB-SCUS*** VMs' NICs or ***Spoke-Vnet*** VMs' NICs with next hop as ***CSR*** NVA as this prefix learned from ***HUB-VNG*** gateway with shorter AS Path, so next hop to this prefix in NICs effective routes will appear as the ***HUB-VNG*** local instances (10.1.5.4 and 10.1.5.5).
+ - 10.2.0.0/16 is ***On-Prem1-Vnet*** prefix, we see that the ***Routeserver*** ASN 65515 has been replaced with NVA ***CSR*** ASN 65002 as shown in the red box. Also note this route will not be injected in the ***HUB-SCUS*** VMs' NICs or ***Spoke-Vnet*** VMs' NICs with next hop as ***CSR*** NVA, as this is system route that ARS will not override, also traditionally from BGP route selection perspective, this prefix has been also learned from ***HUB-VNG*** gateway with shorter AS Path, so next hop to this prefix in NICs effective routes will appear as the ***HUB-VNG*** local instances (10.1.5.4 and 10.1.5.5).
 	
 - 10.3.0.0/16 the ***HUB-EastUS*** Vnet prefix and 10.5.0.0/16 is ***Spoke1-Vnet*** prefix, we can see they are now learned by the ARS ***Routeserver*** and not being dropped after the ASN has been replaced as shown in the red box from 65515 to 65002, and so ARS will inject these routes into NICs effective routes.
 
@@ -1599,13 +1625,13 @@ Prior to configuring As-Override, the ***Routeserver*** was only learning 4 pref
 
 2- ARS ***Routeserver1*** learned routes:
 
-- In addition to the 4 prefixes Routeserevr1 was learing (10.0.0.0/16, 192.168.1.4, 192.168.1.3 and 10.1.10.4/24), ***Routeserver1*** now learned the prefixes in red boxes after configuring AS-Override, which are 10.1.0.0/16 ***HUB-SCUS*** Vnet, 10.4.0.0/16 ***Spoke-Vnet***, and 10.2.0.0/16 ***On-Prem1-Vnet*** and those routes will be now injected in the NICs that are using this ARS. ASN in red box is the ***CSR1*** NVA ASN that replaced the 65515 ASN of the ARS.
+- In addition to the 4 prefixes Routeserevr1 was learning (10.0.0.0/16, 192.168.1.4, 192.168.1.3 and 10.1.10.4/24), ***Routeserver1*** now learned the prefixes in red boxes after configuring AS-Override, which are 10.1.0.0/16 ***HUB-SCUS*** Vnet, 10.4.0.0/16 ***Spoke-Vnet***, and 10.2.0.0/16 ***On-Prem1-Vnet*** and those routes will be now injected in the NICs that are using this ARS. ASN in red box is the ***CSR1*** NVA ASN that replaced the 65515 ASN of the ARS.
 
 ![image](https://user-images.githubusercontent.com/78562461/145095347-d6234c90-cbeb-4496-8776-efcd21d26ab7.png)
 
 🤝 after this change we have full network connectivity, for example you can ping from ***Spoke1-VM*** to ***Spoke-VM*** and to all other VMs in this topology with no UDR has been used to route the traffic. 
 
-As there is no use for route tables, this design is suitable for large deployments with multiple spokes and/or multiple on-premises branches across multiple regions. 
+💡 As route tables are not used in this scenario, this design is scalable and so it is suitable for large deployments with multiple spokes and/or multiple on-premises branches across multiple regions, however, traffic goes over IPsec tunnel will have throughput limitation. Next we will explore using Vnet peering instead of IPsec tunnel.
 
 ![image](https://user-images.githubusercontent.com/78562461/145097896-435f027c-63af-44e5-9c45-bbcdc3920345.png)
 
@@ -1953,4 +1979,4 @@ traceroute to 10.4.10.4 (10.4.10.4), 30 hops max, 60 byte packets
  2  10.1.1.4 (10.1.1.4)  36.549 ms  36.535 ms  38.433 ms
  3  * 10.4.10.4 (10.4.10.4)  73.625 ms *
 
-❗ The use of Vnet peering in this design eliminate the throughput limitation associated with IPsec tunnel that is used in scenario 4, however, unlike scenario 4, this design is not scalable if more Vnets are introduced as the UDR is statically configured.
+💡 The use of Vnet peering in this design eliminates the throughput limitation associated with IPsec tunnel that is used in scenario 4, however, unlike scenario 4, this design is not scalable if more Vnets are introduced, as the routes in the UDR associated with NVAs subnet are statically configured.
