@@ -745,7 +745,7 @@ You can check one connection from either side to get the status of the tunnel. N
 	
 Navigate to Network interfaces -> OnPrem-VMNIC -> Help -> Effective routes
 	
-Or use Cli:
+or use Cli:
 	
 az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --output table
 	
@@ -893,7 +893,7 @@ Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State
 
 👉 **Learned Routes:**
 	
-:exclamation: Output will show learned routes for the two gateway instances of the ***HUB-VNG*** gateway, however, as we built only one tunnel with ***On-Prem1-VNG***, output below is filtered for the one instance used to build this tunnel, which is local address 10.1.5.4 of the ***HUB-VNG*** (Remember this local address BGP ip "might" be different in your lab).
+:exclamation: Output will show learned routes for the two gateway instances of the ***HUB-VNG*** gateway, however, as only one tunnel has been built with ***On-Prem1-VNG***, output below is filtered for the one instance used to build this tunnel, which is local address 10.1.5.4 of the ***HUB-VNG*** (Remember this local address BGP ip "might" be different in your lab).
 	
 - It can be seen that the ***HUB-VNG*** is learning the source prefix (10.0.0.0/16) through this AS Path: 65001 (***On-Prem-VNG***), 65002 (***CSR***), and 65515 (***Route Server***). It also learned the destination prefix (10.2.0.0/16) directly from ASN 65003 (***On-Prem1-VNG***).
 
@@ -932,6 +932,8 @@ az network nic show-effective-route-table -g Route-Server -n on-prem1-VMNIC --ou
 	
 - We can see that the VM learned 10.0.0.0/16 where the source VM located, 10.1.5.4 is the BGP peer ip of the ***HUB-VNG*** gateway, 10.1.0.0/16 is the ***HUB-SCUS*** Vnet prefix, all those routes have been learned with Next Hop Type **virtual network gateway** which refer to ***On-Prem1-VNG*** gateway.
 
+	
+```
 $ az network nic show-effective-route-table -g Route-Server -n on-prem1-VMNIC --output table
 Source                 State    Address Prefix    Next Hop Type          Next Hop IP
 ---------------------  -------  ----------------  ---------------------  --------------
@@ -940,6 +942,7 @@ VirtualNetworkGateway  Active   10.1.5.4/32       VirtualNetworkGateway  23.X.X.
 VirtualNetworkGateway  Active   10.1.0.0/16       VirtualNetworkGateway  23.X.X.X
 VirtualNetworkGateway  Active   10.0.0.0/16       VirtualNetworkGateway  23.X.X.X
 Default                Active   0.0.0.0/0         Internet
+```
 
 
 🙂 From above we see that source ***On-Prem-VM*** (10.0.10.4) knows the route to destination ***On-Prem1-VM*** (10.2.10.4) and vice versa with no UDR has been used due to using ARS, and we see ping work fine:
