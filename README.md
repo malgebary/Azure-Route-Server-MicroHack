@@ -1582,7 +1582,7 @@ az network routeserver peering list-learned-routes --name CSR1 --routeserver Rou
 	 exit-address-family
 	```
 	
-   - Hit 'CTRL Z' to get back to enable mode and type 'wr' to save the configuration:
+   - Hit `CTRL Z` to get back to enable mode and type `wr` to save the configuration:
    
 ```	
 	CSR#wr
