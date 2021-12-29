@@ -1862,10 +1862,10 @@ To make it easier to verify connectivity and routing let divide the network in t
 	
 - If VMs in **Side1** needs to talk to VMs in **Side2** then it will go through ***CSR*** NVA (10.1.1.4) which reside in **Side1**, and if VMs in **Side2** need to talk to VMs in **Side1** then it go to ***CSR1*** NVA (10.3.0.4) which reside in ***Side2***, this is similar to scenario 4 (except for traffic between 10.1.0.0/16 and 10.3.0.0/16 as this traffic will go over the global peering). However, if VMs in **side1** try to reach VM in Side2 or the other direction we will get a loop in this scenario. **Why?**
 	
-💡 ARS doesn't differentiate between the VMs subnet and the NVA subnet, meaning if ARS learn a route it will programs it for all the VMs in the virtual network including the NVA subnet itself. ***How is that a problem in this scenario?*** let say VM1 tries to talk to VM2, VM1 next hop will be NVA1, NVA1 has next hop to VM2 through NVA1 as well, so get a loop at NVA1. The same applies if VM2 tries to reach VM1, traffic will be looping at NVA2.
+💡 ARS doesn't differentiate between the VMs subnet and the NVA subnet, meaning if ARS learn a route it will programs it for all the VMs in the virtual network including the NVA subnet itself. ***How is that a problem in this scenario?*** let say VM1 tries to talk to VM2, VM1 next hop will be NVA1, NVA1 has next hop to VM2 through NVA1 as well, so will get a loop at NVA1. The same applies if VM2 tries to reach VM1, traffic will be looping at NVA2.
 	
 **For example:** if ***Spoke-VM*** (10.4.10.4) tries to ping ***Spoke1-VM*** (10.5.10.4), traffic will go to ***CSR*** NVA 10.1.1.4 according to the route table of ***Spoke-VM***, traffic then will reach NVA ***CSR*** which is pointing to ***CSR1*** NVA (10.3.0.4) as next hop to reach ***Spoke1-VM*** in its internal
-route table as shown in [1], but the Azure route table for the ***CSR*** NIC has next hop to destination as the NVA ***CSR*** itself as shown in [2], the traffic to ***Spoke1-VM*** will be sent back to the ***CSR*** NVA (10.1.1.4) and we will get a loop as shown in [3]. We will have similar behavior in the other direction (from ***Spoke1-VM*** to ***Spoke-VM***) in which traffic will get looped at ***CSR1***.
+route table as shown in [1], but the Azure route table for the ***CSR*** NIC has next hop to destination as the NVA ***CSR*** itself as shown in [2], so the traffic to ***Spoke1-VM*** will be sent back to the ***CSR*** NVA (10.1.1.4) and we will get a loop as shown in [3]. We will have similar behavior in the other direction (from ***Spoke1-VM*** to ***Spoke-VM***) in which traffic will get looped at ***CSR1***.
 
 [1]
 	
@@ -1938,7 +1938,7 @@ traceroute to 10.4.10.4 (10.4.10.4), 30 hops max, 60 byte packets
 	
 ☝️ Why we didn't get this looping issue in scenario 4 even though the NVAs NICs route table are the same as in this scenario?
 
-In scenario 4 we used Ipsec encapsulation to prevent packets reaches Azure networking, in this case Azure network will have no visibility about the source and destination, it will only see packets going between the NVAs and so the Azure route table will not affect this traffic and the traffic will take the right address of next hop (which will be the far end NVA) as shown in the NVA internal route table.
+In scenario 4 we used IPsec encapsulation to prevent packets reaches Azure networking, in this case Azure network will have no visibility about the source and destination, it will only see packets going between the NVAs and so the Azure route table will not affect this traffic and the traffic will take the right address of next hop (which will be the far end NVA) as shown in the NVA internal route table.
 
 
 **Now how to fix this looping issue in this scenario?**
@@ -1986,4 +1986,4 @@ traceroute to 10.4.10.4 (10.4.10.4), 30 hops max, 60 byte packets
 	
 ```
 	
-💡 The use of Vnet peering in this design eliminates the throughput limitation associated with IPsec tunnel that is used in scenario 4, however, unlike scenario 4, this design is not scalable if more Vnets are introduced, as the routes in the UDR associated with NVAs subnet are statically configured.
+> The use of Vnet peering in this design eliminates the throughput limitation associated with IPsec tunnel that is used in scenario 4, however, unlike scenario 4, this design is not as scalable as scenario 4 if more Vnets are introduced, as the routes in the UDR associated with NVAs subnet are statically configured.
