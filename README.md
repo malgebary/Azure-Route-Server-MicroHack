@@ -1934,7 +1934,7 @@ traceroute to 10.4.10.4 (10.4.10.4), 30 hops max, 60 byte packets
  7  10.3.0.4 (10.3.0.4)  17.601 ms  17.588 ms  18.202 ms
  8  10.3.0.4 (10.3.0.4)  20.144 ms  20.132 ms  20.120 ms
 ```
-
+> We will get same result when tracing from Spoke1-VM to 10.2.X.X and 10.0.X.X
 	
 ☝️ Why we didn't get this looping issue in scenario 4 even though the NVAs NICs route table are the same as in this scenario?
 
