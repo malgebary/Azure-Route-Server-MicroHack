@@ -1989,7 +1989,7 @@ az network vnet subnet update --name CSR1-subnet --vnet-name HUB-EastUS --resour
 ```
 
 
-😊 After applying the UDR, ***Spoke-VM*** can reach ***Spoke1-VM*** and vice versa:
+After applying the UDRs, ***Spoke-VM*** can reach ***Spoke1-VM*** and vice versa:
 
 ```
 azureuser@Spoke-VM:~$ traceroute 10.5.10.4
@@ -2006,5 +2006,7 @@ traceroute to 10.4.10.4 (10.4.10.4), 30 hops max, 60 byte packets
  3  * 10.4.10.4 (10.4.10.4)  73.625 ms *
 	
 ```
+
+Also ***Spoke1-VM*** can reach all other VMs in **Side2** (***On-Prem1-VM*** and ***On-Prem-VM***).
 	
 > The use of Vnet peering in this design eliminates the throughput limitation associated with IPsec tunnel that is used in scenario 4, however, unlike scenario 4, this design is not as scalable as scenario 4 if more Vnets are introduced, as the routes in the UDR associated with NVAs subnet are statically configured.
