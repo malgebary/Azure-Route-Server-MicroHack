@@ -1685,7 +1685,7 @@ ip route 10.3.0.4 255.255.255.255 10.1.1.1
 	
 ```
 	
-After pasting above commands make sure that complete BGP configuration should look as follow:
+After pasting above commands make sure that complete BGP configuration should look as below:
 
 ```
 CSR#sh running-config | sec bgp
@@ -1727,7 +1727,28 @@ router bgp 65005
 ! Adding static route to BGP peer to avoid recursive routing failure for CSR BGP endpoints learned via BGP
 ip route 10.1.1.4 255.255.255.255 10.3.0.1
 ```
+After pasting above commands make sure that complete BGP configuration should look as below:
 	
+```
+router bgp 65005
+ bgp log-neighbor-changes
+ neighbor 10.1.1.4 remote-as 65002
+ neighbor 10.1.1.4 ebgp-multihop 255
+ neighbor 10.3.1.4 remote-as 65515
+ neighbor 10.3.1.4 ebgp-multihop 255
+ neighbor 10.3.1.5 remote-as 65515
+ neighbor 10.3.1.5 ebgp-multihop 255
+ !
+ address-family ipv4
+  network 192.168.1.4 mask 255.255.255.255
+  neighbor 10.1.1.4 activate
+  neighbor 10.3.1.4 activate
+  neighbor 10.3.1.4 as-override
+  neighbor 10.3.1.5 activate
+  neighbor 10.3.1.5 as-override
+ exit-address-family	
+```
+
 • Check on BGP session if it has established between the new BGP endpoints 10.1.1.4 and 10.3.0.4 using `sh ip bgp summary` in enable mode:
 	
 ```
