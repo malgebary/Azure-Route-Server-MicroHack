@@ -1938,14 +1938,15 @@ traceroute to 10.4.10.4 (10.4.10.4), 30 hops max, 60 byte packets
 	
 ☝️ Why we didn't get this looping issue in scenario 4 even though the NVAs NICs route table are the same as in this scenario?
 
-The reason is that in scenario 4 we used Ipsec encapsulation to prevent packets reaches Azure networking. In this case Azure network will have no visibility about the source and destination, it will only see packets going between the NVAs and so the Azure route table will not affect this traffic and the traffic will take the right address of next hop (which will be the far end NVA) as shown in the NVA internal route table.
+In scenario 4 we used Ipsec encapsulation to prevent packets reaches Azure networking, in this case Azure network will have no visibility about the source and destination, it will only see packets going between the NVAs and so the Azure route table will not affect this traffic and the traffic will take the right address of next hop (which will be the far end NVA) as shown in the NVA internal route table.
 
 
 **Now how to fix this looping issue in this scenario?**
 
 We will need to create UDRs and assign them to the NVAs subnet to override the Azure route table. We will create two UDRs: **To-Side2** and **To-Side1**:
-. UDR **To-Side2** will be associated to the ***CSR*** subnet (***internal***), we will point the traffic destined to Side2 prefix 10.5.0.0/16 to go through ***CSR1*** NVA (instead of ***CSR*** NVA).
-. UDR **To-Side1** will be associated to the ***CSR1*** subnet (***CSR1-Subnet***), we will point the traffic destined to Side1 prefixes (10.4.0.0/16, 10.2.0.0/16,10.0.0.0/16) to go through ***CSR*** (instead of ***CSR1***).  
+	
+- UDR **To-Side2** will be associated to the ***CSR*** subnet (**internal**), we will point the traffic destined to Side2 prefix 10.5.0.0/16 to go through ***CSR1*** NVA (instead of ***CSR*** NVA).
+- UDR **To-Side1** will be associated to the ***CSR1*** subnet (***CSR1-Subnet***), we will point the traffic destined to Side1 prefixes (10.4.0.0/16, 10.2.0.0/16,10.0.0.0/16) to go through ***CSR*** (instead of ***CSR1***).  
 
 - Create UDR **To-Side2** and associate it to the ***CSR*** ***Internal*** subnet:
 
@@ -1969,6 +1970,7 @@ az network vnet subnet update --name CSR1-subnet --vnet-name HUB-EastUS --resour
 
 😊 After applying the UDR, ***Spoke-VM*** can reach ***Spoke1-VM*** and vice versa:
 
+```
 azureuser@Spoke-VM:~$ traceroute 10.5.10.4
 traceroute to 10.5.10.4 (10.5.10.4), 30 hops max, 60 byte packets
  1  10.1.1.4 (10.1.1.4)  37.028 ms  37.052 ms  36.993 ms
@@ -1981,5 +1983,7 @@ traceroute to 10.4.10.4 (10.4.10.4), 30 hops max, 60 byte packets
  1  10.3.0.4 (10.3.0.4)  2.023 ms  1.975 ms  1.963 ms
  2  10.1.1.4 (10.1.1.4)  36.549 ms  36.535 ms  38.433 ms
  3  * 10.4.10.4 (10.4.10.4)  73.625 ms *
-
+	
+```
+	
 💡 The use of Vnet peering in this design eliminates the throughput limitation associated with IPsec tunnel that is used in scenario 4, however, unlike scenario 4, this design is not scalable if more Vnets are introduced, as the routes in the UDR associated with NVAs subnet are statically configured.
