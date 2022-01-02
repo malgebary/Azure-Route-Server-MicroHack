@@ -1881,7 +1881,7 @@ To make it easier to verify connectivity and routing let divide the network in t
 
 - All VMs (in both Sides) have routes to all prefixes in the network which is great!
 	
-- If VMs in **Side1** needs to talk to VMs in **Side2** then it will go through ***CSR*** NVA (10.1.1.4) which reside in **Side1**, and if VMs in **Side2** need to talk to VMs in **Side1** then it go to ***CSR1*** NVA (10.3.0.4) which reside in ***Side2***, this is similar to scenario 4 (except for traffic between 10.1.0.0/16 and 10.3.0.0/16 as this traffic will go over the global peering). However, if VMs in **side1** try to reach VM in Side2 or the other direction we will get a loop in this scenario. **Why?**
+- If a VM in **Side1** needs to talk to a VM in **Side2** then it will go through ***CSR*** NVA (10.1.1.4) which reside in **Side1**, and if a VM in **Side2** need to talk to a VM in **Side1** then it goes to ***CSR1*** NVA (10.3.0.4) which reside in ***Side2***, this is similar to scenario 4 (except for traffic between 10.1.0.0/16 and 10.3.0.0/16 as this traffic will go over the global peering). However, if VMs in **side1** try to reach VMs in Side2 or the other direction we will get a loop in this scenario. **Why?**
 	
 💡 ARS doesn't differentiate between the VMs subnet and the NVA subnet, meaning if ARS learn a route it will programs it for all the VMs in the virtual network including the NVA subnet itself. ***How is that a problem in this scenario?*** let say VM1 tries to talk to VM2, VM1 next hop will be NVA1, NVA1 has next hop to VM2 through NVA1 as well, so will get a loop at NVA1. The same applies if VM2 tries to reach VM1, traffic will be looping at NVA2.
 	
