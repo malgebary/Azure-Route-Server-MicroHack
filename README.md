@@ -45,10 +45,9 @@ Azure Cli will be used to build this Lab. the complete lab consist of:
   4. Two Azure Route Severs: ***RouteServer***, and ***RouteServer1***.
 	
   
-At the end of the lab the deployment will look like this:
+The complete lab deployment will look like this:
 
-![image](https://user-images.githubusercontent.com/78562461/145697233-8eb24ab3-9550-4c8b-89aa-3b3310c911fd.png)
-
+![image](https://user-images.githubusercontent.com/78562461/147891873-c20be1a1-d7ac-4bed-9701-39820b153f9e.png)
 
 
 # Notes:
