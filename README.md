@@ -20,7 +20,7 @@
 
 [Scenario 5: Route server multi-region design with Vnet peering](#Scenario-5-Route-server-multi-region-design-with-Vnet-peering)
 
-[Scenario 6: On-premises Internet breakout through the NVA in Azure](#Scenario-6-On-premises-internet-breakout-through-the-NVA-in-Azure)
+[Scenario 6: On-premises internet breakout through Azure](#Scenario-6-On-premises-internet-breakout-through-Azure)
 
 
 # Introduction
@@ -2016,27 +2016,27 @@ Also ***Spoke1-VM*** can reach all other VMs in **Side2** (***On-Prem1-VM*** and
 	
 ## Scenario 6: On-premises internet breakout through Azure
 	
-In this scenario we will explore how Azure Route Server can be used to force tunnel internet bound traffic from on-premises network as well as VMs in Vnets through NVA deployed in Azure. In this scenario the NVA CSR will advertise default route through BGP
-and we will check on routing and connectivity post the advertising.
+In this scenario we will explore how Azure Route Server can be used to force tunnel internet bound traffic from on-premises network as well as VMs in Vnets through an NVA deployed in Azure. In this scenario the NVA CSR will advertise default route through BGP and we will check on routing and connectivity post the advertising.
 
 We will test the internet breakout (force tunneling) on the following part of the network:
 
-[image](https://user-images.githubusercontent.com/78562461/148290105-4788002c-f8ae-4d47-bb6c-a6ee4e1b351c.png)
+![image](https://user-images.githubusercontent.com/78562461/148292130-80765a33-5b0d-4406-b9ef-a851acdb53bc.png)
+
 	
 To setup this scenario, we will do the following configuration changes:
 
 
 1- As the NVA ***CSR*** will advertise the default route to the network, we will lose internet connectivity to the CSR and also the VPN tunnel between the ***CSR*** and ***On-Prem-VNG*** will go down, so to fix this issue we will:
 	
-- Create Azure Bastion in Vnet ***HUB-SCUS*** to access the ***CSR*** and ***HUB-VM*** after advertising default route. We will use ***HUB-VM*** to SSH to other VMs   using their private ips as we have full private network connectivity, so we can test on connectivity from those VMs to internet.
+ - Create Azure Bastion in Vnet ***HUB-SCUS*** to access the ***CSR*** and ***HUB-VM*** after advertising default route. We will use ***HUB-VM*** to SSH to other VMs   using their private ips as we have full private network connectivity, so we can test on connectivity from those VMs to internet.
 	
-- Create a UDR and assign it to the **External** subnet where the outside interface **CSROutsideInterface** reside, the UDR will have route to the ***On-Prem-VNG***  public ip with next hop type **Internet**. This interface has a public ip that is used to build the VPN tunnel with ***On-Prem-VNG*** and so it will need the internet   connectivity to build the tunnel.
+ - Create a UDR and assign it to the **External** subnet where the outside interface **CSROutsideInterface** reside, the UDR will have route to the ***On-Prem-VNG***  public ip with next hop type **Internet**. This interface has a public ip that is used to build the VPN tunnel with ***On-Prem-VNG*** and so it will need the internet   connectivity to build the tunnel.
 	
 2- On the ***CSR*** NVA:
-  - Remove BGP peering between the NVAs CSR and CSR1
-  - Remove the as-override configuration with Route Server BGP endpoints   
-  - Advertise default route through BGP 
+   - Remove BGP peering between the NVAs CSR and CSR1
+   - Remove the as-override configuration with Route Server BGP endpoints   
+   - Advertise default route through BGP 
 	
-3- Configure nat to nat private ips to the public ip of the CSR interface **CSROutsideInterface**
+3- Configure nat to nat private ips of the VMs to the public ip of the CSR interface **CSROutsideInterface**
 
 
