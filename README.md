@@ -2026,7 +2026,7 @@ We will test the internet breakout (force tunneling) on the following part of th
 To setup this scenario, we will do the following configuration changes:
 
 
-1- As the NVA ***CSR*** will advertise the default route to the network, we will lose connectivity to the CSR and also the VPN tunnel between the ***CSR*** and ***On-Prem-VNG*** will go down, so to fix this issue we will:
+1- As the NVA ***CSR*** will advertise the default route to the network, we will lose connectivity to the CSR also the VPN tunnel between the ***CSR*** and ***On-Prem-VNG*** will go down, so to fix this issue we will:
 	
  - Create Azure Bastion in Vnet ***HUB-SCUS*** to access the ***CSR*** and ***HUB-VM*** after advertising the default route. We will use ***HUB-VM*** to SSH to other VMs in the network using their private ips as we have full network connectivity within the private network, so we can verify the connectivity to the internet from those VMs after CSR advertises the default route.
 	
