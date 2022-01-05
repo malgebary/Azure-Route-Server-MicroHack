@@ -562,7 +562,7 @@ We see ***On-Prem-Vnet*** prefix 10.0.0.0/16 is programed by ARS in the NIC rout
 
 ![image](https://user-images.githubusercontent.com/78562461/140001830-19a3fba2-aabf-4806-979b-70a5996bcd49.png)
 
-** 4. Learned routes by the On-Prem-VNG gateway:
+**4. Learned routes by the On-Prem-VNG gateway:**
 	
 - Check on learned routes from the portal by navigating to Virtual Network Gateways -> On-Prem-VNG -> Monitoring -> BGP Peers or use Azure Cli `az network vnet-gateway list-learned-routes -g Route-Server -n On-Prem-VNG`.
 	
@@ -872,7 +872,7 @@ Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State
 
     az network routeserver peering list-advertised-routes --name CSR --routeserver RouteServer --resource-group Route-Server
 	
-- Although ARS will not inject the ***HUB-Vnet*** prefix 10.1.0.0/16 into the NICs effective routes, it will advertise this prefix to the ***CSR*** over eBGP, so ***CSR*** can advertise it down to ***On-Prem-VNG*** gateway.
+- Although ARS will not inject the ***HUB-SCUS*** prefix 10.1.0.0/16 into the NICs effective routes, it will advertise this prefix to the ***CSR*** over eBGP, so ***CSR*** can advertise it down to ***On-Prem-VNG*** gateway.
 	
 - 10.2.0.0/16 is learned from ***HUB-VNG (65004)*** which has learned it from ***On-Prem1-VNG*** (65003).
 
