@@ -562,7 +562,7 @@ We see ***On-Prem-Vnet*** prefix 10.0.0.0/16 is programed by ARS in the NIC rout
 
 ![image](https://user-images.githubusercontent.com/78562461/140001830-19a3fba2-aabf-4806-979b-70a5996bcd49.png)
 
-### 4. Learned routes by the On-Prem-VNG gateway:
+** 4. Learned routes by the On-Prem-VNG gateway:
 	
 - Check on learned routes from the portal by navigating to Virtual Network Gateways -> On-Prem-VNG -> Monitoring -> BGP Peers or use Azure Cli `az network vnet-gateway list-learned-routes -g Route-Server -n On-Prem-VNG`.
 	
@@ -576,7 +576,7 @@ We see ***On-Prem-Vnet*** prefix 10.0.0.0/16 is programed by ARS in the NIC rout
 
 
 	
-**4. Effective Route on On-Prem-VM:**
+**5. Effective Route on On-Prem-VM:**
 	
 - Use Azure Cli  `az network nic show-effective-route-table -g Route-Server -n OnPrem-VMNIC --output table`
 	
