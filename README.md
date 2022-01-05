@@ -20,6 +20,9 @@
 
 [Scenario 5: Route server multi-region design with Vnet peering](#Scenario-5-Route-server-multi-region-design-with-Vnet-peering)
 
+[Scenario 6: On-premises Internet breakout through the NVA in Azure](#Scenario-6-On-premises-internet-breakout-through-the-NVA-in-Azure)
+
+
 # Introduction
 
 Azure Route Server ([ARS](https://docs.microsoft.com/en-us/azure/route-server/overview)) enables dynamic routing between Network Virtual Appliance (NVA) and Virtual Network (Vnet) by supporting Border Gateway Protocol (BGP). Before ARS, users had to create a User Defined Route (UDR) to NVA, and need to manually update the routing table on the NVA whenever Vnet addresses get updated. With the introduction of Azure Route Server, users can now inject a similar route without having to create the UDRs, or manually update the NVA with new Vnet prefixes.
