@@ -2038,4 +2038,20 @@ To setup this scenario, we will do the following configuration changes:
    - Advertise default route through BGP
    - Configure nat to nat private ips of the VMs to the public ip of the ***CSR*** interface **CSROutsideInterface**
 
+## Task1: Install traceroute
+
+To validate and to troubleshoot connectivity, install Traceroute tool on the following VMs: HUB-VM, Spoke-VM, On-Prem-VM, On-Prem1-VM.
+	
+- Login to each VM and paste the following command that will install the Traceroute tool:
+	
+```
+sudo apt-get update &&sudo apt-get install traceroute -y
+```
+	
+Task2: Configure Azure Bastion
+
+az network public-ip create --resource-group Route-Server --name BastionPIP --sku Standard --location southcentralus
+az network vnet subnet create --address-prefix 10.1.6.0/26 --name  AzureBastionSubnet --resource-group Route-Server --vnet-name HUB-SCUS
+az network bastion create --name Bastion --public-ip-address BastionPIP --resource-group Route-Server --vnet-name HUB-SCUS --location southcentralus
+![image](https://user-images.githubusercontent.com/78562461/148295046-8750de48-2843-40ac-8d3d-2fe708eea139.png)
 
