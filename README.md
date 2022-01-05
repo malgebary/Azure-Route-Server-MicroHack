@@ -2035,8 +2035,7 @@ To setup this scenario, we will do the following configuration changes:
 2- On the ***CSR*** NVA:
    - Remove BGP peering between the NVAs CSR and CSR1
    - Remove the as-override configuration with Route Server BGP endpoints   
-   - Advertise default route through BGP 
-	
-3- Configure nat to nat private ips of the VMs to the public ip of the CSR interface **CSROutsideInterface**
+   - Advertise default route through BGP
+   - Configure nat to nat private ips of the VMs to the public ip of the CSR interface **CSROutsideInterface**
 
 
