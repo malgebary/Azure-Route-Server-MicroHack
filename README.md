@@ -2026,11 +2026,11 @@ We will test the internet breakout (force tunneling) on the following part of th
 To setup this scenario, we will do the following configuration changes:
 
 
-1- As the NVA ***CSR*** will advertise the default route to the network, we will lose internet connectivity to the CSR and also the VPN tunnel between the ***CSR*** and ***On-Prem-VNG*** will go down, so to fix this issue we will:
+1- As the NVA ***CSR*** will advertise the default route to the network, we will lose connectivity to the CSR and also the VPN tunnel between the ***CSR*** and ***On-Prem-VNG*** will go down, so to fix this issue we will:
 	
- - Create Azure Bastion in Vnet ***HUB-SCUS*** to access the ***CSR*** and ***HUB-VM*** after advertising default route. We will use ***HUB-VM*** to SSH to other VMs   using their private ips as we have full private network connectivity, so we can test on connectivity from those VMs to internet.
+ - Create Azure Bastion in Vnet ***HUB-SCUS*** to access the ***CSR*** and ***HUB-VM*** after advertising the default route. We will use ***HUB-VM*** to SSH to other VMs in the network using their private ips as we have full network connectivity within the private network, so we can verify the connectivity to the internet from those VMs after CSR advertises the default route.
 	
- - Create a UDR and assign it to the **External** subnet where the outside interface **CSROutsideInterface** reside, the UDR will have route to the ***On-Prem-VNG***  public ip with next hop type **Internet**. This interface has a public ip that is used to build the VPN tunnel with ***On-Prem-VNG*** and so it will need the internet   connectivity to build the tunnel.
+ - Create a UDR and assign it to the **External** subnet where the outside interface **CSROutsideInterface** reside, the UDR will have a route to the ***On-Prem-VNG*** public ip with next hop type **Internet**. This interface has a public ip that is used to build the VPN tunnel with ***On-Prem-VNG*** and so it will need the internet connectivity to build the tunnel.
 	
 2- On the ***CSR*** NVA:
    - Remove BGP peering between the NVAs CSR and CSR1
