@@ -2033,9 +2033,9 @@ To setup this scenario, we will do the following configuration changes:
  - Create a UDR and assign it to the **External** subnet where the outside interface **CSROutsideInterface** reside, the UDR will have a route to the ***On-Prem-VNG*** public ip with next hop type **Internet**. This interface has a public ip that is used to build the VPN tunnel with ***On-Prem-VNG*** and so it will need the internet connectivity to build the tunnel.
 	
 2- On the ***CSR*** NVA:
-   - Remove BGP peering between the NVAs CSR and CSR1
+   - Remove BGP peering between the NVAs ***CSR*** and ***CSR1***
    - Remove the as-override configuration with Route Server BGP endpoints   
    - Advertise default route through BGP
-   - Configure nat to nat private ips of the VMs to the public ip of the CSR interface **CSROutsideInterface**
+   - Configure nat to nat private ips of the VMs to the public ip of the ***CSR*** interface **CSROutsideInterface**
 
 
