@@ -2118,6 +2118,40 @@ router bgp 65002
 ```
 	
 
+## Task 5: configure nat
+
+	
+We will nat the traffic from the subnets that host the VMs so that it will be using the CSR public ip assigned to the NIC ***CSROutsideInterface*** when trying to access the internet.
+
+- Login to CSR using the Bastion and paste the following commands one block at a time:
+
+
+interface gigabitEthernet 2
+ip nat inside
+!
+interface tunnel11
+ip nat inside
+!
+ip access-list standard To-Internet
+permit 10.4.10.0 0.0.0.255
+permit 10.1.10.0 0.0.0.255
+permit 10.0.10.0 0.0.0.255
+permit 10.2.10.0 0.0.0.255
+!
+ip nat inside source list To-Internet interface gigabitEthernet 1 overload
+!
+
+## Task 6: Validate routing
+
+We will check the routing table on the gateways and the VMs to validate if they are learning the default route prefixes (128.0.0.0/1 and 0.0.0.0/1).
+	
+**1- Check the route table on the gateways**
+	
+- CSR BGP route table:
+	
+  Login to CSR using Bastion and type `Sh ip bgp` 
+We see that the CSR is advertising the default route successfully 
+![image](https://user-images.githubusercontent.com/78562461/148423337-838e3d20-c82c-4c5b-b46e-ede7b69fa3e2.png)
 
 
 
