@@ -2073,8 +2073,7 @@ az network vnet subnet update --name External --vnet-name HUB-SCUS --resource-gr
 	
 ## Task 4: Remove BGP peering with CSR1, remove as-override, and advertise default route
 
-- Login to ***CSR*** using Azure Bastion:
-  -From Portal navigate to CSR -> Overview -> Connect -> Bastion, then fill in the Username and Password and hit Connect
+- Login to ***CSR*** using Azure Bastion: from Portal navigate to CSR -> Overview -> Connect -> Bastion, then fill in the Username and Password and hit Connect
 
 - Once you logged in, type `conf t` to get into configuration mode, then copy and paste the following commands:
 
@@ -2204,7 +2203,7 @@ Navigate to Virtual Network Gateways -> On-Prem1-VNG -> Monitoring -> BGP Peers
 	
 **- HUB-VM route table**
 
-Use Cli:
+Use Cli command:
 	
 ```
 az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --output table
@@ -2215,7 +2214,7 @@ az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --output 
 
 **- Spoke-VM route table**
 
-Use Cli:
+Use Cli command:
 
 ```
 az network nic show-effective-route-table -g Route-Server -n Spoke-VMNIC --output table
@@ -2224,3 +2223,17 @@ az network nic show-effective-route-table -g Route-Server -n Spoke-VMNIC --outpu
 - ***Spoke-VM*** is also learning the default prefixes with next hop as the CSR internal interface 10.1.1.4.
 
 ![image](https://user-images.githubusercontent.com/78562461/148460289-a9573414-5dc7-414c-a631-8e7e6e6e61fd.png)
+	
+	
+**- On-Prem1-VM route table**
+	
+Use Cli command:
+
+```
+az network nic show-effective-route-table -g Route-Server -n on-prem1-VMNIC --output table
+```
+
+- Next hope ip for the default prefixes (in red box) refer to the ***On-Prem1-VNG*** public ip.
+
+![image](https://user-images.githubusercontent.com/78562461/148461466-49fd0502-29ce-4eef-9e4b-7a4f60c62643.png)
+
