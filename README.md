@@ -2167,7 +2167,8 @@ az network routeserver peering list-learned-routes --name CSR --routeserver Rout
 	
 Note: the results below shows only learned routes from one of the ARS instances which is IN_0 but IN_1 will have same routes 
 
-![image](https://user-images.githubusercontent.com/78562461/148425601-de239379-c667-4abe-b096-d3ccf36ea04b.png)
+![image](https://user-images.githubusercontent.com/78562461/148428394-8bf0f221-0611-417f-b511-02b4ccf54df6.png)
+
 
 
 
