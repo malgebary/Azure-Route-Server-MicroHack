@@ -2175,9 +2175,18 @@ Note: the results below shows only learned routes from one of the ARS instances 
 From portal:
 Navigate to Virtual Network Gateways -> HUB-VNG -> Monitoring -> BGP Peers
 
-- ***Hub-VNG*** is configured in active-active mode so it has two BGP endpoints 10.1.5.4 and 10.1.5.5, both of them are learning the default route from the two ARS instances (10.1.2.4 and 10.1.2.5) as shown below, the AS Path shows the default route prefixes have been advertised from ***CSR*** (ASN 65002) then from ARS (ASN 65515) 
+- ***Hub-VNG*** is configured in active-active mode so it has two BGP endpoints 10.1.5.4 and 10.1.5.5, both of them are learning the default route from the two ARS instances (10.1.2.4 and 10.1.2.5) as shown below, the AS Path shows the default route prefixes have been advertised from ***CSR*** (ASN 65002) then from ARS (ASN 65515). 
 
-![image](https://user-images.githubusercontent.com/78562461/148429510-29a52801-7839-4945-853b-f33c9af870bc.png)
+![image](https://user-images.githubusercontent.com/78562461/148429931-dd825ad4-c346-4074-b086-ecaec38e1018.png)
+
+
+**- ***On-Prem1-VNG*** learned routes:**
+
+Navigate to Virtual Network Gateways -> On-Prem1-VNG -> Monitoring -> BGP Peers
+
+- We see that the default route prefixes are learned from ***HUB-VNG*** (10.1.5.4). AS Path shows the route got advertised from ***CSR*** (ASN 65002), ARS (ASN 65515), then ***HUB-VNG*** (ASN 65004). 
+
+![image](https://user-images.githubusercontent.com/78562461/148429859-76dc8c0e-974c-4d22-ba54-56b362053cae.png)
 
 
 
