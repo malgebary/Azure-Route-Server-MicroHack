@@ -2237,3 +2237,13 @@ az network nic show-effective-route-table -g Route-Server -n on-prem1-VMNIC --ou
 
 ![image](https://user-images.githubusercontent.com/78562461/148461466-49fd0502-29ce-4eef-9e4b-7a4f60c62643.png)
 
+**- On-Prem-Vm route table**
+
+Use Cli command:
+
+```
+az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --output table
+```
+	
+![image](https://user-images.githubusercontent.com/78562461/148461913-fc379822-9a37-4f9f-aa8d-71f8b416a3ba.png)
+
