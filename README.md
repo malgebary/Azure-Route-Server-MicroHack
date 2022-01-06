@@ -2038,7 +2038,7 @@ To setup this scenario, we will do the following configuration changes:
    - Advertise default route through BGP
    - Configure nat to nat private ips of the VMs to the public ip of the ***CSR*** interface **CSROutsideInterface**
 
-## Task1: Install traceroute tool
+## Task 1: Install traceroute tool
 
 To validate and to troubleshoot connectivity, install traceroute tool on the following VMs: ***HUB-VM***, ***Spoke-VM***, ***On-Prem-VM***, ***On-Prem1-VM***.
 	
@@ -2048,12 +2048,31 @@ To validate and to troubleshoot connectivity, install traceroute tool on the fol
 sudo apt-get update &&sudo apt-get install traceroute -y
 ```
 	
-## Task2: Configure Azure Bastion
+## Task 2: Configure Azure Bastion
 
 ```
 az network public-ip create --resource-group Route-Server --name BastionPIP --sku Standard --location southcentralus
 az network vnet subnet create --address-prefix 10.1.6.0/26 --name  AzureBastionSubnet --resource-group Route-Server --vnet-name HUB-SCUS
 az network bastion create --name Bastion --public-ip-address BastionPIP --resource-group Route-Server --vnet-name HUB-SCUS --location southcentralus
+```
+## Task 3: Configure the UDR and assign it to the CSR **External** subnet
+
+- Get the ***On-Prem-VNG*** public ip as we will need it to configure the route in the route table: 
 
 ```
+az network public-ip show -g Route-Server -n Azure-VNGpubip --query "{address: ipAddress}"  
+```
+
+- Create the UDR and replace the X.X.X.X with the ip you got from above command:
+
+```
+az network route-table create --name Outside-Interface-RT --resource-group Route-Server --location southcentralus
+az network route-table route create --name To-On-Prem-VNG --resource-group Route-Server --route-table-name Outside-Interface-RT --address-prefix X.X.X.X/32 --next-hop-type Internet
+az network vnet subnet update --name External --vnet-name HUB-SCUS --resource-group Route-Server --route-table Outside-Interface-RT
+```
+	
+
+
+
+
 
