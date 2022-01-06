@@ -2092,6 +2092,7 @@ ip route 128.0.0.0 128.0.0.0 10.1.0.1
 
 Full BGP configuration after the above changes should look as follows:
 
+```
 CSR#sh running-config | sec bgp
 router bgp 65002
  bgp router-id 192.168.1.1
@@ -2113,11 +2114,8 @@ router bgp 65002
   neighbor 10.1.2.5 activate
  exit-address-family
 
-- Check on BGP peering
-
-We see peering has established correctly with On-Prem-VNG (10.0.0.4) after pointing the traffic to On-prem-VNG to go over the Internet
- 
-![image](https://user-images.githubusercontent.com/78562461/148348598-b7a61547-92cb-487b-9ecb-8c3e00b88027.png)
+```
+	
 
 
 
