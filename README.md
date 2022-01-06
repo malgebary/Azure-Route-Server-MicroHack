@@ -2188,7 +2188,17 @@ Navigate to Virtual Network Gateways -> On-Prem1-VNG -> Monitoring -> BGP Peers
 
 ![image](https://user-images.githubusercontent.com/78562461/148429859-76dc8c0e-974c-4d22-ba54-56b362053cae.png)
 
+***- On-Prem-VNG learned routes***
 
+Navigate to Virtual Network Gateways -> On-Prem1-VNG -> Monitoring -> BGP Peers
+
+- On-Prem-VNG is learning the default prefixes from CSR BGP peer address 192.168.1.1 
+
+![image](https://user-images.githubusercontent.com/78562461/148446632-67d1f7bd-4d66-401a-9455-a250f447e15c.png)
+
+
+**2- Check on VMs route table**
+	
 
 
 
