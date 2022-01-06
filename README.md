@@ -2177,7 +2177,7 @@ Navigate to Virtual Network Gateways -> HUB-VNG -> Monitoring -> BGP Peers
 
 - ***Hub-VNG*** is configured in active-active mode so it has two BGP endpoints 10.1.5.4 and 10.1.5.5, both of them are learning the default route from the two ARS instances (10.1.2.4 and 10.1.2.5) as shown below, the AS Path shows the default route prefixes have been advertised from ***CSR*** (ASN 65002) then from ARS (ASN 65515). 
 
-![image](https://user-images.githubusercontent.com/78562461/148429931-dd825ad4-c346-4074-b086-ecaec38e1018.png)
+![image](https://user-images.githubusercontent.com/78562461/148430059-f36be227-c42f-4539-9473-effe25673f60.png)
 
 
 **- ***On-Prem1-VNG*** learned routes:**
