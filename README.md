@@ -2206,7 +2206,18 @@ Use Cli:
 ```
 az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --output table
 ```
-- ***Hub-VM*** has the default route prefixes (in red boxes) injected by the ARS with next hop as the ***CSR*** internal interface 10.1.1.4. We also see the default route prefix 0.0.0.0/0 with next hop Internet but this prefix will be less preferred as the other two prefixes (in red boxes) will have longer prefix match when trying to access the internet, so the traffic will go to next hop 10.1.1.4 and not **Internet**.
+- ***Hub-VM*** has the default route prefixes (in red boxes) injected by the ARS with next hop as the ***CSR*** internal interface 10.1.1.4, we also see the default route prefix 0.0.0.0/0 with next hop Internet in the effective routes, however, this prefix will be less preferred, as the other two prefixes (in red boxes) will have longer prefix match when trying to access the internet, so the traffic will go to next hop 10.1.1.4 and not **Internet**.
 
 ![image](https://user-images.githubusercontent.com/78562461/148459622-4c5fe466-b662-47a5-be04-6be814277fd3.png)
 
+**- Spoke-VM route table**
+
+Use Cli:
+
+```
+az network nic show-effective-route-table -g Route-Server -n Spoke-VMNIC --output table
+```
+
+- ***Spoke-VM*** is also learning the default prefixes with next hop as the CSR internal interface 10.1.1.4.
+
+![image](https://user-images.githubusercontent.com/78562461/148460289-a9573414-5dc7-414c-a631-8e7e6e6e61fd.png)
