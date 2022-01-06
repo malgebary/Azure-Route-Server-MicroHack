@@ -2170,7 +2170,7 @@ Note: the results below shows only learned routes from one of the ARS instances 
 ![image](https://user-images.githubusercontent.com/78562461/148428394-8bf0f221-0611-417f-b511-02b4ccf54df6.png)
 
 
-**- ***HUB-VNG*** learned routes**
+**- HUB-VNG learned routes**
 
 From portal:
 Navigate to Virtual Network Gateways -> HUB-VNG -> Monitoring -> BGP Peers
@@ -2180,7 +2180,7 @@ Navigate to Virtual Network Gateways -> HUB-VNG -> Monitoring -> BGP Peers
 ![image](https://user-images.githubusercontent.com/78562461/148430059-f36be227-c42f-4539-9473-effe25673f60.png)
 
 
-**- ***On-Prem1-VNG*** learned routes:**
+**- On-Prem1-VNG learned routes:**
 
 Navigate to Virtual Network Gateways -> On-Prem1-VNG -> Monitoring -> BGP Peers
 
@@ -2192,13 +2192,21 @@ Navigate to Virtual Network Gateways -> On-Prem1-VNG -> Monitoring -> BGP Peers
 
 Navigate to Virtual Network Gateways -> On-Prem1-VNG -> Monitoring -> BGP Peers
 
-- On-Prem-VNG is learning the default prefixes from CSR BGP peer address 192.168.1.1 
+- ***On-Prem-VNG*** is learning the default route prefixes from ***CSR*** BGP peer address 192.168.1.1. 
 
 ![image](https://user-images.githubusercontent.com/78562461/148446632-67d1f7bd-4d66-401a-9455-a250f447e15c.png)
 
 
 **2- Check on VMs route table**
 	
+**- HUB-VM route table**
 
+Use Cli:
+	
+```
+az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --output table
+```
+- ***Hub-VM*** has the default route prefixes (in red boxes) injected by the ARS with next hop as the ***CSR*** internal interface 10.1.1.4. We also see the default route prefix 0.0.0.0/0 with next hop Internet but this prefix will be less preferred as the other two prefixes (in red boxes) will have longer prefix match when trying to access the internet, so the traffic will go to next hop 10.1.1.4 and not **Internet**.
 
+![image](https://user-images.githubusercontent.com/78562461/148459622-4c5fe466-b662-47a5-be04-6be814277fd3.png)
 
