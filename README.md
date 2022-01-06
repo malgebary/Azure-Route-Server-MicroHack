@@ -2155,5 +2155,19 @@ We will check the routing table on the gateways and the VMs to validate if they 
 
 
 
+**- ARS Learned routes**
+
+ARS learned routes from CSR:
+
+```
+az network routeserver peering list-learned-routes --name CSR --routeserver RouteServer --resource-group Route-Server
+```
+
+- ARS is learning the default route from the ***CSR*** internal interface 10.1.1.4, ***CSR*** is using this interface to peer with ARS
+	
+Note: the results below shows only learned routes from one of the ARS instances which is IN_0 but IN_1 will have same routes 
+
+![image](https://user-images.githubusercontent.com/78562461/148425601-de239379-c667-4abe-b096-d3ccf36ea04b.png)
+
 
 
