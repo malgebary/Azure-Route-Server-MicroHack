@@ -2147,11 +2147,12 @@ We will check the routing table on the gateways and the VMs to validate if they 
 	
 **1- Check the route table on the gateways**
 	
-- CSR BGP route table:
+**- CSR BGP route table:**
 	
-  Login to CSR using Bastion and type `Sh ip bgp` 
-We see that the CSR is advertising the default route successfully 
-![image](https://user-images.githubusercontent.com/78562461/148423337-838e3d20-c82c-4c5b-b46e-ede7b69fa3e2.png)
+  Login to CSR using Bastion and type `Sh ip bgp`, we see that the CSR is advertising the default route (in red boxes) successfully 
+
+	![image](https://user-images.githubusercontent.com/78562461/148423983-57ec4dfd-9166-4b2d-a930-c5ff378ebc35.png)
+
 
 
 
