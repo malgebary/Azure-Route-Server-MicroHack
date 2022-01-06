@@ -2077,9 +2077,9 @@ az network vnet subnet update --name External --vnet-name HUB-SCUS --resource-gr
 
 - Once you logged in type `conf t` to get into configuration mode, then copy and paste the following commands:
 
-! We will advertise the default route in two prefixes: 128.0.0.0/1 and 0.0.0.0/1 instead of 0.0.0.0/0, because of the limitation in the Azure virtual network gateway type VPN in which it doesn't advertise 0.0.0.0/0 to its neighbors
+❗We will advertise the default route in two prefixes: 128.0.0.0/1 and 0.0.0.0/1 instead of 0.0.0.0/0, because of the limitation in the Azure virtual network gateway type VPN in which it doesn't advertise 0.0.0.0/0 to to on-prem
 
-
+```
 router bgp 65002
 no neighbor 10.3.0.4 remote-as 65005
 no neighbor 10.1.2.4 as-override
@@ -2089,7 +2089,8 @@ network 0.0.0.0 mask 128.0.0.0
 ! Static route for the default route prefixes so it can be advertised into BGP
 ip route 0.0.0.0 128.0.0.0 10.1.0.1
 ip route 128.0.0.0 128.0.0.0 10.1.0.1
-
+```
+	
 Full BGP configuration after the above changes should look as follows:
 
 ```
