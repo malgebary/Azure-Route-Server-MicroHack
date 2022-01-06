@@ -2071,6 +2071,53 @@ az network route-table route create --name To-On-Prem-VNG --resource-group Route
 az network vnet subnet update --name External --vnet-name HUB-SCUS --resource-group Route-Server --route-table Outside-Interface-RT
 ```
 	
+## Task 4: Remove BGP peering with CSR1, remove as-override, and advertise default route
+
+- Login to ***CSR*** using Azure Bastion: From Portal navigate to CSR -> Overview -> Connect -> Bastion, rhen fill in the Username and Password and hit Connect
+
+- Once you logged in type `conf t` to get into configuration mode, then copy and paste the following commands:
+
+! We will advertise the default route in two prefixes: 128.0.0.0/1 and 0.0.0.0/1 instead of 0.0.0.0/0, because of the limitation in the Azure virtual network gateway type VPN in which it doesn't advertise 0.0.0.0/0 to its neighbors
+
+
+router bgp 65002
+no neighbor 10.3.0.4 remote-as 65005
+no neighbor 10.1.2.4 as-override
+no neighbor 10.1.2.5 as-override
+network 128.0.0.0 mask 128.0.0.0
+network 0.0.0.0 mask 128.0.0.0
+! Static route for the default route prefixes so it can be advertised into BGP
+ip route 0.0.0.0 128.0.0.0 10.1.0.1
+ip route 128.0.0.0 128.0.0.0 10.1.0.1
+
+Full BGP configuration after the above changes should look as follows:
+
+CSR#sh running-config | sec bgp
+router bgp 65002
+ bgp router-id 192.168.1.1
+ bgp log-neighbor-changes
+ neighbor 10.0.0.4 remote-as 65001
+ neighbor 10.0.0.4 ebgp-multihop 255
+ neighbor 10.0.0.4 update-source Loopback11
+ neighbor 10.1.2.4 remote-as 65515
+ neighbor 10.1.2.4 ebgp-multihop 255
+ neighbor 10.1.2.5 remote-as 65515
+ neighbor 10.1.2.5 ebgp-multihop 255
+ !
+ address-family ipv4
+  network 0.0.0.0 mask 128.0.0.0
+  network 10.1.10.0 mask 255.255.255.0
+  network 128.0.0.0 mask 128.0.0.0
+  neighbor 10.0.0.4 activate
+  neighbor 10.1.2.4 activate
+  neighbor 10.1.2.5 activate
+ exit-address-family
+
+- Check on BGP peering
+
+We see peering has established correctly with On-Prem-VNG (10.0.0.4) after pointing the traffic to On-prem-VNG to go over the Internet
+ 
+![image](https://user-images.githubusercontent.com/78562461/148348598-b7a61547-92cb-487b-9ecb-8c3e00b88027.png)
 
 
 
