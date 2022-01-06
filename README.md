@@ -2151,7 +2151,7 @@ We will check the routing table on the gateways and the VMs to validate if they 
 	
   Login to CSR using Bastion and type `Sh ip bgp`, we see that the CSR is advertising the default route (in red boxes) successfully 
 
-	![image](https://user-images.githubusercontent.com/78562461/148423983-57ec4dfd-9166-4b2d-a930-c5ff378ebc35.png)
+![image](https://user-images.githubusercontent.com/78562461/148423983-57ec4dfd-9166-4b2d-a930-c5ff378ebc35.png)
 
 
 
