@@ -2073,11 +2073,11 @@ az network vnet subnet update --name External --vnet-name HUB-SCUS --resource-gr
 	
 ## Task 4: Remove BGP peering with CSR1, remove as-override, and advertise default route
 
-- Login to ***CSR*** using Azure Bastion: from Portal navigate to CSR -> Overview -> Connect -> Bastion, then fill in the Username and Password and hit Connect
+- Login to ***CSR*** using Azure Bastion: from Portal navigate to CSR -> Overview -> Connect -> Bastion, then type in the Username and Password and hit Connect
 
 - Once you logged in, type `conf t` to get into configuration mode, then copy and paste the following commands:
 
-❗We will advertise the default route in two prefixes: 128.0.0.0/1 and 0.0.0.0/1 instead of 0.0.0.0/0, because of the limitation in the Azure virtual network gateway type VPN in which it doesn't advertise 0.0.0.0/0 to to on-prem
+❗We will advertise the default route in two prefixes: 128.0.0.0/1 and 0.0.0.0/1 instead of 0.0.0.0/0, because of the limitation in the Azure virtual network gateway type VPN in which it doesn't advertise 0.0.0.0/0 to on-prem.
 
 ```
 ! Static route for the default route prefixes so it can be advertised into BGP
@@ -2151,7 +2151,7 @@ We will check the routing table on the gateways and the VMs to validate if they 
 	
 **- CSR BGP route table:**
 	
-  Login to CSR using Bastion and type `Sh ip bgp`, we see that the CSR is advertising the default route (in red boxes) successfully 
+  Login to CSR using Bastion and type `Sh ip bgp`, we see that the ***CSR*** is advertising the default route (in red boxes) successfully 
 
 ![image](https://user-images.githubusercontent.com/78562461/148423983-57ec4dfd-9166-4b2d-a930-c5ff378ebc35.png)
 
@@ -2246,4 +2246,88 @@ az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --outp
 ```
 	
 ![image](https://user-images.githubusercontent.com/78562461/148461913-fc379822-9a37-4f9f-aa8d-71f8b416a3ba.png)
+
+
+👍From above, we see that all VMs and gateways are learning the default route advertised by the NVA CSR.
+
+## Task 7: Verify connectivity 
+
+We will login to ***HUB-VM*** using Bastion then from ***HUB-VM*** we SSH to the other VMs to verify connectivity to internet
+
+- From Portal: Navigate to HUB-VM -> Connect -> Bastion and type in the user name and password 
+
+- Ping external website like www.microsoft.com
+
+```
+azureuser@HUB-VM:~$ ping www.microsoft.com
+PING e13678.dscb.akamaiedge.net (23.40.185.197) 56(84) bytes of data.
+^C
+--- e13678.dscb.akamaiedge.net ping statistics ---
+7 packets transmitted, 0 received, 100% packet loss, time 6141ms
+
+Let traceroute to see where the traffic is getting stopped:
+
+azureuser@HUB-VM:~$ traceroute www.microsoft.com
+traceroute to www.microsoft.com (23.55.125.163), 30 hops max, 60 byte packets
+ 1  10.1.1.4 (10.1.1.4)  6.545 ms  6.528 ms  6.518 ms
+ 2  * * *
+ 3  * * *
+ 4  * * *
+ 5  * * *
+ 6  * * *
+ 7  *^C
+	
+```
+	
+We see that ping is failing and traceroute shows traffic is stopping at the ***CSR*** internal interface 10.1.1.4
+
+SSH to the other VMs (***Spoke-VM***, ***On-Prem1-VM***, and ***On-prem-VM***) from the ***HUB-VM*** and ping/trace to www.microsoft.com, we see that ping and trace is failing on all VMs and the traffic it is stopping at CSR internal interface 10.1.1.4 as shown below:
+
+ ```
+azureuser@On-Prem-VM:~$ ping www.microsoft.com 
+PING e13678.dscb.akamaiedge.net (23.78.9.173) 56(84) bytes of data.
+^C
+--- e13678.dscb.akamaiedge.net ping statistics ---
+9 packets transmitted, 0 received, 100% packet loss, time 8188ms
+
+azureuser@On-Prem-VM:~$ traceroute www.microsoft.com
+traceroute to www.microsoft.com (104.122.42.4), 30 hops max, 60 byte packets
+ 1  192.168.2.1 (192.168.2.1)  40.093 ms  40.077 ms  40.065 ms
+ 2  10.1.1.4 (10.1.1.4)  41.618 ms  41.603 ms  41.589 ms
+ 3  * * *
+ 4  * * *
+
+azureuser@Spoke-VM:~$ ping www.microsoft.com
+PING e13678.dscb.akamaiedge.net (184.26.130.117) 56(84) bytes of data.
+^C
+--- e13678.dscb.akamaiedge.net ping statistics ---
+7 packets transmitted, 0 received, 100% packet loss, time 6125ms
+
+azureuser@Spoke-VM:~$ traceroute www.microsoft.com
+traceroute to www.microsoft.com (23.73.130.110), 30 hops max, 60 byte packets
+ 1  10.1.1.4 (10.1.1.4)  33.799 ms  33.781 ms  33.767 ms
+ 2  * * *
+ 3  * * *
+ 4  * * *
+ 5  * * *
+ 6  * * *
+ 7  *^C
+
+azureuser@On-Prem1-VM:~$ ping www.microsoft.com
+PING e13678.dscb.akamaiedge.net (104.122.42.4) 56(84) bytes of data.
+^C
+--- e13678.dscb.akamaiedge.net ping statistics ---
+8 packets transmitted, 0 received, 100% packet loss, time 7159ms
+
+azureuser@On-Prem1-VM:~$ traceroute www.microsoft.com
+traceroute to www.microsoft.com (104.122.42.4), 30 hops max, 60 byte packets
+ 1  10.1.1.4 (10.1.1.4)  35.873 ms  35.846 ms  35.824 ms
+ 2  * * *
+ 3  * * *
+ 4  * * *
+ 5  * * *
+ 6  * * *
+ 7  *^C
+```
+	
 
