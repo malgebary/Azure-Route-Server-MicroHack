@@ -2363,10 +2363,13 @@ VRF info: (vrf in name/id, vrf out name/id)
 	
 ```
 👉 **To fix this**, we will need to override default route prefixes (128.0.0.0 and 0.0.0.0/1) learned from ***CSR*** through ARS by creating new routes in UDR **Outside-Interface-RT**, we will point the traffic destined to these prefixes to have next hop type as Internet.
-With this change, as the traffic to default route is being pointed to go over **Internet** there will be no need to have individual route entry pointing the traffic destined to ***On-Prem-VNG*** to **Internet**, so we will update the UDR **Outside-Interface-RT** as follows:
 
-- Add two new route entries, one for traffic destined to 128.0.0.0/1 and other one for traffic destined to 0.0.0.0/1 to have next hop as **Internet**.
-- Delete route entry **To-On-Prem-VNG**
+With this change, as the traffic to default route is being pointed to go over **Internet**, there will be no need to have individual route entry pointing the traffic destined to ***On-Prem-VNG*** to go through **Internet**.
+	
+So we will update the UDR **Outside-Interface-RT** as follows:
+
+- Add two new route entries, one for traffic destined to 128.0.0.0/1 and one for traffic destined to 0.0.0.0/1 to have next hop as **Internet**.
+- Delete route entry **To-On-Prem-VNG**.
 	
 ```
 az network route-table route create --name Internet-Prefix1 --resource-group Route-Server --route-table-name Outside-Interface-RT --address-prefix 128.0.0.0/1 --next-hop-type Internet
@@ -2417,7 +2420,7 @@ PING e13678.dscb.akamaiedge.net (23.2.77.227) 56(84) bytes of data.
 rtt min/avg/max/mdev = 75.094/77.049/79.085/1.478 ms
 
 
-azureuser@On-Prem-VM:~$ ping  www.microsoft.com
+azureuser@On-Prem-VM:~$ ping www.microsoft.com
 PING e13678.dscb.akamaiedge.net (184.84.169.167) 56(84) bytes of data.
 64 bytes from a184-84-169-167.deploy.static.akamaitechnologies.com (184.84.169.167): icmp_seq=1 ttl=47 time=72.5 ms
 64 bytes from a184-84-169-167.deploy.static.akamaitechnologies.com (184.84.169.167): icmp_seq=2 ttl=47 time=71.3 ms
@@ -2430,4 +2433,4 @@ PING e13678.dscb.akamaiedge.net (184.84.169.167) 56(84) bytes of data.
 rtt min/avg/max/mdev = 71.329/72.751/73.993/0.928 ms
 ```
 
-	
+## Summary
