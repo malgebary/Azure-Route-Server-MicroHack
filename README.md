@@ -2377,7 +2377,7 @@ az network route-table route create --name Internet-Prefix2 --resource-group Rou
 az network route-table route delete --name To-On-Prem-VNG --resource-group Route-Server --route-table-name Outside-Interface-RT
 ```
 
-🙂 After this change we see the ping is going out sucessfully:
+🙂 After this change we see the pings from all VMs are going out sucessfully:
 
 ```
 azureuser@On-Prem1-VM:~$ ping www.microsoft.com
@@ -2433,4 +2433,3 @@ PING e13678.dscb.akamaiedge.net (184.84.169.167) 56(84) bytes of data.
 rtt min/avg/max/mdev = 71.329/72.751/73.993/0.928 ms
 ```
 
-## Summary
