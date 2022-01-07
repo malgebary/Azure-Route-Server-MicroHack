@@ -1384,7 +1384,7 @@ router bgp 65002
 	
 	`CSR1#conf t`
 	
-	add the following commands one block at a time:
+	add the following commands one block at a time, replace **CSRPublicIP** with the ip you documented in previous step:
 	
 ```
 	crypto ikev2 proposal to-csr-proposal
@@ -2186,7 +2186,7 @@ Navigate to Virtual Network Gateways -> HUB-VNG -> Monitoring -> BGP Peers
 
 Navigate to Virtual Network Gateways -> On-Prem1-VNG -> Monitoring -> BGP Peers
 
-- We see that the default route prefixes are learned from ***HUB-VNG*** (10.1.5.4). AS Path shows the route got advertised from ***CSR*** (ASN 65002), ARS (ASN 65515), then ***HUB-VNG*** (ASN 65004). 
+- We see the default route prefixes are learned from ***HUB-VNG*** (10.1.5.4). AS Path shows the route got advertised from ***CSR*** (ASN 65002), ARS (ASN 65515), then ***HUB-VNG*** (ASN 65004). 
 
 ![image](https://user-images.githubusercontent.com/78562461/148429859-76dc8c0e-974c-4d22-ba54-56b362053cae.png)
 
@@ -2203,7 +2203,7 @@ Navigate to Virtual Network Gateways -> On-Prem1-VNG -> Monitoring -> BGP Peers
 	
 **- HUB-VM route table**
 
-Use Cli command:
+Run Cli command:
 	
 ```
 az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --output table
@@ -2214,7 +2214,7 @@ az network nic show-effective-route-table -g Route-Server -n HUB-VMNIC --output 
 
 **- Spoke-VM route table**
 
-Use Cli command:
+Run Cli command:
 
 ```
 az network nic show-effective-route-table -g Route-Server -n Spoke-VMNIC --output table
@@ -2227,7 +2227,7 @@ az network nic show-effective-route-table -g Route-Server -n Spoke-VMNIC --outpu
 	
 **- On-Prem1-VM route table**
 	
-Use Cli command:
+Run Cli command:
 
 ```
 az network nic show-effective-route-table -g Route-Server -n on-prem1-VMNIC --output table
@@ -2239,7 +2239,7 @@ az network nic show-effective-route-table -g Route-Server -n on-prem1-VMNIC --ou
 
 **- On-Prem-Vm route table**
 
-Use Cli command:
+Run Cli command:
 
 ```
 az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --output table
