@@ -2376,6 +2376,7 @@ az network route-table route delete --name To-On-Prem-VNG --resource-group Route
 
 🙂 After this change we see the ping is going out sucessfully:
 
+```
 azureuser@On-Prem1-VM:~$ ping www.microsoft.com
 PING e13678.dscb.akamaiedge.net (23.35.78.52) 56(84) bytes of data.
 64 bytes from a23-35-78-52.deploy.static.akamaitechnologies.com (23.35.78.52): icmp_seq=1 ttl=50 time=65.7 ms
@@ -2427,6 +2428,6 @@ PING e13678.dscb.akamaiedge.net (184.84.169.167) 56(84) bytes of data.
 --- e13678.dscb.akamaiedge.net ping statistics ---
 5 packets transmitted, 5 received, 0% packet loss, time 4005ms
 rtt min/avg/max/mdev = 71.329/72.751/73.993/0.928 ms
-
+```
 
 	
