@@ -2254,9 +2254,9 @@ az network nic show-effective-route-table -g Route-Server -n onprem-VMNIC --outp
 
 We will login to ***HUB-VM*** using Bastion then from ***HUB-VM*** we SSH to the other VMs to verify connectivity to internet
 
-- From Portal: Navigate to HUB-VM -> Connect -> Bastion and type in the user name and password 
+- From Portal: Navigate to HUB-VM -> Connect -> Bastion and type in the username and password 
 
-- Ping external website like www.microsoft.com
+- Ping external website like www.microsoft.com:
 
 ```
 azureuser@HUB-VM:~$ ping www.microsoft.com
@@ -2281,7 +2281,7 @@ traceroute to www.microsoft.com (23.55.125.163), 30 hops max, 60 byte packets
 	
 We see that ping is failing and traceroute shows traffic is stopping at the ***CSR*** internal interface 10.1.1.4
 
-SSH to the other VMs (***Spoke-VM***, ***On-Prem1-VM***, and ***On-prem-VM***) from the ***HUB-VM*** and ping/trace to www.microsoft.com, we see that ping and trace is failing on all VMs and the traffic it is stopping at CSR internal interface 10.1.1.4 as shown below:
+SSH to the other VMs (***Spoke-VM***, ***On-Prem1-VM***, and ***On-prem-VM***) from the ***HUB-VM*** and ping/trace to www.microsoft.com, we see ping and trace is also failing on all VMs and the traffic is stopping at the ***CSR*** internal interface 10.1.1.4 as shown below:
 
  ```
 azureuser@On-Prem-VM:~$ ping www.microsoft.com 
@@ -2330,4 +2330,103 @@ traceroute to www.microsoft.com (104.122.42.4), 30 hops max, 60 byte packets
  7  *^C
 ```
 	
+👉 Let us ping and trace from ***CSR***
+	
+- Login to ***CSR*** using Bastion, we see that the traffic is looping as shown below at the internal interface 10.1.1.4, **why**?
 
+Because the **External** subnet where the outside nat interface **CSROutsideInterface** reside (which is GigabitEthernet1 interface in the CSR) has next hop to internet as 10.1.1.4, this route got injected by ARS just like how ARS injected the same in the other VMs NICs, and so the traffic is being routed back to the CSR causing a loop.
+
+```
+CSR#ping www.microsoft.com
+Type escape sequence to abort.
+Sending 5, 100-byte ICMP Echos to 23.40.185.197, timeout is 2 seconds:
+.....
+Success rate is 0 percent (0/5)
+CSR#
+CSR#
+CSR#traceroute www.microsoft.com
+Type escape sequence to abort.
+Tracing the route to a23-40-185-197.deploy.static.akamaitechnologies.com (23.40.185.197)
+VRF info: (vrf in name/id, vrf out name/id)
+  1 10.1.1.4 [AS 65515] 3 msec 2 msec 3 msec
+  2 10.1.1.4 [AS 65515] 5 msec 5 msec 4 msec
+  3 10.1.1.4 [AS 65515] 6 msec 5 msec 7 msec
+  4 10.1.1.4 [AS 65515] 10 msec 9 msec 9 msec
+  5 10.1.1.4 [AS 65515] 11 msec 11 msec 10 msec
+  6 10.1.1.4 [AS 65515] 14 msec 17 msec 15 msec
+  7 10.1.1.4 [AS 65515] 15 msec 18 msec 17 msec
+  8 10.1.1.4 [AS 65515] 19 msec 18 msec 20 msec
+  9 10.1.1.4 [AS 65515] 19 msec 20 msec 20 msec
+ 10 10.1.1.4 [AS 65515] 24 msec 20 msec 22 msec
+ 11 10.1.1.4 [AS 65515] 25 msec 25 msec 23 msec
+ 12 10.1.1.4 [AS 65515] 25 msec 30 msec 27 msec
+	
+```
+👉 **To fix this**, we will need to override default route prefixes (128.0.0.0 and 0.0.0.0/1) learned from ***CSR*** through ARS by creating new routes in UDR **Outside-Interface-RT**, we will point the traffic destined to these prefixes to have next hop type as Internet.
+With this change, as the traffic to default route is being pointed to go over **Internet** there will be no need to have individual route entry pointing the traffic destined to ***On-Prem-VNG*** to **Internet**, so we will update the UDR **Outside-Interface-RT** as follows:
+
+- Add two new route entries, one for traffic destined to 128.0.0.0/1 and other one for traffic destined to 0.0.0.0/1 to have next hop as **Internet**.
+- Delete route entry **To-On-Prem-VNG**
+	
+```
+az network route-table route create --name Internet-Prefix1 --resource-group Route-Server --route-table-name Outside-Interface-RT --address-prefix 128.0.0.0/1 --next-hop-type Internet
+az network route-table route create --name Internet-Prefix2 --resource-group Route-Server --route-table-name Outside-Interface-RT --address-prefix 0.0.0.0/1 --next-hop-type Internet
+az network route-table route delete --name To-On-Prem-VNG --resource-group Route-Server --route-table-name Outside-Interface-RT
+```
+
+🙂 After this change we see the ping is going out sucessfully:
+
+azureuser@On-Prem1-VM:~$ ping www.microsoft.com
+PING e13678.dscb.akamaiedge.net (23.35.78.52) 56(84) bytes of data.
+64 bytes from a23-35-78-52.deploy.static.akamaitechnologies.com (23.35.78.52): icmp_seq=1 ttl=50 time=65.7 ms
+64 bytes from a23-35-78-52.deploy.static.akamaitechnologies.com (23.35.78.52): icmp_seq=2 ttl=50 time=70.0 ms
+64 bytes from a23-35-78-52.deploy.static.akamaitechnologies.com (23.35.78.52): icmp_seq=3 ttl=50 time=64.9 ms
+64 bytes from a23-35-78-52.deploy.static.akamaitechnologies.com (23.35.78.52): icmp_seq=4 ttl=50 time=67.0 ms
+64 bytes from a23-35-78-52.deploy.static.akamaitechnologies.com (23.35.78.52): icmp_seq=5 ttl=50 time=67.5 ms
+64 bytes from a23-35-78-52.deploy.static.akamaitechnologies.com (23.35.78.52): icmp_seq=6 ttl=50 time=67.5 ms
+^C
+--- e13678.dscb.akamaiedge.net ping statistics ---
+6 packets transmitted, 6 received, 0% packet loss, time 5006ms
+rtt min/avg/max/mdev = 64.983/67.165/70.064/1.640 ms
+
+
+azureuser@HUB-VM:~$ ping www.microsoft.com
+PING e13678.dscb.akamaiedge.net (23.55.125.163) 56(84) bytes of data.
+64 bytes from a23-55-125-163.deploy.static.akamaitechnologies.com (23.55.125.163): icmp_seq=1 ttl=51 time=12.4 ms
+64 bytes from a23-55-125-163.deploy.static.akamaitechnologies.com (23.55.125.163): icmp_seq=2 ttl=51 time=10.8 ms
+64 bytes from a23-55-125-163.deploy.static.akamaitechnologies.com (23.55.125.163): icmp_seq=3 ttl=51 time=10.9 ms
+64 bytes from a23-55-125-163.deploy.static.akamaitechnologies.com (23.55.125.163): icmp_seq=4 ttl=51 time=11.8 ms
+64 bytes from a23-55-125-163.deploy.static.akamaitechnologies.com (23.55.125.163): icmp_seq=5 ttl=51 time=10.1 ms
+^C
+--- e13678.dscb.akamaiedge.net ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4007ms
+rtt min/avg/max/mdev = 10.177/11.227/12.430/0.802 ms
+
+
+azureuser@Spoke-VM:~$ ping www.microsoft.com
+PING e13678.dscb.akamaiedge.net (23.2.77.227) 56(84) bytes of data.
+64 bytes from a23-2-77-227.deploy.static.akamaitechnologies.com (23.2.77.227): icmp_seq=1 ttl=50 time=75.0 ms
+64 bytes from a23-2-77-227.deploy.static.akamaitechnologies.com (23.2.77.227): icmp_seq=2 ttl=50 time=78.2 ms
+64 bytes from a23-2-77-227.deploy.static.akamaitechnologies.com (23.2.77.227): icmp_seq=3 ttl=50 time=76.0 ms
+64 bytes from a23-2-77-227.deploy.static.akamaitechnologies.com (23.2.77.227): icmp_seq=4 ttl=50 time=76.7 ms
+64 bytes from a23-2-77-227.deploy.static.akamaitechnologies.com (23.2.77.227): icmp_seq=5 ttl=50 time=79.0 ms
+^C
+--- e13678.dscb.akamaiedge.net ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4006ms
+rtt min/avg/max/mdev = 75.094/77.049/79.085/1.478 ms
+
+
+azureuser@On-Prem-VM:~$ ping  www.microsoft.com
+PING e13678.dscb.akamaiedge.net (184.84.169.167) 56(84) bytes of data.
+64 bytes from a184-84-169-167.deploy.static.akamaitechnologies.com (184.84.169.167): icmp_seq=1 ttl=47 time=72.5 ms
+64 bytes from a184-84-169-167.deploy.static.akamaitechnologies.com (184.84.169.167): icmp_seq=2 ttl=47 time=71.3 ms
+64 bytes from a184-84-169-167.deploy.static.akamaitechnologies.com (184.84.169.167): icmp_seq=3 ttl=47 time=73.0 ms
+64 bytes from a184-84-169-167.deploy.static.akamaitechnologies.com (184.84.169.167): icmp_seq=4 ttl=47 time=73.9 ms
+64 bytes from a184-84-169-167.deploy.static.akamaitechnologies.com (184.84.169.167): icmp_seq=5 ttl=47 time=72.8 ms
+^C
+--- e13678.dscb.akamaiedge.net ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4005ms
+rtt min/avg/max/mdev = 71.329/72.751/73.993/0.928 ms
+
+
+	
