@@ -43,7 +43,7 @@ After completing this MicroHack you will:
 Azure Cli will be used to build this Lab. the complete lab consist of:  
 
   1. Six Vnets: ***On-Prem-Vnet***, ***On-prem1-Vnet***, ***HUB-SCUS***, ***HUB-EastUS***, ***Spoke-Vnet***, and ***Spoke1-Vnet***.
-  2. Three Virtual Network Gateways:***On-Prem-VNG***, ***On-Prem1-VNG***, and ***HUB-VNG***.
+  2. Three Virtual Network Gateways: ***On-Prem-VNG***, ***On-Prem1-VNG***, and ***HUB-VNG***.
   3. Eight VMs: ***On-Prem-VM***, ***On-Prem1-VM***, ***HUB-VM***, ***HUB1-VM***, ***CSR***, ***CSR1***, ***Spoke-VM***, and ***Spoke1-VM***.
   4. Two Azure Route Severs: ***RouteServer***, and ***RouteServer1***.
 	
