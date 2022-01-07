@@ -2120,12 +2120,12 @@ router bgp 65002
 ```
 	
 
-## Task 5: configure nat
+## Task 5: Configure nat
 
 	
-We will nat the traffic from the subnets that host the VMs so that it will be using the CSR public ip assigned to the NIC ***CSROutsideInterface*** when trying to access the internet.
+We will nat the traffic from the subnets hosting the VMs so that they will be using the CSR public ip assigned to the NIC ***CSROutsideInterface*** when trying to access the internet.
 
-- Login to CSR using the Bastion and paste the following commands one block at a time:
+- Login to ***CSR*** using the Bastion and paste the following commands one block at a time:
 
 
 interface gigabitEthernet 2
@@ -2165,7 +2165,7 @@ ARS learned routes from CSR:
 az network routeserver peering list-learned-routes --name CSR --routeserver RouteServer --resource-group Route-Server
 ```
 
-- ARS is learning the default route from the ***CSR*** internal interface 10.1.1.4, ***CSR*** is using this interface to peer with ARS
+- ARS is learning the default route from the ***CSR*** internal interface 10.1.1.4, ***CSR*** is using this interface to peer with ARS.
 	
 Note: the results below shows only learned routes from one of the ARS instances which is IN_0 but IN_1 will have same routes 
 
