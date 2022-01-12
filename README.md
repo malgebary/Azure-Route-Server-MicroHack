@@ -947,7 +947,7 @@ Default                Active   0.0.0.0/0         Internet
 ```
 
 
-🙂 From above we see that source ***On-Prem-VM*** (10.0.10.4) knows the route to destination ***On-Prem1-VM*** (10.2.10.4) and vice versa with no UDR has been used due to using ARS, and we see ping work fine:
+🙂 From above we see the source ***On-Prem-VM*** (10.0.10.4) knows the route to the destination ***On-Prem1-VM*** (10.2.10.4) and vice versa with no UDR has been used due to using ARS, and we see ping works fine:
 
 ```
 azureuser@On-Prem-VM:~$ ping 10.2.10.4
@@ -1515,20 +1515,20 @@ Navigate to Network Interfaces -> CSRInsideInterface -> Help -> Effective routes
 ![image](https://user-images.githubusercontent.com/78562461/144921682-f8fd3920-1444-469b-876f-696121a839fa.png)
 
 
-Let check next on the routes ARS ***Routserver*** learned from its peer ***CSR***
+Let check next on the ARS ***Routserver*** learned from its peer ***CSR***
 
 
 2- ARS ***Routeserver*** learned routes
+
 ```
 az network routeserver peering list-learned-routes --name CSR --routeserver RouteServer --resource-group Route-Server
 ```
 
-- We see that the ARS is learning only about ***On-Prem-Vnet*** prefix 10.0.0.0/16, ***Subnet-1*** prefix in ***HUB-SCUS*** 10.1.10.0/24, 192.168.1.4 Tunnel11 (VTI interface) in ***CSR1*** NVA, and 192.168.1.3 is Tunnel 12 in ***CSR*** NVA, while it doesn't learn about 10.3.0.0/16 or 10.5.0.0/16, why?
+- We see the ARS is learning only about ***On-Prem-Vnet*** prefix 10.0.0.0/16, ***Subnet-1*** prefix in ***HUB-SCUS*** 10.1.10.0/24, 192.168.1.4 Tunnel11 (VTI interface) in ***CSR1*** NVA, and 192.168.1.3 is Tunnel 12 in ***CSR*** NVA, while it doesn't learn about 10.3.0.0/16 or 10.5.0.0/16, why?
 	
 ❗Note: output here showing routes from IN_0 which is 10.1.2.4 but it will be the same for IN_1 10.1.2.5
 
 ![image](https://user-images.githubusercontent.com/78562461/144922817-9a8b0ea4-e7eb-453d-8f60-1780ceafaa22.png)
-
 
 
 
@@ -1537,8 +1537,8 @@ az network routeserver peering list-learned-routes --name CSR --routeserver Rout
 ```	
 sh bgp neighbors 10.1.2.4 advertised-routes
 ```
-	
-- Above shows ***CSR*** is advertising 9 prefixes to the ARS ***Routeserver*** including 10.3.0.0/16 and 10.5.0.0/16, however we only see 10.0.0.0/16, 10.1.10.0/24, 192.168.1.3, and 192.168.1.4 prefixes been learned by the ARS ***Routeserver***, this is due to the BGP loop prevention mechanism, in which the router would drop BGP advertisement when it sees its own AS number in the AS path attribute, and as ARS has ASN of 65515 then any prefix has this ASN in its AS Path attribute will be dropped, and that is the case with 10.3.0.0/16 and 10.5.0.0/16, these two prefixes are originally advertised by the ARS ***Routeserver1*** (65515) then advertised to the ***CSR1*** (65505) then to the ***CSR***, and so when it gets to ARS ***Routeserver*** it will be dropped as ***Routeserver*** will see it is own ASN in the AS Path of this prefix.
+
+- Below shows ***CSR*** is advertising 9 prefixes to the ARS ***Routeserver*** including 10.3.0.0/16 and 10.5.0.0/16, however we only see 10.0.0.0/16, 10.1.10.0/24, 192.168.1.3, and 192.168.1.4 prefixes been learned by the ARS ***Routeserver***, this is due to the BGP loop prevention mechanism, in which the router would drop BGP advertisement when it sees its own AS number in the AS path attribute, and as ARS has ASN of 65515 then any prefix has this ASN in its AS Path attribute will be dropped, and that is the case with 10.3.0.0/16 and 10.5.0.0/16, these two prefixes are originally advertised by the ARS ***Routeserver1*** (65515) then advertised to the ***CSR1*** (65505) then to the ***CSR***, and so when it gets to ARS ***Routeserver*** it will be dropped as ***Routeserver*** will see it is own ASN in the AS Path of this prefix.
 
 ![image](https://user-images.githubusercontent.com/78562461/144934937-9e47e3e7-13cc-43b8-a1b6-e65502c01ab4.png)
 
@@ -1554,7 +1554,7 @@ sh bgp neighbors 10.1.2.4 advertised-routes
 az network routeserver peering list-learned-routes --name CSR1 --routeserver RouteServer1 --resource-group Route-Server
 ```
 	
-🕵️‍♀️ Only 4 prefixes have been learned by the ***Routeserver1*** as they don't have ASN 65515 in the AS Path atribute which are: 10.0.0.0/16, 192.168.1.4, 192.168.1.3, and 10.1.10.0/24.
+Only 4 prefixes have been learned by the ***Routeserver1*** as they don't have ASN 65515 in the AS Path atribute, which are: 10.0.0.0/16, 192.168.1.4, 192.168.1.3, and 10.1.10.0/24.
 	
 ![image](https://user-images.githubusercontent.com/78562461/144961794-81cbf655-db44-40d7-bddf-7ea8251acc44.png)
 
@@ -1636,7 +1636,7 @@ Prior to configuring As-Override, the ***Routeserver*** was only learning 4 pref
 
 🤝 after this change we have full network connectivity, for example you can ping from ***Spoke1-VM*** to ***Spoke-VM*** and to all other VMs in this topology with no UDR has been used to route the traffic. 
 
-💡 As route tables are not used in this scenario, this design is scalable and so it is suitable for large deployments with multiple spokes and/or multiple on-premises branches across multiple regions, however, traffic goes over IPsec tunnel will have throughput limitation. Next we will explore using Vnet peering instead of IPsec tunnel.
+> As route tables are not used in this scenario, this design is scalable and so it is suitable for large deployments with multiple spokes and/or multiple on-premises branches across multiple regions, however, traffic goes over IPsec tunnel will have throughput limitation. Next we will explore using Vnet peering instead of IPsec tunnel.
 
 ![image](https://user-images.githubusercontent.com/78562461/145097896-435f027c-63af-44e5-9c45-bbcdc3920345.png)
 
