@@ -35,8 +35,8 @@ In this MicroHack we will explore some routing scenarios that shows how ARS can 
 
 After completing this MicroHack you will:
 
-- Know how to build Azure Route Server in a Vnet and connect it to an NVA and/or virtual network gateway.
-- Understand the new routing capabilities introduced by ARS and how to interpret the route table after deploying the ARS in the Vnet.
+- Know how to build Azure Route Server in the Vnet and connect it to an NVA and/or virtual network gateway.
+- Explore the new routing capabilities introduced by ARS and how it would simplify routing within Azure and with on-premises.
 
 # Lab:
 
@@ -1655,8 +1655,7 @@ In this design we will have same components as in scenario 4 but we will have gl
 
 The complete scenario will look as follows:
 	
-![image](https://user-images.githubusercontent.com/78562461/145637084-4ee5f2e3-c10d-4510-961d-9b4d81c5a9ac.png)
-
+![image](https://user-images.githubusercontent.com/78562461/149048770-977990e8-3fa0-40c3-bd78-23680b0ae2e3.png)
 
 
 ## Task1: Configure Vnet peering between HUB-SCUS and HUB-EastUS Vnets
@@ -2433,3 +2432,6 @@ PING e13678.dscb.akamaiedge.net (184.84.169.167) 56(84) bytes of data.
 rtt min/avg/max/mdev = 71.329/72.751/73.993/0.928 ms
 ```
 
+## Close Out
+	
+In this MicroHack you learned how to implement and the some used case s
