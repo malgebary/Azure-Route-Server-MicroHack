@@ -22,6 +22,11 @@
 
 [Scenario 6: On-premises internet breakout through Azure](#Scenario-6-On-premises-internet-breakout-through-Azure)
 
+[Clouse out](#Clouse-out)
+
+[Acknowledgment](#Acknowledgment)
+
+
 
 # Introduction
 
@@ -2432,6 +2437,10 @@ PING e13678.dscb.akamaiedge.net (184.84.169.167) 56(84) bytes of data.
 rtt min/avg/max/mdev = 71.329/72.751/73.993/0.928 ms
 ```
 
-## Close Out
+## Close out
 	
-In this MicroHack you learned how to implement and the some used case s
+You have explored Azure Route Server and how it can be used to simplify routing within Azure and with on-premises by using BGP with NVA and/or with virtual network gateway through different scenarios.
+	
+## Acknowledgment 
+
+Special thanks to [Daniel Mauser](https://github.com/dmauser/)
