@@ -2443,4 +2443,4 @@ You have explored Azure Route Server and how it can be used to simplify routing 
 	
 ## Acknowledgment 
 
-Special thanks to [Daniel Mauser](https://github.com/dmauser/)
+Special thanks to [Daniel Mauser](https://github.com/dmauser/) for his insight and for the GBB team.
