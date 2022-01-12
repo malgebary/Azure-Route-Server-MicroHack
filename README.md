@@ -50,7 +50,7 @@ Azure Cli will be used to build this Lab. the complete lab consist of:
   
 The complete lab deployment will look like this:
 
-![image](https://user-images.githubusercontent.com/78562461/147891873-c20be1a1-d7ac-4bed-9701-39820b153f9e.png)
+![image](https://user-images.githubusercontent.com/78562461/149048634-156c0f9f-3a2c-42f0-9336-bada2f0b5c68.png)
 
 
 # Notes:
