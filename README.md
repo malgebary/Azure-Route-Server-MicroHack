@@ -1146,7 +1146,7 @@ rtt min/avg/max/mdev = 58.128/58.656/59.337/0.542 ms
 
 ## Scenario 4: Route server multi-region design with IPsec 
 
-In this scenario, we will have another route server in EastUS region, and will configure BGP over IPsec tunnel between the NVAs. We will explore how routes can be exchanged between the NVAs and route servers and how that affects routing within the Vnets and with on-premises networks.
+In this scenario, we will have another route server in EastUS region and we will configure BGP over IPsec tunnel between the NVAs. We will explore how routes can be exchanged between the NVAs and route servers and how that affects routing within the Vnets and with on-premises networks.
 	
 For this scenario we will add the following components:
 
@@ -1283,7 +1283,7 @@ router bgp 65005
 
    ## Task5: Build IPsec tunnel between CSR NVA in HUB-SCUS Vnet and CSR1 NVA in HUB-EastUS Vnet
        
-   - Document the ***CSR1*** NVA public ip ***CSR1NVA-PublicIp*** and the public ip of the ***CSR*** NVA ***CSRPublicIP*** as we will need them to build the Ipsec tunnel in next step:
+   - Document the ***CSR1*** public ip **CSR1NVA-PublicIp** and the ***CSR*** NVA public ip **CSRPublicIP** as we will need them to build the IPsec tunnel in next step:
    
 ```
 az network public-ip show -g  Route-Server -n  CSR1NVA-PublicIP --query "{address: ipAddress}"
@@ -1296,7 +1296,7 @@ az network public-ip show -g  Route-Server -n  CSRPublicIP  --query "{address: i
          CSR#conf t
 ```
 
-   add the following commands one block at a time, replace ***CSR1NVA-PublicIp*** with the ip you got from above step:
+   add the following commands one block at a time, replace **CSR1NVA-PublicIp** with the ip you got from above step:
    
 ```
 crypto ikev2 proposal to-csr1-proposal
@@ -1473,7 +1473,7 @@ Tunnel12 is up, line protocol is up
 
 
 
-✔️ From above we see that IPsec and BGP are up between NVAs ***CSR*** and ***CSR1***
+✔️ From above we see that IPsec and BGP are up between the NVAs ***CSR*** and ***CSR1***
 
 
 
@@ -1510,7 +1510,7 @@ Navigate to Network Interfaces -> CSROutsideInterface -> Help -> Effective route
 Or:
 Navigate to Network Interfaces -> CSRInsideInterface -> Help -> Effective routes
 	
-- We see that the ***CSROutsideInterface*** and ***CSRInsideInterface*** NICs are not learning ***Spoke1-Vnet*** prefix 10.5.0.0/16 and ***HUB-EastUS*** Vnet prefix 10.3.0.0/16 which are supposed to be programmed in the NIC effective routes by the ARS ***Routeserver***, while it learned all other prefixes in the network diagram which are also programmed by the ARS in the NICs effective routes (10.0.0.0/16, 10.2.0.0/16, 192.68.1.4)! 
+- We see the ***CSROutsideInterface*** and ***CSRInsideInterface*** NICs are not learning ***Spoke1-Vnet*** prefix 10.5.0.0/16 and ***HUB-EastUS*** Vnet prefix 10.3.0.0/16 which are supposed to be programmed in the NIC effective routes by the ARS ***Routeserver***, while it learned all other prefixes in the network diagram which are also programmed by the ARS in the NICs effective routes (10.0.0.0/16, 10.2.0.0/16, 192.68.1.4)! 
 
 ![image](https://user-images.githubusercontent.com/78562461/144921682-f8fd3920-1444-469b-876f-696121a839fa.png)
 
