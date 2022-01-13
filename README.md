@@ -89,7 +89,7 @@ This scenario consist of:
 
 1. ***On-prem-Vnet*** to simulate on-premises network, Vpn Gateway ***On-Prem-VNG*** to simulate gateway on the on-premises, and an VM ***On-Prem-VM***.
 2. ***HUB-SCUS*** Vnet represent Azure side that has: NVA (***CSR***), VM (***HUB-VM***), and ARS (***RouteServer***).
-3. NVA ***CSR*** with two Nics, one external (CSROutsideInterface) and one Internal (CSRInsideInterface), external interface will be used as the source for Ipsec tunnel, while internal interface will be used as BGP peer with ARS.
+3. NVA ***CSR*** with two Nics, one external (CSROutsideInterface) and one Internal (CSRInsideInterface), external interface will be used as the source for IPsec tunnel, while internal interface will be used as BGP peer with ARS.
 4. We will use loopback interface on the ***CSR*** (Loopback11) as update source for the BGP peering with ***On-Prem-VNG***, while will use the internal interface of the ***CSR*** as the BGP peer with ARS instances.
 	
 
@@ -121,7 +121,7 @@ After deploying above, the diagram will look like following:
 
 **On-Prem-VNG:**
 
-**Note:** The VPN GW will take 20+ minutes to deploy
+**Note:** The VPN gateway will take 20+ minutes to deploy
 
     az network public-ip create --name Azure-VNGpubip --resource-group Route-Server --allocation-method Dynamic --location northcentralus
 
@@ -156,11 +156,11 @@ Here we are going to use Cisco CSR1000v as NVA. This NVA will have two NICs, one
     az vm create --resource-group Route-Server --location southcentralus --name CSR --size Standard_DS3_v2 --nics CSROutsideInterface CSRInsideInterface --image cisco:cisco-csr-1000v:17_2_1-byol:17.2.120200508 --admin-username azureuser --admin-password Routeserver123
 
 
-- **Build IPsec tunnel between ***CSR*** NVA (respresent Azure side) and ***On-Prem-VNG*** gateway (represent On-Premises side):**
+- **Build IPsec tunnel between ***CSR*** NVA (respresent Azure side) and ***On-Prem-VNG*** gateway (represent On-premises side):**
 
 **Note:** for simplicity, we will build one tunnel between ***CSR*** and ***On-Prem-VNG***
 
-• After the ***On-Prem-VNG*** gateway and ***CSR*** have been created, document the public IP address for both, we will use them to build the Ipsec tunnel:
+• After the ***On-Prem-VNG*** gateway and ***CSR*** have been created, document the public IP address for both, we will use them to build the IPsec tunnel:
 
     az network public-ip show -g  Route-Server -n Azure-VNGpubip --query "{address: ipAddress}"
     az network public-ip show -g Route-Server -n CSRPublicIP --query "{address: ipAddress}"
@@ -177,7 +177,7 @@ Go to command prompt and type:
 
     CSR#
 
-we will need to get into the configuration mode to configure Ipsec and BGP, so type (**conf t**):
+we will need to get into the configuration mode to configure IPsec and BGP, so type (**conf t**):
 
     CSR#conf t
 
@@ -264,7 +264,7 @@ Type `exit` multiple times until the prompt shows `csr#` or simply hit `CTRL Z` 
 
 ## Task2: Verify Connectivity
 
-**1.** Check the connection/tunnel status if it is connected: you can check it from the portal by navigating to Virtual Network Gateways -> On-Prem-VNG-> Settings -> Connections, it should show Connected as below:
+**1.** Check the connection (tunnel) status if it is connected: you can check it from the portal by navigating to Virtual Network Gateways -> On-Prem-VNG-> Settings -> Connections, it should show Connected as below:
 
 ![image](https://user-images.githubusercontent.com/78562461/139628348-ccad0fa6-0461-4dbd-a2c9-711968c6a564.png)
 
