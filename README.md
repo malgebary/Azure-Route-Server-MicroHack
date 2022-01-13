@@ -36,6 +36,7 @@ ARS enables the NVA to advertise routes to other endpoints in the local/peered V
 
 In this MicroHack we will explore some routing scenarios that shows how ARS can be utilized to simplify configuration, management, and deployment of the NVAs in the Virtual Network and how would that simplify routing within Azure and between Azure and on-premises.
 
+
 # Objectives:
 
 After completing this MicroHack you will:
