@@ -83,7 +83,7 @@ The complete lab deployment will look like this:
 
 ## Scenario 1: Connect on-premises network to Azure and use ARS for route distribution
 
-In this scenario you will connect on-premises network (***On-Prem-Vnet***) to Azure through NVA (CSR 1000V) deployed in ***HUB-SCUS*** Vnet, and we will observe the routing table before and after deploying ARS in the ***HUB-SCUS*** Vnet.
+In this scenario you will connect on-premises network (***On-Prem-Vnet***) to Azure through NVA (CSR 1000V) deployed in ***HUB-SCUS*** Vnet, and we will observe the routing table before and after deploying ARS ***RouteServer*** in the ***HUB-SCUS*** Vnet.
 
 This scenario consist of:
 
