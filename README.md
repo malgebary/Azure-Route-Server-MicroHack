@@ -2025,7 +2025,7 @@ In this scenario we will explore how Azure Route Server can be used to force tun
 
 We will test the internet breakout (force tunneling) on the following part of the network:
 
-![image](https://user-images.githubusercontent.com/78562461/148292130-80765a33-5b0d-4406-b9ef-a851acdb53bc.png)
+![image](https://user-images.githubusercontent.com/78562461/149457192-d2db15f7-182d-4890-8493-6cad2dd53115.png)
 
 	
 To setup this scenario, we will do the following configuration changes:
