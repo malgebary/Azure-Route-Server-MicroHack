@@ -312,7 +312,7 @@ Tunnel11 is up, line protocol is up
 
    Check on learned routes by either using the Azure Cli:
       
-	        az network vnet-gateway list-learned-routes -g Route-Server -n On-Prem-VNG
+	az network vnet-gateway list-learned-routes -g Route-Server -n On-Prem-VNG
 	      
    or from Portal by navigating to Virtual Network Gateways -> On-Prem-VNG -> Monitoring -> BGP Peers:
 
@@ -334,12 +334,12 @@ Tunnel11 is up, line protocol is up
 
 ## Task3: Inspect the routing table to answer questions 3-5
 
-👉 **For  3**, check on route table on the ***CSR***, do `show ip route 10.0.10.4` in enable mode as shown below:
+👉 **For  3**, check on the ***CSR*** roue table, do `show ip route 10.0.10.4` in enable mode as shown below:
 
 ![image](https://user-images.githubusercontent.com/78562461/139948143-dfda1cb5-b712-43ae-87a7-d383e7cfce2e.png)
 
 
-We see that the ***CSR*** is learning the route through BGP over the tunnel from peer ip 10.0.0.4, which is the BGP peer ip of ***On-Prem-VNG***, and so when `Ping 10.0.10.4` it works:
+We see the ***CSR*** is learning the route through BGP over the tunnel from peer ip 10.0.0.4, which is the BGP peer ip of ***On-Prem-VNG***, and so when `Ping 10.0.10.4` it works:
 
 ```
 CSR#ping 10.0.10.4
