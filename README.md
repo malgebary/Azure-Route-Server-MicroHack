@@ -542,9 +542,9 @@ RPKI validation codes: V valid, I invalid, N Not found
    
 * Both NICs return the below table. Note that 10.0.0.0/16 (***On-Prem-Vnet***) got injected by ARS in the ***CSR*** NICs' route table, with Next Hop IP as the ***CSR*** LAN Interface and Next Hop Type as Virtual Network Gateway, so traffic will be directed to the ***CSR*** directly. This shows that **ARS is not in the data path**, it only exchange BGP routes with NVA and program the routes it learns in the NICs' route table.
 
-:exclamation: We don't see 10.1.10.0/24 route programmed in the NICs' route table, this route is ***Subnet-1*** prefix that belong to the Vnet (***HUB-SCUS***), even though it is learned by the ARS from the ***CSR*** as shown in ARS learned routes above, why?
+:exclamation: We don't see 10.1.10.0/24 route programmed in the NICs' route table, this route is ***Subnet-1*** prefix in Vnet (***HUB-SCUS***), even though it is learned by the ARS from the ***CSR*** as shown in ARS learned routes above, why?
 
-:bulb: Because ARS will not program any route equal to the Vnet/Subnets prefix into the Vnet. In other words, ARS will not program routes it knows through system routes and so we cannot override the Vnet system routes using ARS.
+:bulb: Because ARS will not program a route equal to the Vnet or Subnets prefix into the Vnet. ARS will not program routes it knows through system routes and so we cannot override the Vnet system routes using ARS.
 
 ```
 
