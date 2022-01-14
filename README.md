@@ -22,7 +22,7 @@
 
 [Scenario 6: On-premises internet breakout through Azure](#Scenario-6-On-premises-internet-breakout-through-Azure)
 
-[Clouse out](#Clouse-out)
+[Close out](#Clouse-out)
 
 [Acknowledgment](#Acknowledgment)
 
