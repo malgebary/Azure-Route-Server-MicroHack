@@ -2443,4 +2443,13 @@ You have explored Azure Route Server and how it can be used to simplify routing 
 	
 ## Acknowledgment 
 
-Special thanks to [Daniel Mauser](https://github.com/dmauser/) for his insight and for the GBB team.
+Special thanks to [Daniel Mauser](https://github.com/dmauser/) for his insight and to [Heather Sze](https://github.com/hsze/) and [Jeremy Wright](https://github.com/jwrightazure/) from the GBB team. I also want to acknowledge other GitHub contribution that 
+discussed the use cases of Azure Route Server:
+
+1. [Forced Tunneling of Internet traffic through Active-Active OPNsense Firewalls using Azure Route Server (ExpressRoute)](https://github.com/dmauser/Lab/tree/master/RS-AA-OPNsense-ForceTunnel-ER)
+2. [Enable Transit Between ExpressRoute Circuits without Using Global Reach](https://github.com/jocortems/azurehybridnetworking/blob/main/ExpressRoute-Transit-with-Azure-RouteServer/)
+3. [Route Server Multi-Region Design](https://blog.cloudtrooper.net/2021/03/06/route-server-multi-region-design/)
+[Forced Tunneling of Internet traffic through Active-Active Fortinet Firewalls using Azure Route Server](https://github.com/hsze/RS-AA-Fortinet-ForceTunnel/)
+4. [Forced Tunneling of Internet traffic through Active-Active Fortinet Firewalls using Azure Route Server](https://github.com/hsze/RS-AA-Fortinet-ForceTunnel/)
+
+
