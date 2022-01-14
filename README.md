@@ -1773,9 +1773,9 @@ We see that BGP session between the new BGP endpoints 10.1.1.4 (***CSR***) and 1
 
 To make it easier to verify connectivity and routing let divide the network in two Sides (**Side1** and **Side2**) as shown below:
 
-![image](https://user-images.githubusercontent.com/78562461/145638689-a49379fd-a03c-482a-92ca-ecdd6690ec72.png)
-	
-	
+![image](https://user-images.githubusercontent.com/78562461/149457471-5fa758f5-70ce-4b85-a847-42345b750024.png)
+
+
 1- Check on effective routes for VMs in **Side1**
 	
 - ***HUB-VM*** effective routes
