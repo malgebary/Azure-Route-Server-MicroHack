@@ -380,7 +380,7 @@ VirtualNetworkGateway  Active   10.1.10.0/24      VirtualNetworkGateway  20.X.X.
 Default                Active   0.0.0.0/0         Internet
 ```
 
-💡 Traditionally, to have ***HUB-VM*** able to ping ***On-Prem-VM*** we need to create a UDR and associate it to ***subnet-1*** (where ***HUB-VM*** reside) to direct traffic destined to 10.0.10.0/24 (or in general to remote Vnet 10.0.0.0/16) to the ***CSR*** internal interface 10.1.1.4. But with ARS there is no need for UDR, ARS will inject the route it learns from ***CSR*** (NVA) automatically. We will see this next.
+💡 Traditionally, to have ***HUB-VM*** able to ping ***On-Prem-VM*** we need to create a UDR and associate it to ***subnet-1*** (where ***HUB-VM*** reside) to direct traffic destined to 10.0.10.0/24 (or in general to remote Vnet 10.0.0.0/16) to the ***CSR*** internal interface 10.1.1.4. But with ARS there is no need for UDR, ARS will inject the route it learns from ***CSR*** (NVA) automatically and we will see that next.
 
 
 
@@ -467,7 +467,7 @@ On the ***CSR*** do `show ip bgp summary`: we see BGP is up with 10.1.2.4 and 10
 	
 **·** We see all routes have next hop as 10.1.1.4 which is the ***CSR*** internal (LAN) interface that the ARS ***RouteServer*** is peering with. Pay attention to the asPath, the one with 65002-65001 shows this route has been advertised from (***On-Prem-VNG***) which is here 10.0.0.0/16, while route 10.1.10.0/24 with asPath 65002 is a route been advertised by the ***CSR*** itself .
 
-❗ ARS has two instances for high availabilty, IN_0 (10.1.2.4) and IN_1 (10.1.2.5), and both will have same learned/advertised routes.
+❗ARS has two instances for high availabilty, IN_0 (10.1.2.4) and IN_1 (10.1.2.5), and both will have same learned/advertised routes.
 
 ![image](https://user-images.githubusercontent.com/78562461/140400321-3c67f0e0-17a3-4ce3-979e-e600260371b5.png)
 
