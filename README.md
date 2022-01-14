@@ -1162,8 +1162,7 @@ For this scenario we will add the following components:
 	
 After deploying above component the complete diagram will be as below:
 	
-![image](https://user-images.githubusercontent.com/78562461/145701591-595fdcdd-e2c3-4999-a006-22c912b66dec.png)
-
+![image](https://user-images.githubusercontent.com/78562461/149525045-b51f9b73-42cb-4e46-9eaa-898a5fcbe5b1.png)
 
 
 ## Task1: Create the HUB-EastUS Vnet, HUB1-VM, CSR1 NVA, and ARS Routeserver1
