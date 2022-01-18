@@ -1656,7 +1656,7 @@ In previous scenario we were able to achieve full network connectivity by using 
 [Vnet peering](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-network-peering-overview) provides a low latency and high bandwidth connection that is useful in scenarios such as cross-region data replication and database failover scenarios. 
 
 
-In this design we will have same components as in scenario 4 but we will have global Vnet peering between ***HUB-EastUS*** and ***HUB-SCUS*** Vnets and will configure BGP over the Vnet peering between the NVAs ***CSR*** and ***CSR1***, we will explore if there will be routing changes when having Vnet peering versus IPsec tunnel between NVAs.
+In this design we will have same components as in scenario 4 but we will have global Vnet peering between ***HUB-EastUS*** and ***HUB-SCUS*** Vnets and we will configure BGP over the Vnet peering between the NVAs ***CSR*** and ***CSR1***, we will explore if there will be routing changes when having Vnet peering versus IPsec tunnel between NVAs.
 
 The complete scenario will look as follows:
 	
