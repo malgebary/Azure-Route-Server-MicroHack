@@ -1660,7 +1660,8 @@ In this design we will have same components as in scenario 4 but we will have gl
 
 The complete scenario will look as follows:
 	
-![image](https://user-images.githubusercontent.com/78562461/149048770-977990e8-3fa0-40c3-bd78-23680b0ae2e3.png)
+![image](https://user-images.githubusercontent.com/78562461/149855854-847aedfd-c204-4211-8096-6c5eda2dcd02.png)
+
 
 
 ## Task1: Configure Vnet peering between HUB-SCUS and HUB-EastUS Vnets
