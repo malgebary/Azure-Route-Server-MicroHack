@@ -1985,7 +1985,7 @@ traceroute to 10.4.10.4 (10.4.10.4), 30 hops max, 60 byte packets
 	
 ☝️ Why we didn't get this looping issue in scenario 4 even though the NVAs NICs route table are the same as in this scenario?
 
-In scenario 4 we used IPsec encapsulation to prevent packets reaches Azure networking, in this case Azure network will have no visibility about the source and destination, it will only see packets going between the NVAs and so the Azure route table will not affect this traffic and the traffic will take the right address of next hop (which will be the far end NVA) as shown in the NVA internal route table.
+In scenario 4 we used IPsec encapsulation to prevent packets reaching Azure networking, in this case Azure network will have no visibility about the source and destination, it will only see packets going between the NVAs and so the Azure route table will not affect this traffic and the traffic will take the right address of next hop (which will be the far end NVA) as shown in the NVA internal route table.
 
 
 **Now how to fix this looping issue in this scenario?**
