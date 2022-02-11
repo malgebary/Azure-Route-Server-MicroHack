@@ -2403,7 +2403,8 @@ az network route-table route create --name Internet-Prefix2 --resource-group Rou
 az network route-table route delete --name To-On-Prem-VNG --resource-group Route-Server --route-table-name Outside-Interface-RT
 ```
 
-❗You may also as a simply way to just disable gateway route propagation for this route table and fix this issue. In the portal navigate to Route tables -> Outside-Interface-RT -> Settings -> Configuration then set **propagate gateway routes** to No.
+	
+❗As an alternative way, you can simply just disable gateway route propagation for this route table and fix this issue. In the portal navigate to Route tables -> Outside-Interface-RT -> Settings -> Configuration then set **propagate gateway routes** to No.
 	
 🙂 After this change we see the pings from all VMs are going out sucessfully:
 
@@ -2467,5 +2468,12 @@ You have explored Azure Route Server and how it can be used to simplify routing 
 	
 ## Acknowledgment 
 
+Special thanks to [Daniel Mauser](https://github.com/dmauser/) for his insight and for validating this lab and to the GBB team. I also want to acknowledge other GitHub contributions that discussed the use cases of Azure Route Server.
+
+1. [Forced Tunneling of Internet traffic through Active-Active OPNsense Firewalls using Azure Route Server (ExpressRoute)](https://github.com/dmauser/Lab/tree/master/RS-AA-OPNsense-ForceTunnel-ER)
+2. [Enable Transit Between ExpressRoute Circuits without Using Global Reach](https://github.com/jocortems/azurehybridnetworking/blob/main/ExpressRoute-Transit-with-Azure-RouteServer/)
+3. [Route Server Multi-Region Design](https://blog.cloudtrooper.net/2021/03/06/route-server-multi-region-design/)
+4. [Forced Tunneling of Internet traffic through Active-Active Fortinet Firewalls using Azure Route Server](https://github.com/hsze/RS-AA-Fortinet-ForceTunnel/)
+![image](https://user-images.githubusercontent.com/78562461/153531820-f43b48e6-ea5e-414a-83cb-72ae3d73f700.png)
 
 
