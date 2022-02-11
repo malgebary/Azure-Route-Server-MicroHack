@@ -2389,7 +2389,7 @@ VRF info: (vrf in name/id, vrf out name/id)
 	
 ```
 👉 **To fix this**, we will need to override default route prefixes (128.0.0.0 and 0.0.0.0/1) learned from ***CSR*** through ARS by creating new routes in UDR **Outside-Interface-RT**, we will point the traffic destined to these prefixes to have next hop type as Internet.
-
+	
 With this change, as the traffic to default route is being pointed to go over **Internet**, there will be no need to have individual route entry pointing the traffic destined to ***On-Prem-VNG*** to go through **Internet**.
 	
 So we will update the UDR **Outside-Interface-RT** as follows:
@@ -2403,6 +2403,8 @@ az network route-table route create --name Internet-Prefix2 --resource-group Rou
 az network route-table route delete --name To-On-Prem-VNG --resource-group Route-Server --route-table-name Outside-Interface-RT
 ```
 
+❗You may also just disable gateway route propagation for this route table and fix this issue. In the portal navigate to Route tables -> Outside-Interface-RT -> Settings -> Configuration then set **propagate gateway routes** to NO.
+	
 🙂 After this change we see the pings from all VMs are going out sucessfully:
 
 ```
