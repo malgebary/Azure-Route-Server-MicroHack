@@ -2403,7 +2403,7 @@ az network route-table route create --name Internet-Prefix2 --resource-group Rou
 az network route-table route delete --name To-On-Prem-VNG --resource-group Route-Server --route-table-name Outside-Interface-RT
 ```
 
-❗You may also just disable gateway route propagation for this route table and fix this issue. In the portal navigate to Route tables -> Outside-Interface-RT -> Settings -> Configuration then set **propagate gateway routes** to NO.
+❗You may also as a simply way to just disable gateway route propagation for this route table and fix this issue. In the portal navigate to Route tables -> Outside-Interface-RT -> Settings -> Configuration then set **propagate gateway routes** to No.
 	
 🙂 After this change we see the pings from all VMs are going out sucessfully:
 
