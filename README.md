@@ -2388,7 +2388,7 @@ VRF info: (vrf in name/id, vrf out name/id)
  12 10.1.1.4 [AS 65515] 25 msec 30 msec 27 msec
 	
 ```
-👉 **To fix this**, we will need to override default route prefixes (128.0.0.0 and 0.0.0.0/1) learned from ***CSR*** through ARS by creating new routes in UDR **Outside-Interface-RT**, we will point the traffic destined to these prefixes to have next hop type as Internet.
+👉 **To fix this**, we will need to override default route prefixes (128.0.0.0 and 0.0.0.0/1) learned from ***CSR*** through ARS by creating new routes in UDR **Outside-Interface-RT**. We will point the traffic destined to these prefixes to have next hop type as Internet.
 	
 With this change, as the traffic to default route is being pointed to go over **Internet**, there will be no need to have individual route entry pointing the traffic destined to ***On-Prem-VNG*** to go through **Internet**.
 	
