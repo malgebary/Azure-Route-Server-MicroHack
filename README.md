@@ -2474,6 +2474,4 @@ Special thanks to [Daniel Mauser](https://github.com/dmauser/) for his insight a
 2. [Enable Transit Between ExpressRoute Circuits without Using Global Reach](https://github.com/jocortems/azurehybridnetworking/blob/main/ExpressRoute-Transit-with-Azure-RouteServer/)
 3. [Route Server Multi-Region Design](https://blog.cloudtrooper.net/2021/03/06/route-server-multi-region-design/)
 4. [Forced Tunneling of Internet traffic through Active-Active Fortinet Firewalls using Azure Route Server](https://github.com/hsze/RS-AA-Fortinet-ForceTunnel/)
-![image](https://user-images.githubusercontent.com/78562461/153531820-f43b48e6-ea5e-414a-83cb-72ae3d73f700.png)
-
 
