@@ -38,7 +38,7 @@ In this MicroHack, we will explore common routing scenarios that show how ARS ca
 
 After completing this MicroHack you will:
 
-- Know how to build Azure Route Server in the Vnet and connect it to an NVA and/or virtual network gateway.
+- Know how to build Azure Route Server in the VNET and connect it to an NVA and/or virtual network gateway.
 - Explore the new routing capabilities introduced by ARS and how it would simplify routing within Azure and with on-premises.
 
 ## Lab steps
