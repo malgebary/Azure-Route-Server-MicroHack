@@ -28,7 +28,7 @@
 
 ## Introduction
 
-Azure Route Server (ARS) enables dynamic routing between Network Virtual Appliance (NVA) and Virtual Network (VNET) by supporting Border Gateway Protocol (BGP). Before ARS, users had to create a User Defined Route (UDR) to steer traffic to the NVA, and needed to manually update the routing table on the NVA when VNET addresses got updated. With the introduction of Azure Route Server, users can now inject a similar route without having to create the UDRs, or manually update the NVA with new Vnet prefixes.
+Azure Route Server (ARS) enables dynamic routing between Network Virtual Appliance (NVA) and Virtual Network (VNET) by supporting Border Gateway Protocol (BGP). Before ARS, users had to create a User Defined Route (UDR) to steer traffic to the NVA, and needed to manually update the routing table on the NVA when VNET addresses got updated. With the introduction of Azure Route Server, users can now inject a similar route without having to create the UDRs, or manually update the NVA with new VNETs prefixes.
 
 ARS enables the NVA to advertise and learn routes to other endpoints in the local or peered VNETs. Another integration that ARS allows is the ability of NVAs to learn and advertise routes to on-premises networks connected via ExpressRoute or VPN, allowing transit between networks connected to NVA to transit to on-premises via Virtual Network Gateways (ExpressRoute and VPN) which was not possible before.
 
